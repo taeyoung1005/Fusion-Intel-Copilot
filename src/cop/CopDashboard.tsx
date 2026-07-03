@@ -281,7 +281,6 @@ export function CopDashboard(): ReactElement {
             recentActivitySummary={recentActivitySummary}
             onSelectCitation={setSelectedCitationId}
             onSelectIncident={selectIncident}
-            onVisionEvidence={addVisionEvidence}
           />
         )}
       </div>

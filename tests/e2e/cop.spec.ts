@@ -165,41 +165,61 @@ test.describe("D4D COP 표면과 상호작용", () => {
 
   test("Codex 요청 중 사건을 바꿔도 이전 판단을 표시하지 않는다", async ({ page }) => {
     // Incidents are now real: they only exist once DETR actually detects
-    // something. Two connected CARLA simulation cameras, plus two realtime
-    // DETR runs (one per camera), yield the two real incidents this test
-    // switches between.
+    // something. Two CARLA simulation cameras, brought online one after the
+    // other, each auto-detect via useCarlaCameraDetection and yield the two
+    // real incidents this test switches between.
+    const framePng =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
     const cameraA = {
       id: "CARLA-STALE-A",
       label: "지연 테스트 A",
       source: "carla",
       status: "online",
-      frameCount: 0,
+      frameCount: 1,
       createdAt: "2026-06-30T00:00:00.000Z",
-      lastFrameAt: null,
-      latestFrameDataUrl: null,
+      lastFrameAt: "2026-06-30T00:00:01.000Z",
+      latestFrameDataUrl: framePng,
     }
     const cameraB = {
       id: "CARLA-STALE-B",
       label: "지연 테스트 B",
       source: "carla",
       status: "online",
-      frameCount: 0,
+      frameCount: 1,
       createdAt: "2026-06-30T00:01:00.000Z",
-      lastFrameAt: null,
-      latestFrameDataUrl: null,
+      lastFrameAt: "2026-06-30T00:01:01.000Z",
+      latestFrameDataUrl: framePng,
     }
-    let orderedCameras = [cameraA, cameraB]
+    let onlineCameras = [cameraA]
     await page.route("**/api/carla-cameras**", async (route) => {
+      if (route.request().url().includes("/frame.jpg")) {
+        await route.fulfill({
+          status: 200,
+          contentType: "image/png",
+          body: Buffer.from(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+            "base64",
+          ),
+        })
+        return
+      }
       await route.fulfill({
         status: 200,
         contentType: "application/json; charset=utf-8",
-        body: JSON.stringify({ cameras: orderedCameras }),
+        body: JSON.stringify({ cameras: onlineCameras }),
       })
     })
 
+    // Deliberately a non-person label: this test only cares which camera an
+    // incident is tagged to and the Codex race timing, not attributes. A
+    // "person" label would trigger CLIP attribute extraction on both cameras
+    // with identical mock scores, making them look like the same person and
+    // firing the D-phase cross-camera correlation feature — which would
+    // rename/relabel one of the two incidents mid-test and break the
+    // camera-identity assertions below.
     await page.addInitScript(() => {
       window.__D4D_TEST_DETR_DETECTOR__ = async () => [
-        { label: "person", score: 0.9, box: { xmin: 300, ymin: 92, xmax: 366, ymax: 258 } },
+        { label: "car", score: 0.9, box: { xmin: 300, ymin: 92, xmax: 366, ymax: 258 } },
       ]
     })
     await page.route("**/api/vision-pipeline", async (route) => {
@@ -210,7 +230,7 @@ test.describe("D4D COP 표면과 상호작용", () => {
           provider: "transformers-detr",
           sequenceId: "stale-test-sequence",
           cameraId: "unused",
-          detections: [{ id: "det-stale-001", label: "person", confidence: 0.9 }],
+          detections: [{ id: "det-stale-001", label: "car", confidence: 0.9 }],
           tracks: [{ id: "trk-stale-001", status: "active_track" }],
           visualAnalysisAgent: { status: "triggered", summary: "테스트 탐지" },
           situationAnalysisAgent: { riskLevel: "watch", summary: "테스트 위험도" },
@@ -240,32 +260,25 @@ test.describe("D4D COP 표면과 상호작용", () => {
 
     await page.goto("/")
 
-    // First realtime DETR run: carlaCameras[0] is A, so the evidence (and the
-    // incident it creates) is tagged to CARLA-STALE-A.
-    await page.getByRole("button", { name: "실시간 DETR 추론 시작" }).click()
-    await expect.poll(() => page.locator(".cop-track-block").count()).toBeGreaterThanOrEqual(1)
-    await page.getByRole("button", { name: "실시간 DETR 추론 중지" }).click()
-
-    // Reorder so carlaCameras[0] becomes B; the dashboard's 250ms camera poll
-    // (useCarlaCameras) picks this up and the vision panel's cameraLabel
-    // prop follows.
-    orderedCameras = [cameraB, cameraA]
-    await page.waitForTimeout(500)
-
+    // Camera A is online from the start and auto-detects → the dashboard's
+    // first-ever incident (A) becomes the sticky default selection.
     const incidents = page.locator(".cop-incidents")
-    await page.getByRole("button", { name: "실시간 DETR 추론 시작" }).click()
+    await expect(incidents.locator(".cop-incident", { hasText: "CARLA-STALE-A" })).toBeVisible({
+      timeout: 10_000,
+    })
+
+    // Camera B comes online second; its own automatic detection creates a
+    // second, independent incident.
+    onlineCameras = [cameraA, cameraB]
     await expect(incidents.locator(".cop-incident", { hasText: "CARLA-STALE-B" })).toBeVisible({
       timeout: 10_000,
     })
-    await page.getByRole("button", { name: "실시간 DETR 추론 중지" }).click()
     // Let any in-flight auto-triggered Codex requests from the detection churn
     // above settle before the race this test actually exercises.
     await page.waitForTimeout(1_000)
 
-    // The dashboard auto-selects the first incident it ever sees (A, created by
-    // the first DETR run) and keeps that selection sticky across the camera
-    // reorder above. Switch to B here first so the actual race below starts
-    // from a real prior selection and clicking A is a genuine transition.
+    // Switch to B here first so the actual race below starts from a real
+    // prior selection and clicking A is a genuine transition.
     await incidents.locator(".cop-incident", { hasText: "CARLA-STALE-B" }).click()
     await page.waitForTimeout(500)
 
@@ -286,172 +299,6 @@ test.describe("D4D COP 표면과 상호작용", () => {
     await expect(page.getByText("판단-inc-CARLA-STALE-A")).toHaveCount(0)
     // B's decision is the one that lands.
     await expect(page.getByText("판단-inc-CARLA-STALE-B")).toBeVisible()
-  })
-
-  test("비전 AI 파이프라인 결과를 사람 검토 증거 번들로 표시한다", async ({ page }) => {
-    let postedSequenceId = ""
-
-    await page.route("**/api/vision-pipeline", async (route) => {
-      const request = route.request()
-      const payload = request.postDataJSON()
-      postedSequenceId = payload.sequenceId
-
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json; charset=utf-8",
-        body: JSON.stringify({
-          provider: "local-frame-cv",
-          sequenceId: "cop-deterministic-vision-sample",
-          cameraId: "CAM-E-03",
-          detections: [
-            { id: "det-001", label: "synthetic-person", confidence: 0.71 },
-            { id: "det-002", label: "synthetic-vehicle", confidence: 0.64 },
-          ],
-          tracks: [{ id: "trk-001", status: "active_track" }],
-          semanticEvents: [
-            {
-              id: "sem-001",
-              subjectLabel: "person",
-              action: "walking_or_running",
-              direction: "moving_right",
-              distanceTrend: "approaching",
-              durationMs: 2000,
-              frameIds: ["frame-001", "frame-002", "frame-003"],
-              confidence: 0.87,
-              summary: "person moving_right approaching walking_or_running",
-            },
-          ],
-          visualAnalysisAgent: {
-            status: "evidence_bundle_ready",
-            summary: "CAM-E-03 프레임 3개에서 합성 관측을 묶었습니다.",
-          },
-          situationAnalysisAgent: {
-            riskLevel: "watch",
-            summary: "자동 조치 없이 사람 검토 대기 상태입니다.",
-          },
-          evidenceBundle: {
-            codexReady: true,
-            recommendedAction: "사람 검토와 인접 CCTV 확인을 유지합니다.",
-            citations: ["frame-001:det-001"],
-          },
-        }),
-      })
-    })
-
-    await page.goto("/")
-    await page.getByRole("button", { name: "비전 AI 파이프라인 실행" }).click()
-
-    await expect.poll(() => postedSequenceId).toBe("cop-deterministic-vision-sample")
-    await expect(page.getByText("local-frame-cv")).toBeVisible()
-    await expect(page.getByText("탐지 2건")).toBeVisible()
-    await expect(page.getByText("active_track")).toBeVisible()
-    await expect(page.getByText("evidence_bundle_ready")).toBeVisible()
-    await expect(page.getByText("시맨틱 추출")).toBeVisible()
-    await expect(page.getByText(/walking_or_running/)).toBeVisible()
-    await expect(page.locator(".cop-vision-grid dd", { hasText: "watch" })).toBeVisible()
-    await expect(page.locator(".cop-vision-safe")).toContainText("사람 검토")
-    await expect(page.locator(".cop-vision-safe")).toContainText("증거 번들")
-    await expect(page.getByText(/물리적 표적|자동 무력|자동 발사/)).toHaveCount(0)
-  })
-
-  test("비전 AI 파이프라인 오류를 패널 안에 표시한다", async ({ page }) => {
-    await page.route("**/api/vision-pipeline", async (route) => {
-      await route.fulfill({
-        status: 503,
-        contentType: "application/json; charset=utf-8",
-        body: JSON.stringify({ error: "vision worker unavailable" }),
-      })
-    })
-
-    await page.goto("/")
-    await page.getByRole("button", { name: "비전 AI 파이프라인 실행" }).click()
-
-    await expect(page.getByText("vision worker unavailable")).toBeVisible()
-    await expect(page.getByRole("button", { name: "비전 AI 파이프라인 실행" })).toBeEnabled()
-  })
-
-  test("실시간 DETR 추론 루프가 탐지 프레임을 에이전트 판단 API로 전달한다", async ({ page }) => {
-    let postedProvider = ""
-    let postedFrameCount = 0
-    let postedObjectCount = 0
-
-    await page.addInitScript(() => {
-      window.__D4D_TEST_DETR_DETECTOR__ = async () => [
-        {
-          label: "person",
-          score: 0.91,
-          box: { xmin: 300, ymin: 92, xmax: 366, ymax: 258 },
-        },
-      ]
-    })
-
-    await page.route("**/api/vision-pipeline", async (route) => {
-      const payload = route.request().postDataJSON()
-      postedProvider = payload.providerHint
-      postedFrameCount = payload.frames.length
-      postedObjectCount = payload.frames[0]?.objects.length ?? 0
-
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json; charset=utf-8",
-        body: JSON.stringify({
-          provider: "transformers-detr",
-          sequenceId: "rt-test-sequence",
-          cameraId: "CAM-E-03",
-          detections: [{ id: "det-rt-001", label: "person", confidence: 0.91 }],
-          tracks: [{ id: "trk-rt-001", status: "active_track" }],
-          semanticEvents: [
-            {
-              id: "sem-rt-001",
-              subjectLabel: "person",
-              action: "approaching_camera",
-              direction: "moving_left",
-              distanceTrend: "approaching",
-              durationMs: 250,
-              frameIds: ["rt-frame-001"],
-              confidence: 0.91,
-              summary: "person moving_left approaching approaching_camera",
-            },
-          ],
-          visualAnalysisAgent: {
-            status: "triggered",
-            summary: "실시간 DETR 프레임에서 사람 객체를 탐지했습니다.",
-          },
-          situationAnalysisAgent: {
-            riskLevel: "watch",
-            summary: "접근 추세 후보를 사람 검토 대기 상태로 묶었습니다.",
-          },
-          evidenceBundle: {
-            codexReady: true,
-            recommendedAction: "사람 검토와 인접 CCTV 확인을 유지합니다.",
-            citations: ["rt-frame-001:det-rt-001"],
-          },
-        }),
-      })
-    })
-
-    await page.goto("/")
-    await page.getByRole("button", { name: "실시간 DETR 추론 시작" }).click()
-
-    await expect.poll(() => postedProvider).toBe("transformers-detr")
-    await expect.poll(() => postedFrameCount).toBeGreaterThanOrEqual(2)
-    expect(postedObjectCount).toBe(1)
-    await expect(page.getByText("transformers-detr")).toBeVisible()
-    await expect(page.getByText("실시간 DETR 가동")).toBeVisible()
-    await expect(page.getByText("triggered")).toBeVisible()
-    await expect(
-      page
-        .locator(".cop-vision")
-        .getByText(/approaching_camera/)
-        .first(),
-    ).toBeVisible()
-    await expect(page.locator(".cop-vision-grid dd", { hasText: "watch" })).toBeVisible()
-
-    // A real DETR detection lands on EVENT TIMELINE as a track block.
-    await expect.poll(() => page.locator(".cop-track-block").count()).toBeGreaterThanOrEqual(1)
-    // This is the webcam test panel, not a CARLA camera, so it must never
-    // trigger the realtime alert popup (that's CARLA-only, see Task 7 below).
-    await expect(page.locator(".cop-realtime-alert")).toHaveCount(0)
   })
 
   test("Codex 자동 요청에 최근 활동 시간 윈도우 종합 문구가 포함된다", async ({ page }) => {

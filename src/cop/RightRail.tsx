@@ -3,7 +3,6 @@ import { CodexSummary } from "./RightRailCodex"
 import { CitationsPanel, MissingContextPanel } from "./RightRailEvidence"
 import { ActiveIncidents } from "./RightRailIncidents"
 import { DailyReportPanel, ResponseGatePanel } from "./RightRailResponseReport"
-import { VisionPipelinePanel } from "./VisionPipelinePanel"
 import type {
   Citation,
   CodexMetric,
@@ -29,7 +28,6 @@ type RightRailProps = {
   readonly recentActivitySummary: string | undefined
   readonly onSelectCitation: (citationId: string) => void
   readonly onSelectIncident: (incidentId: string) => void
-  readonly onVisionEvidence: (clip: EvidenceClip) => void
 }
 
 export function RightRail({
@@ -47,7 +45,6 @@ export function RightRail({
   recentActivitySummary,
   onSelectCitation,
   onSelectIncident,
-  onVisionEvidence,
 }: RightRailProps): ReactElement {
   const scrollToGate = (): void => {
     document.getElementById("cop-gate")?.scrollIntoView({ behavior: "smooth", block: "center" })
@@ -61,7 +58,6 @@ export function RightRail({
         cameraLabel={cameraLabel}
         onSelectIncident={onSelectIncident}
       />
-      <VisionPipelinePanel cameraLabel={cameraLabel} onVisionEvidence={onVisionEvidence} />
       <CodexSummary
         selectedClip={selectedClip}
         selectedIncident={selectedIncident}
