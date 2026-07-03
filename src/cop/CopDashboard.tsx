@@ -16,6 +16,8 @@ import {
   toneToLane,
 } from "./copData"
 import type { DynamicCameraRecord } from "./dynamicMapCamera"
+import { useEvidenceWindowBuffer } from "./evidenceWindowBuffer"
+import { summarizeWindow, windowMsForTone } from "./evidenceWindowSummary"
 import {
   buildCitations,
   buildCodexMetrics,
@@ -65,6 +67,7 @@ export function CopDashboard(): ReactElement {
   // and CARLA simulation CCTV alike). With nothing detected they show a quiet
   // baseline.
   const evidenceClips = visionEvidence
+  const windowBuffer = useEvidenceWindowBuffer(evidenceClips)
   const { alerts, dismissAlert, updateAlertSettings } = useRealtimeAlerts(evidenceClips)
   const incidents = useMemo(() => buildIncidents(cameras, evidenceClips), [cameras, evidenceClips])
   const citations = useMemo(() => buildCitations(evidenceClips), [evidenceClips])
@@ -96,6 +99,18 @@ export function CopDashboard(): ReactElement {
   const selectedIncident =
     incidents.find((incident) => incident.id === selectedIncidentId) ?? incidents[0]
 
+  const recentActivitySummary = useMemo(() => {
+    if (selectedIncident === undefined) {
+      return undefined
+    }
+    const entries = windowBuffer.get(selectedIncident.zone)
+    if (entries === undefined || entries.length === 0) {
+      return undefined
+    }
+    const latestTone = entries[entries.length - 1]?.clip.tone ?? "normal"
+    return summarizeWindow(entries, Date.now(), windowMsForTone(latestTone))?.text
+  }, [selectedIncident, windowBuffer])
+
   // The human-confirmation gate reflects the selected incident's real readiness.
   const responseGates = useMemo(
     () =>
@@ -116,7 +131,7 @@ export function CopDashboard(): ReactElement {
     alerts: correlationAlerts,
     dismissAlert: dismissCorrelationAlert,
     updateAlertSettings: updateCorrelationAlertSettings,
-  } = useCorrelationAlerts(evidenceClips, cameras, addVisionEvidence)
+  } = useCorrelationAlerts(evidenceClips, cameras, addVisionEvidence, windowBuffer)
   const combinedAlerts = [...alerts, ...correlationAlerts]
   const dismissAnyAlert = (id: string): void => {
     dismissAlert(id)
@@ -263,6 +278,7 @@ export function CopDashboard(): ReactElement {
             reportPeriod={reportPeriod}
             cameraLabel={liveCameraLabel}
             selectedCitationId={selectedCitationId}
+            recentActivitySummary={recentActivitySummary}
             onSelectCitation={setSelectedCitationId}
             onSelectIncident={selectIncident}
             onVisionEvidence={addVisionEvidence}
