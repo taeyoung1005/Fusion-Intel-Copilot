@@ -9,3 +9,7 @@ npm-debug.log*
 sim/falcon-bridge/__pycache__/
 sim/falcon-bridge/.venv/
 data/
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
