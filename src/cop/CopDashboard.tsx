@@ -27,6 +27,7 @@ import {
   buildResponseGates,
 } from "./operationalTelemetry"
 import { useCarlaCameras } from "./useCarlaCameras"
+import { useCorrelationAlerts } from "./useCorrelationAlerts"
 import { useRealtimeAlerts } from "./useRealtimeAlerts"
 
 const MAX_VISION_EVIDENCE = 6
@@ -109,6 +110,24 @@ export function CopDashboard(): ReactElement {
       const deduped = previous.filter((existing) => existing.id !== clip.id)
       return [clip, ...deduped].slice(0, MAX_VISION_EVIDENCE)
     })
+  }
+
+  const {
+    alerts: correlationAlerts,
+    dismissAlert: dismissCorrelationAlert,
+    updateAlertSettings: updateCorrelationAlertSettings,
+  } = useCorrelationAlerts(evidenceClips, cameras, addVisionEvidence)
+  const combinedAlerts = [...alerts, ...correlationAlerts]
+  const dismissAnyAlert = (id: string): void => {
+    dismissAlert(id)
+    dismissCorrelationAlert(id)
+  }
+  const updateAnyAlertSettings = (
+    id: string,
+    settings: { readonly autoClose: boolean; readonly autoCloseMs: number },
+  ): void => {
+    updateAlertSettings(id, settings)
+    updateCorrelationAlertSettings(id, settings)
   }
 
   // Keep selections valid as real data appears/disappears.
@@ -251,9 +270,9 @@ export function CopDashboard(): ReactElement {
         )}
       </div>
       <RealtimeAlertStack
-        alerts={alerts}
-        onDismiss={dismissAlert}
-        onUpdateSettings={updateAlertSettings}
+        alerts={combinedAlerts}
+        onDismiss={dismissAnyAlert}
+        onUpdateSettings={updateAnyAlertSettings}
       />
     </div>
   )
