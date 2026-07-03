@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
-import type { EvidenceClip } from "./copData"
+import { type CodexAgentContext, requestCodexAgent } from "./codexAgentClient"
+import type { Citation, EvidenceClip, Incident } from "./copData"
 import type { DynamicCameraRecord } from "./dynamicMapCamera"
 import {
   type CorrelationCandidate,
@@ -58,6 +59,80 @@ const buildConfirmedClip = (
   }
 }
 
+// Ambiguous clips are emitted once, when Codex resolves. `summary` is Codex's
+// decision text on success, or undefined on any failure (rule-based fallback).
+const buildAmbiguousClip = (
+  candidate: CorrelationCandidate,
+  cameras: readonly DynamicCameraRecord[],
+  summary: string | undefined,
+): EvidenceClip => {
+  const laterLabel = labelFor(cameras, candidate.clipB.camera)
+  const verdict =
+    summary === undefined ? `유사도 ${candidate.score}% (규칙 기반)` : `Codex 판단: ${summary}`
+  return {
+    id: `${CORRELATION_CLIP_PREFIX}${pairKey(candidate.clipA.id, candidate.clipB.id)}`,
+    time: nowClock(),
+    camera: candidate.clipB.camera,
+    tone: "watch",
+    label: `${laterLabel} · ⚠️ ${candidate.clipA.camera} 동일 인물 가능성 ${candidate.score}% · ${verdict}`,
+    detail: `CORR ${candidate.score}%`,
+    source: "correlation",
+    confidencePct: candidate.score,
+    ...(candidate.clipB.attributes !== undefined ? { attributes: candidate.clipB.attributes } : {}),
+  }
+}
+
+const buildJudgingClip = (
+  candidate: CorrelationCandidate,
+  cameras: readonly DynamicCameraRecord[],
+): EvidenceClip => {
+  const laterLabel = labelFor(cameras, candidate.clipB.camera)
+  return {
+    id: `${CORRELATION_CLIP_PREFIX}judging-${pairKey(candidate.clipA.id, candidate.clipB.id)}`,
+    time: nowClock(),
+    camera: candidate.clipB.camera,
+    tone: "watch",
+    label: `${laterLabel} · ⚠️ ${candidate.clipA.camera} 동일 인물 판단 중... 유사도 ${candidate.score}%`,
+    detail: `CORR ${candidate.score}%`,
+    source: "correlation",
+    confidencePct: candidate.score,
+    ...(candidate.clipB.attributes !== undefined ? { attributes: candidate.clipB.attributes } : {}),
+  }
+}
+
+const buildCodexContext = (candidate: CorrelationCandidate): CodexAgentContext => {
+  const key = pairKey(candidate.clipA.id, candidate.clipB.id)
+  const incident: Incident = {
+    id: `inc-corr-${key}`,
+    tone: "WATCH",
+    // All CARLA cameras ring the single AMMO DEPOT cluster (see design §3); the
+    // DynamicCameraRecord has no zone field, so this fixed value is sufficient.
+    zone: "AMMO DEPOT CLUSTER",
+    title: `${candidate.clipA.camera} → ${candidate.clipB.camera} 동일 인물 가능성 검토`,
+    meta: `유사도 ${candidate.score}%`,
+    time: nowClock(),
+    confidence: candidate.score,
+  }
+  const citations: readonly Citation[] = [
+    {
+      id: `cite-corr-a-${candidate.clipA.id}`,
+      label: candidate.clipA.camera,
+      time: candidate.clipA.time,
+    },
+    {
+      id: `cite-corr-b-${candidate.clipB.id}`,
+      label: candidate.clipB.camera,
+      time: candidate.clipB.time,
+    },
+  ]
+  return {
+    incident,
+    citations,
+    missingContext: [],
+    responseOutcome: "상관관계 자동 판단",
+  }
+}
+
 const buildCorrelationAlert = (
   candidate: CorrelationCandidate,
   clip: EvidenceClip,
@@ -83,6 +158,27 @@ export const useCorrelationAlerts = (
   const camerasRef = useRef(cameras)
   camerasRef.current = cameras
 
+  const resolveAmbiguous = async (
+    candidate: CorrelationCandidate,
+    alertId: string,
+  ): Promise<void> => {
+    let summary: string | undefined
+    try {
+      const decision = await requestCodexAgent(buildCodexContext(candidate))
+      summary = decision.decision.summary
+    } catch {
+      // Never block evidence/alert emission on a Codex failure — fall back to
+      // the rule-based text below.
+      summary = undefined
+    }
+    const finalClip = buildAmbiguousClip(candidate, camerasRef.current, summary)
+    onCorrelationEvidenceRef.current(finalClip)
+    setAlerts((previous) =>
+      previous.map((alert) => (alert.id === alertId ? { ...alert, clip: finalClip } : alert)),
+    )
+  }
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: resolveAmbiguous is a stable closure over refs/setAlerts; the effect intentionally keys only on evidenceClips and must not re-run per render.
   useEffect(() => {
     const now = Date.now()
 
@@ -122,8 +218,13 @@ export const useCorrelationAlerts = (
         const clip = buildConfirmedClip(candidate, camerasRef.current)
         onCorrelationEvidenceRef.current(clip)
         setAlerts((previous) => [...previous, buildCorrelationAlert(candidate, clip)])
+        continue
       }
-      // Ambiguous band handled in Task 4.
+      // Ambiguous: show a local "judging" alert immediately, then consult Codex.
+      const judgingClip = buildJudgingClip(candidate, camerasRef.current)
+      const alert = buildCorrelationAlert(candidate, judgingClip)
+      setAlerts((previous) => [...previous, alert])
+      void resolveAmbiguous(candidate, alert.id)
     }
   }, [evidenceClips])
 
