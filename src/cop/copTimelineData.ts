@@ -1,3 +1,4 @@
+import type { PersonAttributes } from "./attributeClassifier"
 import type { AlertTone } from "./copMapBaseData"
 
 // --- Center: event timeline -----------------------------------------------------
@@ -112,6 +113,7 @@ export type EvidenceClip = {
   readonly source: EvidenceClipSource
   readonly confidencePct: number
   readonly frameDataUrl?: string | null
+  readonly attributes?: PersonAttributes
 }
 
 export const LEGEND_ITEMS = [
