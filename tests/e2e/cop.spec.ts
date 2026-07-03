@@ -743,6 +743,23 @@ test.describe("D4D COP 표면과 상호작용", () => {
       window.__D4D_TEST_DETR_DETECTOR__ = async () => [
         { label: "person", score: 0.88, box: { xmin: 300, ymin: 92, xmax: 366, ymax: 258 } },
       ]
+      window.__D4D_TEST_CLIP_CLASSIFIER__ = async (_source, candidateLabels) => {
+        const first = candidateLabels[0]
+        const second = candidateLabels[1]
+        if (first === undefined || second === undefined) {
+          return []
+        }
+        if (first.includes("hat")) {
+          return [
+            { label: first, score: 0.2 },
+            { label: second, score: 0.8 },
+          ]
+        }
+        return [
+          { label: first, score: 0.85 },
+          { label: second, score: 0.15 },
+        ]
+      }
     })
     await page.route("**/api/vision-pipeline", async (route) => {
       await route.fulfill({
