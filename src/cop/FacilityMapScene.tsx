@@ -9,6 +9,7 @@ import {
   TerrainContours,
 } from "./FacilityMapOverlays"
 import { SatelliteBase, SatelliteTiles } from "./FacilityMapTerrain"
+import { cameraConnectionState } from "./cameraConnectionStatus"
 import {
   DEPOT_BUNKERS,
   DEPOT_FOOTPRINT,
@@ -21,7 +22,6 @@ import {
   ZONE_LABELS,
 } from "./copData"
 import type { DynamicCameraRecord } from "./dynamicMapCamera"
-import { mobileCameraConnectionState } from "./mobileCameraStatus"
 import { type OsmFeatures, pointsToSvg } from "./osmFeatures"
 
 type MapSceneProps = {
@@ -99,7 +99,7 @@ export function MapScene({
 
       {has("cctvCameras") &&
         dynamicCameraRecords.map((record) => {
-          const connection = mobileCameraConnectionState(record)
+          const connection = cameraConnectionState(record)
           return (
             <CameraNode
               key={record.id}

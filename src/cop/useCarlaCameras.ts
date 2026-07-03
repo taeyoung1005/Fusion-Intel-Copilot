@@ -20,6 +20,24 @@ type CarlaCameraRegistry = {
 
 const CARLA_CAMERA_POLL_INTERVAL_MS = 250
 
+const snapshotsEqual = (
+  left: readonly CarlaCameraSnapshot[],
+  right: readonly CarlaCameraSnapshot[],
+): boolean =>
+  left.length === right.length &&
+  left.every((camera, index) => {
+    const other = right[index]
+    return (
+      other !== undefined &&
+      camera.id === other.id &&
+      camera.label === other.label &&
+      camera.status === other.status &&
+      camera.lastFrameAt === other.lastFrameAt &&
+      camera.frameCount === other.frameCount &&
+      camera.latestFrameDataUrl === other.latestFrameDataUrl
+    )
+  })
+
 export const useCarlaCameras = ({
   setCommandFeedback,
 }: UseCarlaCameraRegistryArgs): CarlaCameraRegistry => {
@@ -31,7 +49,10 @@ export const useCarlaCameras = ({
       try {
         const cameras = await listCarlaCameras()
         if (active) {
-          setCarlaSnapshots(cameras)
+          // Skip the state update when nothing actually changed — polling
+          // every 250ms would otherwise hand downstream consumers (like the
+          // Codex auto-request effect) a new array reference every tick.
+          setCarlaSnapshots((previous) => (snapshotsEqual(previous, cameras) ? previous : cameras))
         }
       } catch (error: unknown) {
         if (active && error instanceof Error) {

@@ -1,3 +1,4 @@
+import { cameraConnectionState } from "./cameraConnectionStatus"
 import type {
   Citation,
   CodexMetric,
@@ -8,14 +9,13 @@ import type {
   ResponseGate,
 } from "./copData"
 import type { DynamicCameraRecord } from "./dynamicMapCamera"
-import { mobileCameraConnectionState } from "./mobileCameraStatus"
 
 export type DailyReportRow = { readonly id: string; readonly label: string; readonly value: string }
 
 // Derives the right-rail panels (incidents, citations, Codex metrics) from the
-// only real signals the harness has: connected mobile CCTV and DETR detections.
-// With nothing connected the panels report a quiet, honest baseline rather than
-// fabricated activity.
+// only real signals the harness has: connected CARLA simulation CCTV and DETR
+// detections. With nothing connected the panels report a quiet, honest
+// baseline rather than fabricated activity.
 
 const STANDBY_INCIDENT: Incident = {
   id: "inc-standby",
@@ -75,8 +75,9 @@ export const buildIncidents = (
 }
 
 // Real DETR detections surface on the facility map as markers anchored to the
-// camera node that produced them. Live mobile frames alone are not "events", so
-// only vision detections place a marker; with none the map carries no markers.
+// camera node that produced them. A live camera heartbeat alone is not an
+// "event", so only vision detections place a marker; with none the map
+// carries no markers.
 export const buildDetectionMarkers = (
   cameras: readonly DynamicCameraRecord[],
   evidence: readonly EvidenceClip[],
@@ -108,7 +109,7 @@ export const buildMissingContext = (
   cameras: readonly DynamicCameraRecord[],
 ): readonly MissingContext[] =>
   cameras
-    .filter((camera) => mobileCameraConnectionState(camera).tone === "waiting")
+    .filter((camera) => cameraConnectionState(camera).tone === "waiting")
     .map((camera) => ({
       id: `miss-${camera.id}`,
       camera: camera.id,
@@ -185,9 +186,7 @@ export const buildCodexMetrics = (
   const visionDetections = evidence.filter((clip) => clip.source === "vision").length
   const objectiveEvidence = totalFrames + visionDetections
   const anomalies = evidence.filter((clip) => clip.tone === "watch" || clip.tone === "alert").length
-  const liveCount = cameras.filter(
-    (camera) => mobileCameraConnectionState(camera).tone === "live",
-  ).length
+  const liveCount = cameras.filter((camera) => cameraConnectionState(camera).tone === "live").length
   const coverage = cameras.length === 0 ? 0 : Math.round((liveCount / cameras.length) * 100)
   const avgConfidence =
     evidence.length === 0

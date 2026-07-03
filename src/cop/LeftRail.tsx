@@ -10,9 +10,7 @@ import {
   SlidersHorizontal,
 } from "lucide-react"
 import { type ReactElement, useState } from "react"
-import { CameraRegistryPanel } from "./CameraRegistryPanel"
 import { CarlaCctvWall } from "./CarlaCctvWall"
-import { LivePhoneCctvWall } from "./LivePhoneCctvWall"
 import { type EvidenceClip, MAP_LAYERS, type MapLayerId } from "./copData"
 import type { DynamicCameraRecord } from "./dynamicMapCamera"
 
@@ -62,9 +60,7 @@ type LeftPanelsProps = {
   readonly activeLayers: ReadonlySet<MapLayerId>
   readonly onToggleLayer: (id: MapLayerId) => void
   readonly selectedCameraId: string
-  readonly mobileCameras: readonly DynamicCameraRecord[]
   readonly carlaCameras: readonly DynamicCameraRecord[]
-  readonly onDeleteSelectedCamera: () => void
   readonly onSelectDynamicCamera: (camera: DynamicCameraRecord) => void
   readonly lastUpdated: string
   readonly onRefresh: () => void
@@ -75,9 +71,7 @@ export function LeftPanels({
   activeLayers,
   onToggleLayer,
   selectedCameraId,
-  mobileCameras,
   carlaCameras,
-  onDeleteSelectedCamera,
   onSelectDynamicCamera,
   lastUpdated,
   onRefresh,
@@ -114,24 +108,11 @@ export function LeftPanels({
         </ul>
       </section>
 
-      <LivePhoneCctvWall
-        cameras={mobileCameras}
-        selectedCameraId={selectedCameraId}
-        onSelectCamera={onSelectDynamicCamera}
-        onVisionEvidence={onVisionEvidence}
-      />
-
       <CarlaCctvWall
         cameras={carlaCameras}
         selectedCameraId={selectedCameraId}
         onSelectCamera={onSelectDynamicCamera}
         onVisionEvidence={onVisionEvidence}
-      />
-
-      <CameraRegistryPanel
-        mobileCameras={mobileCameras}
-        selectedCameraId={selectedCameraId}
-        onDeleteSelectedCamera={onDeleteSelectedCamera}
       />
 
       <div className="cop-left-footer">

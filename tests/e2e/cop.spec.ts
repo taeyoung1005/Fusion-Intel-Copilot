@@ -172,12 +172,13 @@ test.describe("D4D COP 표면과 상호작용", () => {
 
   test("Codex 요청 중 사건을 바꿔도 이전 판단을 표시하지 않는다", async ({ page }) => {
     // Incidents are now real: they only exist once DETR actually detects
-    // something. Two connected phone cameras, plus two realtime DETR runs (one
-    // per camera), yield the two real incidents this test switches between.
+    // something. Two connected CARLA simulation cameras, plus two realtime
+    // DETR runs (one per camera), yield the two real incidents this test
+    // switches between.
     const cameraA = {
-      id: "PHONE-STALE-A",
+      id: "CARLA-STALE-A",
       label: "지연 테스트 A",
-      source: "mobile",
+      source: "carla",
       status: "online",
       frameCount: 0,
       createdAt: "2026-06-30T00:00:00.000Z",
@@ -185,9 +186,9 @@ test.describe("D4D COP 표면과 상호작용", () => {
       latestFrameDataUrl: null,
     }
     const cameraB = {
-      id: "PHONE-STALE-B",
+      id: "CARLA-STALE-B",
       label: "지연 테스트 B",
-      source: "mobile",
+      source: "carla",
       status: "online",
       frameCount: 0,
       createdAt: "2026-06-30T00:01:00.000Z",
@@ -195,7 +196,7 @@ test.describe("D4D COP 표면과 상호작용", () => {
       latestFrameDataUrl: null,
     }
     let orderedCameras = [cameraA, cameraB]
-    await page.route("**/api/mobile-cameras", async (route) => {
+    await page.route("**/api/carla-cameras*", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json; charset=utf-8",
@@ -238,7 +239,7 @@ test.describe("D4D COP 표면과 상호작용", () => {
             recommendedAction: "사람 확인 유지",
             checkpoint: "stale-request",
           },
-          citations: ["PHONE-STALE-A"],
+          citations: ["CARLA-STALE-A"],
           adapterNotice: "테스트 지연 응답",
         }),
       })
@@ -246,36 +247,44 @@ test.describe("D4D COP 표면과 상호작용", () => {
 
     await page.goto("/")
 
-    // First realtime DETR run: mobileCameras[0] is A, so the evidence (and the
-    // incident it creates) is tagged to PHONE-STALE-A.
+    // First realtime DETR run: carlaCameras[0] is A, so the evidence (and the
+    // incident it creates) is tagged to CARLA-STALE-A.
     await page.getByRole("button", { name: "실시간 DETR 추론 시작" }).click()
     await expect.poll(() => page.locator(".cop-clip").count()).toBeGreaterThanOrEqual(1)
     await page.getByRole("button", { name: "실시간 DETR 추론 중지" }).click()
 
-    // Reorder so mobileCameras[0] becomes B; the dashboard's 2s camera poll
-    // (useDynamicCameras) picks this up and the vision panel's cameraLabel
+    // Reorder so carlaCameras[0] becomes B; the dashboard's 250ms camera poll
+    // (useCarlaCameras) picks this up and the vision panel's cameraLabel
     // prop follows.
     orderedCameras = [cameraB, cameraA]
-    await page.waitForTimeout(2_500)
+    await page.waitForTimeout(500)
 
     const incidents = page.locator(".cop-incidents")
     await page.getByRole("button", { name: "실시간 DETR 추론 시작" }).click()
-    await expect(incidents.locator(".cop-incident", { hasText: "PHONE-STALE-B" })).toBeVisible({
+    await expect(incidents.locator(".cop-incident", { hasText: "CARLA-STALE-B" })).toBeVisible({
       timeout: 10_000,
     })
     await page.getByRole("button", { name: "실시간 DETR 추론 중지" }).click()
+    // Let any in-flight auto-triggered Codex requests from the detection churn
+    // above settle before the race this test actually exercises.
+    await page.waitForTimeout(1_000)
 
-    await incidents.locator(".cop-incident", { hasText: "PHONE-STALE-A" }).click()
+    await incidents.locator(".cop-incident", { hasText: "CARLA-STALE-A" }).click()
+    // Selecting an incident auto-triggers a Codex request too; let that settle
+    // before manually firing the request this assertion is actually about.
+    await expect(page.getByRole("button", { name: "서버 Codex 판단 요청" })).toBeEnabled({
+      timeout: 10_000,
+    })
     const delayedCodexResponse = page.waitForResponse(
       (response) => response.url().includes("/api/codex-agent") && response.status() === 200,
     )
     await page.getByRole("button", { name: "서버 Codex 판단 요청" }).click()
-    await incidents.locator(".cop-incident", { hasText: "PHONE-STALE-B" }).click()
+    await incidents.locator(".cop-incident", { hasText: "CARLA-STALE-B" }).click()
     await delayedCodexResponse
 
     await expect(page.locator(".cop-codex")).toHaveCount(1)
     // The stale request bound to incident A must never replace the active panel.
-    await expect(page.getByText("판단-inc-PHONE-STALE-A")).toHaveCount(0)
+    await expect(page.getByText("판단-inc-CARLA-STALE-A")).toHaveCount(0)
     await expect(page.getByRole("button", { name: "서버 Codex 판단 요청" })).toBeEnabled()
   })
 
@@ -444,43 +453,31 @@ test.describe("D4D COP 표면과 상호작용", () => {
     await expect(page.locator(".cop-clip-foot").first()).toContainText("CONF")
   })
 
-  test("휴대폰 CCTV를 LIVE PHONE CCTV와 지도에 표시하고 해제한다", async ({ page }) => {
-    const mobileCameraA = {
-      id: "PHONE-E2E-001",
-      label: "E2E 휴대폰 CCTV",
-      source: "mobile",
+  test("CARLA 시뮬레이션 카메라를 CARLA SIM CCTV와 지도에 표시한다", async ({ page }) => {
+    const carlaCameraA = {
+      id: "CARLA-E2E-001",
+      label: "E2E CARLA CCTV",
+      source: "carla",
       status: "online",
       frameCount: 3,
       createdAt: "2026-06-30T00:00:00.000Z",
       lastFrameAt: "2026-06-30T00:00:03.000Z",
       latestFrameDataUrl: "data:image/jpeg;base64,QUJDRA==",
     }
-    const mobileCameraB = {
-      id: "PHONE-E2E-002",
-      label: "E2E 보조 휴대폰 CCTV",
-      source: "mobile",
+    const carlaCameraB = {
+      id: "CARLA-E2E-002",
+      label: "E2E 보조 CARLA CCTV",
+      source: "carla",
       status: "online",
-      frameCount: 5,
+      frameCount: 0,
       createdAt: "2026-06-30T00:01:00.000Z",
-      lastFrameAt: "2026-06-30T00:01:05.000Z",
+      lastFrameAt: null,
       latestFrameDataUrl: null,
     }
-    let registeredCameras = [mobileCameraA, mobileCameraB]
+    const registeredCameras = [carlaCameraA, carlaCameraB]
 
-    await page.route("**/api/mobile-cameras", async (route) => {
+    await page.route("**/api/carla-cameras*", async (route) => {
       if (route.request().method() === "GET") {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json; charset=utf-8",
-          body: JSON.stringify({ cameras: registeredCameras }),
-        })
-        return
-      }
-      await route.fulfill({ status: 405 })
-    })
-    await page.route("**/api/mobile-cameras/PHONE-E2E-001", async (route) => {
-      if (route.request().method() === "DELETE") {
-        registeredCameras = [mobileCameraB]
         await route.fulfill({
           status: 200,
           contentType: "application/json; charset=utf-8",
@@ -494,32 +491,19 @@ test.describe("D4D COP 표면과 상호작용", () => {
     await page.goto("/")
 
     const cameraLabels = page.locator(".cop-map-svg .cop-svg-camlabel")
-    await expect(page.getByRole("button", { name: "CCTV 추가" })).toHaveCount(0)
-    await expect(page.getByText("TEMP CCTV GRP")).toHaveCount(0)
-    await expect(page.getByAltText("휴대폰 CCTV 연결 QR 코드")).toBeVisible()
-    // The QR/link defaults to the dashboard's own origin (no dead hardcoded tunnel).
-    const uplinkLink = page.getByLabel("휴대폰 CCTV QR 연결").getByRole("link")
-    await expect(uplinkLink).toHaveAttribute("href", /\/mobile-camera\?autostart=1$/)
-    await expect(uplinkLink).not.toHaveAttribute("href", /gather-attachments-brands-timer/)
-    // On a non-HTTPS origin the operator is warned and can paste a tunnel URL that updates the QR.
-    await expect(page.locator(".cop-registry-qr-warn")).toBeVisible()
-    const uplinkInput = page.getByLabel("휴대폰 CCTV 업링크 주소")
-    await uplinkInput.fill("https://demo-tunnel.trycloudflare.com")
-    await expect(uplinkLink).toHaveAttribute(
-      "href",
-      "https://demo-tunnel.trycloudflare.com/mobile-camera?autostart=1",
-    )
-    await expect(page.locator(".cop-registry-qr-warn")).toHaveCount(0)
-    await uplinkInput.fill("")
 
-    // The LIVE PHONE CCTV wall is the single place that lists connected phones.
+    // The CARLA SIM CCTV wall is the single place that lists connected cameras —
+    // there is no separate registry/QR panel, since CARLA cameras register
+    // themselves via the bridge.
     await expect(page.locator(".cop-mobile-live-card")).toHaveCount(2)
-    await expect(page.getByRole("img", { name: "PHONE-E2E-001 라이브 CCTV 화면" })).toBeVisible()
+    await expect(page.getByRole("img", { name: "CARLA-E2E-001 CARLA CCTV 화면" })).toBeVisible()
     await expect(
-      page.locator(".cop-mobile-live-card", { hasText: "PHONE-E2E-002" }).getByText("프레임 대기"),
+      page
+        .locator(".cop-mobile-live-card", { hasText: "CARLA-E2E-002" })
+        .locator(".cop-mobile-live-empty"),
     ).toBeVisible()
-    await expect(cameraLabels.filter({ hasText: "PHONE-E2E-001" })).toHaveCount(1)
-    await expect(cameraLabels.filter({ hasText: "PHONE-E2E-002" })).toHaveCount(1)
+    await expect(cameraLabels.filter({ hasText: "CARLA-E2E-001" })).toHaveCount(1)
+    await expect(cameraLabels.filter({ hasText: "CARLA-E2E-002" })).toHaveCount(1)
     await expect(page.locator('polygon[fill="#59d7ff"]')).toHaveCount(2)
 
     // Camera Handoff layer draws a real handoff route between the two camera nodes.
@@ -530,23 +514,17 @@ test.describe("D4D COP 표면과 상호작용", () => {
     await page.locator("label.cop-layer", { hasText: "Camera Handoff" }).click()
     await expect(handoffRoutes).toHaveCount(1)
 
-    // A connected phone's frame heartbeat alone is not "evidence" — EVIDENCE
+    // A connected camera's frame heartbeat alone is not "evidence" — EVIDENCE
     // CLIPS only fills in from a real DETR detection (covered by the realtime
     // DETR test above), so it stays honestly empty here.
     await expect(page.locator(".cop-clip")).toHaveCount(0)
     await expect(page.locator(".cop-clips-count")).toHaveText("0 Clips")
 
-    await page.getByRole("button", { name: "PHONE-E2E-001 카메라 선택" }).hover()
-    await expect(page.getByRole("img", { name: "PHONE-E2E-001 지도 CCTV 미리보기" })).toBeVisible()
+    await page.getByRole("button", { name: "CARLA-E2E-001 카메라 선택" }).hover()
+    await expect(page.getByRole("img", { name: "CARLA-E2E-001 지도 CCTV 미리보기" })).toBeVisible()
 
-    await page.getByRole("button", { name: "PHONE-E2E-001 라이브 CCTV 선택" }).click()
-    await expect(page.getByText(/PHONE-E2E-001 선택/)).toBeVisible()
-
-    await page.getByRole("button", { name: "선택 CCTV 해제" }).click()
-    await expect(cameraLabels.filter({ hasText: "PHONE-E2E-001" })).toHaveCount(0)
-    await expect(cameraLabels.filter({ hasText: "PHONE-E2E-002" })).toHaveCount(1)
-    await expect(page.locator(".cop-mobile-live-card")).toHaveCount(1)
-    await expect(page.locator(".cop-mobile-live-card").getByText("PHONE-E2E-002")).toBeVisible()
+    await page.getByRole("button", { name: "CARLA-E2E-001 CARLA 시뮬레이션 CCTV 선택" }).click()
+    await expect(page.getByText(/CARLA-E2E-001 선택/)).toBeVisible()
   })
 
   test("Weather Overlay는 실시간 현지 날씨를 반영한다", async ({ page }) => {

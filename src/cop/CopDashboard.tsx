@@ -15,6 +15,7 @@ import {
   type TimelineEvent,
   toneToLane,
 } from "./copData"
+import type { DynamicCameraRecord } from "./dynamicMapCamera"
 import {
   buildCitations,
   buildCodexMetrics,
@@ -26,7 +27,6 @@ import {
   buildResponseGates,
 } from "./operationalTelemetry"
 import { useCarlaCameras } from "./useCarlaCameras"
-import { useDynamicCameras } from "./useDynamicCameras"
 
 const MAX_VISION_EVIDENCE = 6
 
@@ -55,26 +55,15 @@ export function CopDashboard(): ReactElement {
     "COP 준비 완료: 합성 CCTV와 서버 Codex 하네스 연결 대기",
   )
 
-  const dynamicRegistry = useDynamicCameras({
-    selectedCameraId,
-    setSelectedCameraId,
-    setCommandFeedback,
-  })
   const carlaRegistry = useCarlaCameras({ setCommandFeedback })
-  const combinedCameras = useMemo(
-    () => [...dynamicRegistry.mobileCameras, ...carlaRegistry.carlaCameras],
-    [dynamicRegistry.mobileCameras, carlaRegistry.carlaCameras],
-  )
-  const liveCameraLabel = dynamicRegistry.mobileCameras[0]?.id ?? "휴대폰 CCTV 대기"
+  const cameras = carlaRegistry.carlaCameras
+  const liveCameraLabel = cameras[0]?.id ?? "CARLA 시뮬레이션 CCTV 대기"
 
-  // All right-rail panels derive from the real signal: DETR detections (webcam,
-  // mobile CCTV, and CARLA simulation CCTV alike). With nothing detected they
-  // show a quiet baseline.
+  // All right-rail panels derive from the real signal: DETR detections (webcam
+  // and CARLA simulation CCTV alike). With nothing detected they show a quiet
+  // baseline.
   const evidenceClips = visionEvidence
-  const incidents = useMemo(
-    () => buildIncidents(combinedCameras, evidenceClips),
-    [combinedCameras, evidenceClips],
-  )
+  const incidents = useMemo(() => buildIncidents(cameras, evidenceClips), [cameras, evidenceClips])
   const citations = useMemo(() => buildCitations(evidenceClips), [evidenceClips])
   // Timeline events are the real evidence, placed on a live current-time axis.
   const timelineEvents = useMemo<readonly TimelineEvent[]>(
@@ -89,15 +78,15 @@ export function CopDashboard(): ReactElement {
     [evidenceClips],
   )
   const detectionMarkers = useMemo(
-    () => buildDetectionMarkers(combinedCameras, evidenceClips),
-    [combinedCameras, evidenceClips],
+    () => buildDetectionMarkers(cameras, evidenceClips),
+    [cameras, evidenceClips],
   )
-  const missingContext = useMemo(() => buildMissingContext(combinedCameras), [combinedCameras])
+  const missingContext = useMemo(() => buildMissingContext(cameras), [cameras])
   const reportRows = useMemo(() => buildDailyReportRows(evidenceClips), [evidenceClips])
   const reportPeriod = useMemo(() => buildDailyReportPeriod(evidenceClips), [evidenceClips])
   const codexMetrics = useMemo(
-    () => buildCodexMetrics(combinedCameras, evidenceClips),
-    [combinedCameras, evidenceClips],
+    () => buildCodexMetrics(cameras, evidenceClips),
+    [cameras, evidenceClips],
   )
 
   const selectedClip = evidenceClips.find((clip) => clip.id === selectedClipId)
@@ -205,6 +194,11 @@ export function CopDashboard(): ReactElement {
     setCommandFeedback(`${label} 패널로 이동했습니다.`)
   }
 
+  const selectDynamicCamera = (camera: DynamicCameraRecord): void => {
+    setSelectedCameraId(camera.id)
+    setCommandFeedback(`${camera.id} 선택: ${camera.label} 지도 노드를 확인 중입니다.`)
+  }
+
   return (
     <div className="cop-shell">
       <CommandBar onCommand={setCommandFeedback} />
@@ -217,22 +211,20 @@ export function CopDashboard(): ReactElement {
           activeLayers={activeLayers}
           onToggleLayer={toggleLayer}
           selectedCameraId={selectedCameraId}
-          mobileCameras={dynamicRegistry.mobileCameras}
-          carlaCameras={carlaRegistry.carlaCameras}
-          onDeleteSelectedCamera={dynamicRegistry.deleteSelectedMobileCamera}
-          onSelectDynamicCamera={dynamicRegistry.selectDynamicCamera}
+          carlaCameras={cameras}
           lastUpdated={formatUpdated(refreshTick)}
           onRefresh={() => setRefreshTick((tick) => tick + 3)}
+          onSelectDynamicCamera={selectDynamicCamera}
           onVisionEvidence={addVisionEvidence}
         />
         <main className="cop-center" aria-label="시설 지도와 증거 타임라인">
           <FacilityMap
             activeLayers={activeLayers}
             selectedCameraId={selectedCameraId}
-            dynamicCameraRecords={combinedCameras}
+            dynamicCameraRecords={cameras}
             detectionMarkers={detectionMarkers}
             onSelectCamera={selectCamera}
-            onSelectDynamicCamera={dynamicRegistry.selectDynamicCamera}
+            onSelectDynamicCamera={selectDynamicCamera}
             onSelectEvent={selectMapEvent}
           />
           <EventTimeline

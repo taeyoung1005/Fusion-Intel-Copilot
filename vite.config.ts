@@ -4,9 +4,6 @@ import { codexAgentPlugin } from "./server/viteCodexAgentPlugin"
 
 const config = defineConfig({
   plugins: [react(), codexAgentPlugin()],
-  server: {
-    allowedHosts: [".trycloudflare.com", ".ngrok-free.app", ".ngrok.io"],
-  },
   test: {
     exclude: ["tests/e2e/**", "**/node_modules/**", "**/.git/**"],
   },

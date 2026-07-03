@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import type { EvidenceClip } from "./copData"
 import type { Incident } from "./copData"
-import { buildDynamicCameraRecord, mobileCameraInput } from "./dynamicMapCamera"
+import { buildDynamicCameraRecord, carlaCameraInput } from "./dynamicMapCamera"
 import {
   buildCitations,
   buildCodexMetrics,
@@ -15,7 +15,7 @@ import {
 
 const camera = (id: string, frameCount: number, lastFrameAt: string | null) =>
   buildDynamicCameraRecord(
-    mobileCameraInput(id, `${id} 라벨`, 0, frameCount, lastFrameAt, "data:image/jpeg;base64,QQ=="),
+    carlaCameraInput(id, `${id} 라벨`, 0, frameCount, lastFrameAt, "data:image/jpeg;base64,QQ=="),
   )
 
 const evidence = (
@@ -92,7 +92,7 @@ describe("buildMissingContext", () => {
   it("flags only cameras that have not uplinked a frame", () => {
     const streaming = camera("PHONE-001", 5, "2026-06-30T00:00:05Z")
     const silent = buildDynamicCameraRecord(
-      mobileCameraInput("PHONE-002", "무프레임", 1, 0, null, null),
+      carlaCameraInput("PHONE-002", "무프레임", 1, 0, null, null),
     )
     const missing = buildMissingContext([streaming, silent])
     expect(missing).toHaveLength(1)

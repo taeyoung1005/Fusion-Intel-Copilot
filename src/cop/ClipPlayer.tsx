@@ -11,10 +11,10 @@ type ClipPlayerProps = {
   readonly onClose: () => void
 }
 
-// Plays back an evidence clip. When the clip carries a real captured frame (live
-// mobile uplink or a DETR detection frame) it shows that frame with a moving scan
-// overlay; otherwise it renders a deterministic synthetic reconstruction. Either
-// way it is real, controllable playback — not a static thumbnail.
+// Plays back an evidence clip. When the clip carries a real captured frame (a
+// DETR detection frame) it shows that frame with a moving scan overlay;
+// otherwise it renders a deterministic synthetic reconstruction. Either way
+// it is real, controllable playback — not a static thumbnail.
 export function ClipPlayer({ clip, onClose }: ClipPlayerProps): ReactElement {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const rafRef = useRef<number | undefined>(undefined)

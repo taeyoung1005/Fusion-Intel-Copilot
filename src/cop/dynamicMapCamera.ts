@@ -1,6 +1,6 @@
 import { CENTER, MAP_VIEW, type MapCamera, type Point } from "./copData"
 
-type DynamicCameraSource = "mobile" | "carla"
+type DynamicCameraSource = "carla"
 
 export type DynamicCameraRecord = {
   readonly id: string
@@ -26,25 +26,6 @@ type DynamicCameraInput = {
 
 const CONE_LENGTH = 132
 const CONE_HALF_ANGLE = 16
-
-export const mobileCameraInput = (
-  id: string,
-  label: string,
-  index: number,
-  frameCount: number,
-  lastFrameAt: string | null,
-  latestFrameDataUrl: string | null,
-): DynamicCameraInput => ({
-  id,
-  label,
-  source: "mobile",
-  angle: 126 - index * 17,
-  radiusX: 350,
-  radiusY: 224,
-  frameCount,
-  lastFrameAt,
-  latestFrameDataUrl,
-})
 
 export const carlaCameraInput = (
   id: string,
@@ -79,8 +60,8 @@ export const buildDynamicCameraRecord = (input: DynamicCameraInput): DynamicCame
     camera: {
       id: input.id,
       direction: directionForAngle(input.angle),
-      confidence: isLiveSource(input.source) ? liveStreamConfidence(input.frameCount ?? 0) : 82,
-      tone: isLiveSource(input.source) ? "watch" : "uncertain",
+      confidence: liveStreamConfidence(input.frameCount ?? 0),
+      tone: "watch",
       node,
       conePoints: buildCone(node),
       labelAnchor: labelAnchorFor(node),
@@ -131,9 +112,6 @@ const directionForAngle = (angle: number): MapCamera["direction"] => {
   }
   return "E"
 }
-
-const isLiveSource = (source: DynamicCameraSource): boolean =>
-  source === "mobile" || source === "carla"
 
 const liveStreamConfidence = (frameCount: number): number => (frameCount > 0 ? 86 : 62)
 

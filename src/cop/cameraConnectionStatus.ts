@@ -1,16 +1,14 @@
 import type { DynamicCameraRecord } from "./dynamicMapCamera"
 
-export type MobileCameraConnectionTone = "live" | "waiting"
+export type CameraConnectionTone = "live" | "waiting"
 
-export type MobileCameraConnectionState = {
+export type CameraConnectionState = {
   readonly label: "수신 중" | "연결됨 · 프레임 대기"
   readonly shortLabel: "LIVE" | "WAIT"
-  readonly tone: MobileCameraConnectionTone
+  readonly tone: CameraConnectionTone
 }
 
-export const mobileCameraConnectionState = (
-  camera: DynamicCameraRecord,
-): MobileCameraConnectionState => {
+export const cameraConnectionState = (camera: DynamicCameraRecord): CameraConnectionState => {
   const frameCount = camera.frameCount ?? 0
   if (
     frameCount > 0 &&

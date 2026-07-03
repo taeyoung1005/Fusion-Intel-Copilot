@@ -1,9 +1,9 @@
 import { Car, MonitorPlay, WifiOff } from "lucide-react"
 import type { ReactElement } from "react"
+import { cameraConnectionState } from "./cameraConnectionStatus"
 import { carlaCameraStreamSrc } from "./carlaCameraClient"
 import type { EvidenceClip } from "./copData"
 import type { DynamicCameraRecord } from "./dynamicMapCamera"
-import { mobileCameraConnectionState } from "./mobileCameraStatus"
 import { useCarlaCameraDetection } from "./useCarlaCameraDetection"
 
 type CarlaCctvWallProps = {
@@ -31,9 +31,7 @@ export function CarlaCctvWall({
   onSelectCamera,
   onVisionEvidence,
 }: CarlaCctvWallProps): ReactElement {
-  const liveCount = cameras.filter(
-    (camera) => mobileCameraConnectionState(camera).tone === "live",
-  ).length
+  const liveCount = cameras.filter((camera) => cameraConnectionState(camera).tone === "live").length
 
   return (
     <section
@@ -91,7 +89,7 @@ function CarlaCctvCard({
   onSelectCamera,
   onVisionEvidence,
 }: CarlaCctvCardProps): ReactElement {
-  const connection = mobileCameraConnectionState(record)
+  const connection = cameraConnectionState(record)
   useCarlaCameraDetection(
     record.id,
     record.label,

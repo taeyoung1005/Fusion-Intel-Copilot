@@ -1,14 +1,5 @@
 /// <reference types="vite/client" />
 
-interface ImportMetaEnv {
-  /** Optional fixed uplink origin (e.g. an https tunnel) for phone CCTV QR/links. */
-  readonly VITE_MOBILE_UPLINK_ORIGIN?: string
-}
-
-interface ImportMeta {
-  readonly env: ImportMetaEnv
-}
-
 type D4dTestDetrDetection = {
   readonly label: string
   readonly score: number
