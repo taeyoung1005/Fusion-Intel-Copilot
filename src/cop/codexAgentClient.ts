@@ -100,7 +100,7 @@ export const requestCodexAgent = async (
           incidentId: context.incident.id,
           title: context.incident.title,
           status: statusForIncident(context.incident),
-          summary: `${context.incident.zone} ${context.incident.meta} 증거 패킷`,
+          summary: `${context.incident.zone} ${context.incident.meta} 증거 패킷 — ${context.incident.title}`,
           citations: context.citations.map(citationLabel),
           missingContext: context.missingContext.map((item) => `${item.camera}: ${item.reason}`),
           responseOutcome: context.responseOutcome,
