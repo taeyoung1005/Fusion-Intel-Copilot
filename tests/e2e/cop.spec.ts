@@ -673,4 +673,113 @@ test.describe("D4D COP 표면과 상호작용", () => {
     await page.locator(".cop-track-block").first().hover()
     await expect(page.locator(".cop-track-tooltip").first()).toBeVisible()
   })
+
+  test("추출된 인물 속성이 EVENT TIMELINE과 Codex 입력에 반영된다", async ({ page }) => {
+    const onePixelPngDataUrl =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+
+    const carlaCamera = {
+      id: "CARLA-ATTR-01",
+      label: "E2E 속성 테스트",
+      source: "carla",
+      status: "online",
+      frameCount: 1,
+      createdAt: "2026-07-03T00:00:00.000Z",
+      lastFrameAt: "2026-07-03T00:00:01.000Z",
+      latestFrameDataUrl: onePixelPngDataUrl,
+    }
+
+    await page.route("**/api/carla-cameras**", async (route) => {
+      if (route.request().url().includes("/frame.jpg")) {
+        await route.fulfill({
+          status: 200,
+          contentType: "image/png",
+          body: Buffer.from(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+            "base64",
+          ),
+        })
+        return
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json; charset=utf-8",
+        body: JSON.stringify({ cameras: [carlaCamera] }),
+      })
+    })
+
+    await page.addInitScript(() => {
+      window.__D4D_TEST_DETR_DETECTOR__ = async () => [
+        { label: "person", score: 0.92, box: { xmin: 300, ymin: 92, xmax: 366, ymax: 258 } },
+      ]
+      window.__D4D_TEST_CLIP_CLASSIFIER__ = async (_source, candidateLabels) => {
+        const first = candidateLabels[0]
+        const second = candidateLabels[1]
+        if (first === undefined || second === undefined) {
+          return []
+        }
+        if (first.includes("hat")) {
+          return [
+            { label: first, score: 0.2 },
+            { label: second, score: 0.8 },
+          ]
+        }
+        return [
+          { label: first, score: 0.85 },
+          { label: second, score: 0.15 },
+        ]
+      }
+    })
+    await page.route("**/api/vision-pipeline", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json; charset=utf-8",
+        body: JSON.stringify({
+          provider: "transformers-detr",
+          sequenceId: "attr-test-sequence",
+          cameraId: "CARLA-ATTR-01",
+          detections: [{ id: "det-attr-001", label: "person", confidence: 0.92 }],
+          tracks: [{ id: "trk-attr-001", status: "active_track" }],
+          visualAnalysisAgent: { status: "triggered", summary: "테스트 탐지" },
+          situationAnalysisAgent: { riskLevel: "watch", summary: "테스트 위험도" },
+        }),
+      })
+    })
+
+    let postedSummary = ""
+    await page.route("**/api/codex-agent", async (route) => {
+      const payload = route.request().postDataJSON()
+      postedSummary = payload?.evidence?.summary ?? ""
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json; charset=utf-8",
+        body: JSON.stringify({
+          codexMode: "local-codex-adapter",
+          decision: {
+            title: "테스트 판단",
+            summary: "테스트 응답",
+            recommendedAction: "사람 확인 유지",
+            checkpoint: "test-checkpoint",
+          },
+          citations: ["CARLA-ATTR-01"],
+          adapterNotice: "테스트 응답",
+        }),
+      })
+    })
+
+    await page.goto("/")
+
+    await expect
+      .poll(() => page.locator(".cop-track-block").count(), { timeout: 10_000 })
+      .toBeGreaterThanOrEqual(1)
+
+    await page.locator(".cop-track-block").first().hover()
+    const timelineTooltip = page.locator(".cop-track-tooltip").first()
+    await expect(timelineTooltip.getByText(/배낭 소지/)).toBeVisible()
+    await expect(timelineTooltip.getByText(/모자 없음/)).toBeVisible()
+
+    await page.getByRole("button", { name: "서버 Codex 판단 요청" }).click()
+    await expect.poll(() => postedSummary).toContain("배낭 소지")
+    await expect.poll(() => postedSummary).toContain("모자 없음")
+  })
 })
