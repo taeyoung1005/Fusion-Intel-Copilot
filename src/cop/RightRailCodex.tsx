@@ -111,16 +111,6 @@ export function CodexSummary({
           {state.response.adapterNotice}
         </p>
       )}
-      <button
-        type="button"
-        className="cop-button full"
-        disabled={state.kind === "loading"}
-        onClick={() => {
-          void requestDecision()
-        }}
-      >
-        {state.kind === "loading" ? "서버 Codex 판단 요청 중" : "서버 Codex 판단 요청"}
-      </button>
     </section>
   )
 }
