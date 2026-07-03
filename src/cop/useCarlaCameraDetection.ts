@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react"
+import { describeAttributes, extractPersonAttributes } from "./attributeClassifier"
 import type { EvidenceClip } from "./copData"
 import { detectFrameObjectsWithDetr } from "./detrVisionDetector"
 import { riskToTone } from "./evidenceData"
@@ -18,6 +19,8 @@ type VisionPipelineFrame = VisionPipelineRequest["frames"][number]
 
 let carlaDetrDisabled = false
 let carlaDetrDisableWarningShown = false
+let carlaAttributesDisabled = false
+let carlaAttributesDisableWarningShown = false
 
 const nowClock = (): string => {
   const now = new Date()
@@ -49,6 +52,30 @@ const isDetrMemoryFailure = (error: unknown): boolean => {
     return false
   }
   return /bad_alloc|can't create a session|failed to call ortrun/i.test(error.message)
+}
+
+const extractPersonAttributesSafely = async (
+  source: string,
+  bbox: { x: number; y: number; width: number; height: number },
+  frameHeight: number,
+): Promise<Awaited<ReturnType<typeof extractPersonAttributes>> | undefined> => {
+  if (carlaAttributesDisabled) {
+    return undefined
+  }
+  try {
+    return await extractPersonAttributes({ source, bbox, frameHeight })
+  } catch (error: unknown) {
+    if (isDetrMemoryFailure(error)) {
+      carlaAttributesDisabled = true
+      if (!carlaAttributesDisableWarningShown) {
+        carlaAttributesDisableWarningShown = true
+        console.warn("CARLA 속성 추출(CLIP) 메모리 부족으로 자동 비활성화했습니다.")
+      }
+      return undefined
+    }
+    console.error("CARLA 인물 속성 추출 실패", error)
+    return undefined
+  }
 }
 
 export const useCarlaCameraDetection = (
@@ -117,21 +144,33 @@ export const useCarlaCameraDetection = (
         if (frameIndex - lastEvidenceFrameRef.current >= EVIDENCE_EVERY_FRAMES) {
           lastEvidenceFrameRef.current = frameIndex
           const topObject = objects[0]
+          const personObject = objects.find((object) =>
+            object.label.toLowerCase().includes("person"),
+          )
           const semantic = response.semanticEvents?.at(0)
           const label =
             semantic !== undefined
               ? `${semantic.subjectLabel} ${semantic.action}`
               : `${topObject?.label ?? "object"} 탐지`
+
+          const attributes =
+            personObject !== undefined
+              ? await extractPersonAttributesSafely(source, personObject.bbox, FRAME_HEIGHT)
+              : undefined
+          const attributeSuffix =
+            attributes !== undefined ? ` · ${describeAttributes(attributes)}` : ""
+
           onVisionEvidenceRef.current({
             id: `ev-carla-vision-${cameraId}-${frameIndex}`,
             time: nowClock(),
             camera: cameraId,
             tone: riskToTone(response.situationAnalysisAgent.riskLevel),
-            label: `${cameraLabel} · ${label}`,
+            label: `${cameraLabel} · ${label}${attributeSuffix}`,
             detail: `CONF ${Math.round((topObject?.confidence ?? 0) * 100)}%`,
             source: "vision",
             confidencePct: Math.round((topObject?.confidence ?? 0) * 100),
             frameDataUrl: source,
+            ...(attributes !== undefined ? { attributes } : {}),
           })
         }
       } catch (error: unknown) {
