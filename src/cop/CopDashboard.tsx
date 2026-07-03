@@ -1,7 +1,6 @@
 import { type ReactElement, useEffect, useMemo, useState } from "react"
 import { CommandBar } from "./CommandBar"
 import { EventTimeline } from "./EventTimeline"
-import { EvidenceClips } from "./EvidenceClips"
 import { FacilityMap } from "./FacilityMap"
 import { IconRail, LeftPanels } from "./LeftRail"
 import { RealtimeAlertStack } from "./RealtimeAlertStack"
@@ -177,11 +176,6 @@ export function CopDashboard(): ReactElement {
     setCommandFeedback(`${event.display} 타임라인 이벤트 선택: 해당 증거를 동기화했습니다.`)
   }
 
-  const selectClip = (clipId: string): void => {
-    setSelectedClipId(clipId)
-    setCommandFeedback(`${clipId} 증거 클립 선택: Codex 입력을 동기화했습니다.`)
-  }
-
   // Selecting an incident also focuses its camera on the map, tying the queue,
   // map node and right-rail panels to one subject.
   const selectIncident = (incidentId: string): void => {
@@ -235,11 +229,6 @@ export function CopDashboard(): ReactElement {
             evidenceClips={evidenceClips}
             selectedEventId={selectedClipId}
             onSelectEvent={selectTimelineEvent}
-          />
-          <EvidenceClips
-            clips={evidenceClips}
-            selectedClipId={selectedClipId}
-            onSelectClip={selectClip}
           />
         </main>
         {selectedIncident !== undefined && (
