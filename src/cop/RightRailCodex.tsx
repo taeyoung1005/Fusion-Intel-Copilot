@@ -20,6 +20,7 @@ type CodexSummaryProps = {
   readonly metrics: readonly CodexMetric[]
   readonly citations: readonly Citation[]
   readonly missingContext: readonly MissingContext[]
+  readonly recentActivitySummary: string | undefined
 }
 
 // When there is no real evidence yet, the Codex request still needs a citation
@@ -38,6 +39,7 @@ export function CodexSummary({
   metrics,
   citations,
   missingContext,
+  recentActivitySummary,
 }: CodexSummaryProps): ReactElement {
   const [state, setState] = useState<CodexPanelState>({ kind: "idle" })
   const selectionScope = `${selectedIncident.id}:${selectedClip?.id ?? "no-clip"}`
@@ -55,6 +57,7 @@ export function CodexSummary({
         citations: requestCitations,
         missingContext,
         responseOutcome: `사람 확인 게이트 대기 / ${selectedClip?.label ?? "선택 클립 없음"}`,
+        ...(recentActivitySummary !== undefined ? { recentActivitySummary } : {}),
       })
       if (requestVersion.current !== currentRequest) {
         return
@@ -70,7 +73,7 @@ export function CodexSummary({
       }
       throw error
     }
-  }, [selectedClip?.label, selectedIncident, citations, missingContext])
+  }, [selectedClip?.label, selectedIncident, citations, missingContext, recentActivitySummary])
 
   useEffect(() => {
     if (selectionScope.length > 0) {

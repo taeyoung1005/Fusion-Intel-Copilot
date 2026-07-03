@@ -26,6 +26,7 @@ type RightRailProps = {
   readonly reportPeriod: string
   readonly cameraLabel: string
   readonly selectedCitationId: string
+  readonly recentActivitySummary: string | undefined
   readonly onSelectCitation: (citationId: string) => void
   readonly onSelectIncident: (incidentId: string) => void
   readonly onVisionEvidence: (clip: EvidenceClip) => void
@@ -43,6 +44,7 @@ export function RightRail({
   reportPeriod,
   cameraLabel,
   selectedCitationId,
+  recentActivitySummary,
   onSelectCitation,
   onSelectIncident,
   onVisionEvidence,
@@ -66,6 +68,7 @@ export function RightRail({
         metrics={codexMetrics}
         citations={citations}
         missingContext={missingContext}
+        recentActivitySummary={recentActivitySummary}
       />
       <CitationsPanel
         citations={citations}
