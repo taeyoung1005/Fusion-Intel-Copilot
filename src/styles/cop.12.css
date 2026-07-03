@@ -494,44 +494,6 @@
   font-size: 11px;
 }
 
-/* ---------- Evidence clips: empty state + real frames ---------- */
-
-.cop-clips-empty {
-  display: grid;
-  justify-items: center;
-  align-content: center;
-  gap: 8px;
-  min-height: 132px;
-  padding: var(--space-4);
-  border: 1px dashed var(--line-soft);
-  border-radius: 6px;
-  background: var(--panel-inset);
-  color: var(--text-secondary);
-  text-align: center;
-}
-
-.cop-clips-empty strong {
-  color: var(--text-primary);
-  font-family: var(--mono);
-  font-size: 12px;
-}
-
-.cop-clips-empty span {
-  max-width: 420px;
-  color: var(--text-tertiary);
-  font-size: 11px;
-  line-height: 1.45;
-  word-break: keep-all;
-}
-
-.cop-clip-frame {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 /* ---------- Evidence clip player ---------- */
 
 .cop-clip-player-backdrop {

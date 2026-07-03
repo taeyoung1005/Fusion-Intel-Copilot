@@ -188,7 +188,7 @@ test.describe("D4D COP 표면과 상호작용", () => {
       latestFrameDataUrl: null,
     }
     let orderedCameras = [cameraA, cameraB]
-    await page.route("**/api/carla-cameras*", async (route) => {
+    await page.route("**/api/carla-cameras**", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json; charset=utf-8",
@@ -469,7 +469,7 @@ test.describe("D4D COP 표면과 상호작용", () => {
     }
     const registeredCameras = [carlaCameraA, carlaCameraB]
 
-    await page.route("**/api/carla-cameras*", async (route) => {
+    await page.route("**/api/carla-cameras**", async (route) => {
       if (route.request().method() === "GET") {
         await route.fulfill({
           status: 200,
