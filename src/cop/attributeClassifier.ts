@@ -103,3 +103,138 @@ export const describeAttributes = (attributes: PersonAttributes): string => {
   const colorPrefix = COLOR_LABEL_KO[attributes.topColor]
   return `${colorPrefix}상의 · ${bagText} · ${hatText} · ${sleeveText}`
 }
+
+import { z } from "zod"
+import type { VisionFrameObject } from "./detrVisionDetector"
+
+const CLIP_MODEL_ID = "Xenova/clip-vit-base-patch32"
+
+const HAT_LABELS: readonly [string, string] = [
+  "a person wearing a hat",
+  "a person not wearing a hat",
+]
+const SLEEVE_LABELS: readonly [string, string] = [
+  "a person wearing short sleeves",
+  "a person wearing long sleeves",
+]
+const BAG_LABELS: readonly [string, string] = [
+  "a person carrying a bag or backpack",
+  "a person without a bag",
+]
+
+const ClipClassificationSchema = z
+  .array(z.object({ label: z.string(), score: z.number() }))
+  .readonly()
+
+const createClipClassifier = async () => {
+  const { pipeline } = await import("@huggingface/transformers")
+  return pipeline("zero-shot-image-classification", CLIP_MODEL_ID)
+}
+
+let clipClassifierPromise: ReturnType<typeof createClipClassifier> | undefined
+
+const testClipClassifier = (): D4dTestClipClassifier | undefined => {
+  if (typeof window === "undefined") {
+    return undefined
+  }
+  return window.__D4D_TEST_CLIP_CLASSIFIER__
+}
+
+const runClipClassification = async (
+  source: string,
+  candidateLabels: readonly [string, string],
+): Promise<readonly { label: string; score: number }[]> => {
+  const testFn = testClipClassifier()
+  if (testFn !== undefined) {
+    return ClipClassificationSchema.parse(await testFn(source, candidateLabels))
+  }
+  clipClassifierPromise ??= createClipClassifier()
+  const classifier = await clipClassifierPromise
+  const output = await classifier(source, candidateLabels as unknown as string[])
+  return ClipClassificationSchema.parse(output)
+}
+
+const classifyBinary = async <A extends string, B extends string>(
+  source: string,
+  labels: readonly [string, string],
+  values: readonly [A, B],
+): Promise<{ readonly value: A | B; readonly score: number }> => {
+  const scores = await runClipClassification(source, labels)
+  return pickBinaryLabel(scores, labels, values)
+}
+
+type Bbox = VisionFrameObject["bbox"]
+
+const decodeAndCropToCanvas = (source: string, bbox: Bbox): Promise<HTMLCanvasElement> =>
+  new Promise((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => {
+      const canvas = document.createElement("canvas")
+      canvas.width = Math.max(1, bbox.width)
+      canvas.height = Math.max(1, bbox.height)
+      const context = canvas.getContext("2d")
+      if (context === null) {
+        reject(new Error("캔버스 컨텍스트를 생성할 수 없습니다."))
+        return
+      }
+      context.drawImage(
+        image,
+        bbox.x,
+        bbox.y,
+        bbox.width,
+        bbox.height,
+        0,
+        0,
+        canvas.width,
+        canvas.height,
+      )
+      resolve(canvas)
+    }
+    image.onerror = () => reject(new Error("프레임을 디코딩할 수 없습니다."))
+    image.src = source
+  })
+
+const averageColorOf = (canvas: HTMLCanvasElement): { r: number; g: number; b: number } => {
+  const context = canvas.getContext("2d")
+  if (context === null) {
+    return { r: 128, g: 128, b: 128 }
+  }
+  const { data } = context.getImageData(0, 0, canvas.width, canvas.height)
+  let r = 0
+  let g = 0
+  let b = 0
+  const pixelCount = data.length / 4
+  for (let i = 0; i < data.length; i += 4) {
+    r += data[i] ?? 0
+    g += data[i + 1] ?? 0
+    b += data[i + 2] ?? 0
+  }
+  return { r: r / pixelCount, g: g / pixelCount, b: b / pixelCount }
+}
+
+export const extractPersonAttributes = async (input: {
+  readonly source: string
+  readonly bbox: Bbox
+  readonly frameHeight: number
+}): Promise<PersonAttributes> => {
+  const canvas = await decodeAndCropToCanvas(input.source, input.bbox)
+  const croppedDataUrl = canvas.toDataURL("image/jpeg", 0.8)
+  const { r, g, b } = averageColorOf(canvas)
+  const topColor = rgbToNamedColor(r, g, b)
+  const build = buildFromRatio(input.bbox.height, input.frameHeight)
+
+  const [hat, sleeveLength, bagCarried] = await Promise.all([
+    classifyBinary(croppedDataUrl, HAT_LABELS, ["wearing_hat", "no_hat"] as const),
+    classifyBinary(croppedDataUrl, SLEEVE_LABELS, ["short_sleeve", "long_sleeve"] as const),
+    classifyBinary(croppedDataUrl, BAG_LABELS, ["carrying_bag", "no_bag"] as const),
+  ])
+
+  return {
+    hat: hat.value,
+    sleeveLength: sleeveLength.value,
+    bagCarried: bagCarried.value,
+    topColor,
+    build,
+    attributeConfidence: (hat.score + sleeveLength.score + bagCarried.score) / 3,
+  }
+}
