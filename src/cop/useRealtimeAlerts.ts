@@ -40,6 +40,7 @@ export const useRealtimeAlerts = (
       if (shouldOpenNewAlert(lastAlertAtRef.current.get(cameraId), now, REALTIME_ALERT_GAP_MS)) {
         toOpen.push({
           id: clip.id,
+          kind: "detection",
           cameraId,
           clip,
           autoClose: DEFAULT_AUTO_CLOSE,

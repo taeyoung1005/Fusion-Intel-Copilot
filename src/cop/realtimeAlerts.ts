@@ -7,6 +7,7 @@ export const DEFAULT_AUTO_CLOSE_MS = 10_000
 
 export type RealtimeAlert = {
   readonly id: string
+  readonly kind: "detection" | "correlation"
   readonly cameraId: string
   readonly clip: EvidenceClip
   readonly autoClose: boolean

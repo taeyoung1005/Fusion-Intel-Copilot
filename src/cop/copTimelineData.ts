@@ -101,7 +101,7 @@ export type TimelineEvent = {
 // real-time DETR detections — never from a static demo list. `detail` carries the
 // source-appropriate metric (uplink frame count for mobile, detection confidence
 // for vision); `frameDataUrl` is the actual captured frame when available.
-export type EvidenceClipSource = "mobile" | "vision"
+export type EvidenceClipSource = "mobile" | "vision" | "correlation"
 
 export type EvidenceClip = {
   readonly id: string

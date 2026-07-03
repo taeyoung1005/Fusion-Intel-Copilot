@@ -53,10 +53,18 @@ function RealtimeAlertCard({
     return () => window.clearTimeout(timer)
   }, [alert.id, alert.autoClose, alert.autoCloseMs])
 
+  const isCorrelation = alert.kind === "correlation"
+
   return (
-    <div className={`cop-realtime-alert tone-${alert.clip.tone}`} role="alert">
+    <div
+      className={`cop-realtime-alert tone-${alert.clip.tone}${isCorrelation ? " kind-correlation" : ""}`}
+      role="alert"
+      style={
+        isCorrelation ? { borderColor: "#f4c430", boxShadow: "0 0 0 1px #f4c430 inset" } : undefined
+      }
+    >
       <header className="cop-realtime-alert-head">
-        <strong>{alert.cameraId}</strong>
+        <strong>{isCorrelation ? `⚠ ${alert.cameraId}` : alert.cameraId}</strong>
         <div className="cop-realtime-alert-actions">
           <button
             type="button"
