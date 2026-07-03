@@ -238,3 +238,31 @@ export const extractPersonAttributes = async (input: {
     attributeConfidence: (hat.score + sleeveLength.score + bagCarried.score) / 3,
   }
 }
+
+let attributesDisabled = false
+let attributesDisableWarningShown = false
+
+export const extractPersonAttributesSafely = async (
+  source: string,
+  bbox: Bbox,
+  frameHeight: number,
+  isMemoryFailure: (error: unknown) => boolean,
+): Promise<PersonAttributes | undefined> => {
+  if (attributesDisabled) {
+    return undefined
+  }
+  try {
+    return await extractPersonAttributes({ source, bbox, frameHeight })
+  } catch (error: unknown) {
+    if (isMemoryFailure(error)) {
+      attributesDisabled = true
+      if (!attributesDisableWarningShown) {
+        attributesDisableWarningShown = true
+        console.warn("CARLA 속성 추출(CLIP) 메모리 부족으로 자동 비활성화했습니다.")
+      }
+      return undefined
+    }
+    console.error("CARLA 인물 속성 추출 실패", error)
+    return undefined
+  }
+}

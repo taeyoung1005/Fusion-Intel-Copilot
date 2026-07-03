@@ -1,5 +1,5 @@
 import { type RefObject, useEffect, useRef } from "react"
-import { describeAttributes, extractPersonAttributes } from "./attributeClassifier"
+import { describeAttributes, extractPersonAttributesSafely } from "./attributeClassifier"
 import type { EvidenceClip } from "./copData"
 import { detectFrameObjectsWithDetr } from "./detrVisionDetector"
 import { riskToTone } from "./evidenceData"
@@ -19,8 +19,6 @@ type VisionPipelineFrame = VisionPipelineRequest["frames"][number]
 
 let carlaVideoDetrDisabled = false
 let carlaVideoDetrDisableWarningShown = false
-let carlaAttributesDisabled = false
-let carlaAttributesDisableWarningShown = false
 
 const nowClock = (): string => {
   const now = new Date()
@@ -48,30 +46,6 @@ const isDetrMemoryFailure = (error: unknown): boolean => {
     return false
   }
   return /bad_alloc|can't create a session|failed to call ortrun/i.test(error.message)
-}
-
-const extractPersonAttributesSafely = async (
-  source: string,
-  bbox: { x: number; y: number; width: number; height: number },
-  frameHeight: number,
-): Promise<Awaited<ReturnType<typeof extractPersonAttributes>> | undefined> => {
-  if (carlaAttributesDisabled) {
-    return undefined
-  }
-  try {
-    return await extractPersonAttributes({ source, bbox, frameHeight })
-  } catch (error: unknown) {
-    if (isDetrMemoryFailure(error)) {
-      carlaAttributesDisabled = true
-      if (!carlaAttributesDisableWarningShown) {
-        carlaAttributesDisableWarningShown = true
-        console.warn("CARLA 속성 추출(CLIP) 메모리 부족으로 자동 비활성화했습니다.")
-      }
-      return undefined
-    }
-    console.error("CARLA 인물 속성 추출 실패", error)
-    return undefined
-  }
 }
 
 export const useCarlaVideoDetection = (
@@ -151,7 +125,12 @@ export const useCarlaVideoDetection = (
 
           const attributes =
             personObject !== undefined
-              ? await extractPersonAttributesSafely(source, personObject.bbox, FRAME_HEIGHT)
+              ? await extractPersonAttributesSafely(
+                  source,
+                  personObject.bbox,
+                  FRAME_HEIGHT,
+                  isDetrMemoryFailure,
+                )
               : undefined
           const attributeSuffix =
             attributes !== undefined ? ` · ${describeAttributes(attributes)}` : ""
