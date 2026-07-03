@@ -4,6 +4,7 @@ import { EventTimeline } from "./EventTimeline"
 import { EvidenceClips } from "./EvidenceClips"
 import { FacilityMap } from "./FacilityMap"
 import { IconRail, LeftPanels } from "./LeftRail"
+import { RealtimeAlertStack } from "./RealtimeAlertStack"
 import { RightRail } from "./RightRail"
 import {
   type EvidenceClip,
@@ -27,6 +28,7 @@ import {
   buildResponseGates,
 } from "./operationalTelemetry"
 import { useCarlaCameras } from "./useCarlaCameras"
+import { useRealtimeAlerts } from "./useRealtimeAlerts"
 
 const MAX_VISION_EVIDENCE = 6
 
@@ -63,6 +65,7 @@ export function CopDashboard(): ReactElement {
   // and CARLA simulation CCTV alike). With nothing detected they show a quiet
   // baseline.
   const evidenceClips = visionEvidence
+  const { alerts, dismissAlert, updateAlertSettings } = useRealtimeAlerts(evidenceClips)
   const incidents = useMemo(() => buildIncidents(cameras, evidenceClips), [cameras, evidenceClips])
   const citations = useMemo(() => buildCitations(evidenceClips), [evidenceClips])
   // Timeline events are the real evidence, placed on a live current-time axis.
@@ -257,6 +260,11 @@ export function CopDashboard(): ReactElement {
           />
         )}
       </div>
+      <RealtimeAlertStack
+        alerts={alerts}
+        onDismiss={dismissAlert}
+        onUpdateSettings={updateAlertSettings}
+      />
     </div>
   )
 }
