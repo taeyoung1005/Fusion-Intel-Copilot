@@ -94,14 +94,6 @@ test.describe("D4D COP 표면과 상호작용", () => {
       await watchFilter.click()
       await expect(watchFilter).toHaveAttribute("aria-pressed", "true")
 
-      // --- Evidence clips ------------------------------------------------------
-      // With no live cameras and no DETR detections, there is no fabricated
-      // evidence: the strip shows an honest empty state, not static demo clips.
-      await expect(page.getByText("EVIDENCE CLIPS")).toBeVisible()
-      await expect(page.getByText("탐지된 영상 증거 없음")).toBeVisible()
-      await expect(page.locator(".cop-clip")).toHaveCount(0)
-      await expect(page.locator(".cop-clips-count")).toHaveText("0 Clips")
-
       // --- Right rail: active incidents (real, quiet baseline) -----------------
       // With nothing connected the queue shows a single honest standby incident,
       // not fabricated PERIMETER/AMMO/SOUTH events.
@@ -250,7 +242,7 @@ test.describe("D4D COP 표면과 상호작용", () => {
     // First realtime DETR run: carlaCameras[0] is A, so the evidence (and the
     // incident it creates) is tagged to CARLA-STALE-A.
     await page.getByRole("button", { name: "실시간 DETR 추론 시작" }).click()
-    await expect.poll(() => page.locator(".cop-clip").count()).toBeGreaterThanOrEqual(1)
+    await expect.poll(() => page.locator(".cop-track-block").count()).toBeGreaterThanOrEqual(1)
     await page.getByRole("button", { name: "실시간 DETR 추론 중지" }).click()
 
     // Reorder so carlaCameras[0] becomes B; the dashboard's 250ms camera poll
@@ -447,10 +439,11 @@ test.describe("D4D COP 표면과 상호작용", () => {
     ).toBeVisible()
     await expect(page.locator(".cop-vision-grid dd", { hasText: "watch" })).toBeVisible()
 
-    // A real DETR detection lands in EVIDENCE CLIPS as a captured-frame clip.
-    await expect.poll(() => page.locator(".cop-clip").count()).toBeGreaterThanOrEqual(1)
-    await expect(page.locator(".cop-clip .cop-clip-frame").first()).toBeVisible()
-    await expect(page.locator(".cop-clip-foot").first()).toContainText("CONF")
+    // A real DETR detection lands on EVENT TIMELINE as a track block.
+    await expect.poll(() => page.locator(".cop-track-block").count()).toBeGreaterThanOrEqual(1)
+    // This is the webcam test panel, not a CARLA camera, so it must never
+    // trigger the realtime alert popup (that's CARLA-only, see Task 7 below).
+    await expect(page.locator(".cop-realtime-alert")).toHaveCount(0)
   })
 
   test("CARLA 시뮬레이션 카메라를 CARLA SIM CCTV와 지도에 표시한다", async ({ page }) => {
@@ -513,12 +506,6 @@ test.describe("D4D COP 표면과 상호작용", () => {
     await expect(handoffRoutes).toHaveCount(0)
     await page.locator("label.cop-layer", { hasText: "Camera Handoff" }).click()
     await expect(handoffRoutes).toHaveCount(1)
-
-    // A connected camera's frame heartbeat alone is not "evidence" — EVIDENCE
-    // CLIPS only fills in from a real DETR detection (covered by the realtime
-    // DETR test above), so it stays honestly empty here.
-    await expect(page.locator(".cop-clip")).toHaveCount(0)
-    await expect(page.locator(".cop-clips-count")).toHaveText("0 Clips")
 
     await page.getByRole("button", { name: "CARLA-E2E-001 카메라 선택" }).hover()
     await expect(page.getByRole("img", { name: "CARLA-E2E-001 지도 CCTV 미리보기" })).toBeVisible()
@@ -611,5 +598,79 @@ test.describe("D4D COP 표면과 상호작용", () => {
     await expect(chip).toContainText("동풍")
     await expect(page.locator('.cop-map-weather-canvas[data-condition="clear"]')).toBeVisible()
     expect(call).toBeGreaterThanOrEqual(2)
+  })
+
+  test("CARLA 탐지 시 실시간 알림 팝업이 뜨고, EVENT TIMELINE 호버/클릭이 동작한다", async ({
+    page,
+  }) => {
+    const TINY_PNG = Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+      "base64",
+    )
+    const carlaCamera = {
+      id: "CARLA-ALERT-01",
+      label: "E2E 알림 테스트",
+      source: "carla",
+      status: "online",
+      frameCount: 1,
+      createdAt: "2026-07-03T00:00:00.000Z",
+      lastFrameAt: "2026-07-03T00:00:01.000Z",
+      latestFrameDataUrl: null,
+    }
+
+    await page.route("**/api/carla-cameras**", async (route) => {
+      if (route.request().url().includes("/frame.jpg")) {
+        await route.fulfill({ status: 200, contentType: "image/png", body: TINY_PNG })
+        return
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json; charset=utf-8",
+        body: JSON.stringify({ cameras: [carlaCamera] }),
+      })
+    })
+
+    await page.addInitScript(() => {
+      window.__D4D_TEST_DETR_DETECTOR__ = async () => [
+        { label: "person", score: 0.88, box: { xmin: 300, ymin: 92, xmax: 366, ymax: 258 } },
+      ]
+    })
+    await page.route("**/api/vision-pipeline", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json; charset=utf-8",
+        body: JSON.stringify({
+          provider: "transformers-detr",
+          sequenceId: "carla-alert-test-sequence",
+          cameraId: "CARLA-ALERT-01",
+          detections: [{ id: "det-alert-001", label: "person", confidence: 0.88 }],
+          tracks: [{ id: "trk-alert-001", status: "active_track" }],
+          visualAnalysisAgent: { status: "triggered", summary: "테스트 탐지" },
+          situationAnalysisAgent: { riskLevel: "watch", summary: "테스트 위험도" },
+        }),
+      })
+    })
+
+    await page.goto("/")
+
+    // A real CARLA-sourced detection opens a realtime alert popup automatically.
+    const alert = page.locator(".cop-realtime-alert")
+    await expect(alert).toBeVisible({ timeout: 10_000 })
+    await expect(alert.getByText("CARLA-ALERT-01")).toBeVisible()
+    await expect.poll(() => page.locator(".cop-track-block").count()).toBeGreaterThanOrEqual(1)
+
+    // Closing it manually works.
+    await page.getByRole("button", { name: "CARLA-ALERT-01 알림 닫기" }).click()
+    await expect(alert).toHaveCount(0)
+
+    // Clicking the resulting EVENT TIMELINE block opens the clip player modal.
+    await page.locator(".cop-track-block").first().click()
+    await expect(page.locator(".cop-clip-player")).toBeVisible()
+    await page.getByRole("button", { name: "재생 닫기" }).click()
+    await expect(page.locator(".cop-clip-player")).toHaveCount(0)
+
+    // Hovering a block reveals its tooltip.
+    await page.locator(".cop-track-block").first().hover()
+    await expect(page.locator(".cop-track-tooltip").first()).toBeVisible()
   })
 })
