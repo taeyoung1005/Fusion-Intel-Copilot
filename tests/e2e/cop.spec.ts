@@ -109,7 +109,8 @@ test.describe("D4D COP 표면과 상호작용", () => {
       await expect(codex.getByText("연결 센서 노드")).toBeVisible()
       // No cameras and no detections → zeroed metrics, not the old 128/64%.
       await expect(codex.locator(".cop-codex-value")).toHaveText(["0", "0", "0", "0%", "0%"])
-      await page.getByRole("button", { name: "서버 Codex 판단 요청" }).click()
+      // The Codex request now fires automatically on selection; the manual
+      // button was removed. The decision text appears without any click.
       await expect(page.getByText(/서버 Codex 하네스 판단/)).toBeVisible()
 
       // --- Right rail: citations (empty until real evidence) -------------------
@@ -261,23 +262,30 @@ test.describe("D4D COP 표면과 상호작용", () => {
     // above settle before the race this test actually exercises.
     await page.waitForTimeout(1_000)
 
-    await incidents.locator(".cop-incident", { hasText: "CARLA-STALE-A" }).click()
-    // Selecting an incident auto-triggers a Codex request too; let that settle
-    // before manually firing the request this assertion is actually about.
-    await expect(page.getByRole("button", { name: "서버 Codex 판단 요청" })).toBeEnabled({
-      timeout: 10_000,
-    })
-    const delayedCodexResponse = page.waitForResponse(
-      (response) => response.url().includes("/api/codex-agent") && response.status() === 200,
-    )
-    await page.getByRole("button", { name: "서버 Codex 판단 요청" }).click()
+    // The dashboard auto-selects the first incident it ever sees (A, created by
+    // the first DETR run) and keeps that selection sticky across the camera
+    // reorder above. Switch to B here first so the actual race below starts
+    // from a real prior selection and clicking A is a genuine transition.
     await incidents.locator(".cop-incident", { hasText: "CARLA-STALE-B" }).click()
-    await delayedCodexResponse
+    await page.waitForTimeout(500)
+
+    // Selecting incident A auto-fires a Codex request (300ms delayed mock).
+    // Immediately switching to B fires a second request; the requestVersion
+    // guard must drop A's stale response so it never replaces the panel.
+    const staleResponseA = page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/codex-agent") &&
+        (response.request().postDataJSON()?.evidence?.incidentId ?? "") === "inc-CARLA-STALE-A",
+    )
+    await incidents.locator(".cop-incident", { hasText: "CARLA-STALE-A" }).click()
+    await incidents.locator(".cop-incident", { hasText: "CARLA-STALE-B" }).click()
+    await staleResponseA
 
     await expect(page.locator(".cop-codex")).toHaveCount(1)
     // The stale request bound to incident A must never replace the active panel.
     await expect(page.getByText("판단-inc-CARLA-STALE-A")).toHaveCount(0)
-    await expect(page.getByRole("button", { name: "서버 Codex 판단 요청" })).toBeEnabled()
+    // B's decision is the one that lands.
+    await expect(page.getByText("판단-inc-CARLA-STALE-B")).toBeVisible()
   })
 
   test("비전 AI 파이프라인 결과를 사람 검토 증거 번들로 표시한다", async ({ page }) => {
@@ -778,8 +786,211 @@ test.describe("D4D COP 표면과 상호작용", () => {
     await expect(timelineTooltip.getByText(/배낭 소지/)).toBeVisible()
     await expect(timelineTooltip.getByText(/모자 없음/)).toBeVisible()
 
-    await page.getByRole("button", { name: "서버 Codex 판단 요청" }).click()
-    await expect.poll(() => postedSummary).toContain("배낭 소지")
-    await expect.poll(() => postedSummary).toContain("모자 없음")
+    // The auto Codex request for the selected attribute-enriched incident posts
+    // the enriched summary; no manual button is needed.
+    await expect.poll(() => postedSummary, { timeout: 10_000 }).toContain("배낭 소지")
+    await expect.poll(() => postedSummary, { timeout: 10_000 }).toContain("모자 없음")
+  })
+
+  test("동일 속성이 두 카메라에서 잡히면 확신 구간 상관관계 알림과 합성 클립을 만든다", async ({
+    page,
+  }) => {
+    const RED_FRAME =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGO4IyICAALUAQVZcNPCAAAAAElFTkSuQmCC"
+    const RED_PNG = Buffer.from(RED_FRAME.split(",")[1] ?? "", "base64")
+
+    const cameraA = {
+      id: "CARLA-CORR-A",
+      label: "상관관계 A",
+      source: "carla",
+      status: "online",
+      frameCount: 1,
+      createdAt: "2026-07-03T00:00:00.000Z",
+      lastFrameAt: "2026-07-03T00:00:01.000Z",
+      latestFrameDataUrl: RED_FRAME,
+    }
+    const cameraB = {
+      id: "CARLA-CORR-B",
+      label: "상관관계 B",
+      source: "carla",
+      status: "online",
+      frameCount: 1,
+      createdAt: "2026-07-03T00:00:02.000Z",
+      lastFrameAt: "2026-07-03T00:00:03.000Z",
+      latestFrameDataUrl: RED_FRAME,
+    }
+
+    await page.route("**/api/carla-cameras**", async (route) => {
+      if (route.request().url().includes("/frame.jpg")) {
+        await route.fulfill({ status: 200, contentType: "image/png", body: RED_PNG })
+        return
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json; charset=utf-8",
+        body: JSON.stringify({ cameras: [cameraA, cameraB] }),
+      })
+    })
+
+    await page.addInitScript(() => {
+      window.__D4D_TEST_DETR_DETECTOR__ = async () => [
+        { label: "person", score: 0.9, box: { xmin: 300, ymin: 92, xmax: 366, ymax: 258 } },
+      ]
+      window.__D4D_TEST_CLIP_CLASSIFIER__ = async (_source, candidateLabels) => {
+        const first = candidateLabels[0]
+        const second = candidateLabels[1]
+        if (first === undefined || second === undefined) {
+          return []
+        }
+        return [
+          { label: first, score: 0.85 },
+          { label: second, score: 0.15 },
+        ]
+      }
+    })
+    await page.route("**/api/vision-pipeline", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json; charset=utf-8",
+        body: JSON.stringify({
+          provider: "transformers-detr",
+          sequenceId: "corr-confirmed-sequence",
+          cameraId: "CARLA-CORR",
+          detections: [{ id: "det-corr-001", label: "person", confidence: 0.9 }],
+          tracks: [{ id: "trk-corr-001", status: "active_track" }],
+          visualAnalysisAgent: { status: "triggered", summary: "테스트 탐지" },
+          situationAnalysisAgent: { riskLevel: "watch", summary: "테스트 위험도" },
+        }),
+      })
+    })
+
+    await page.goto("/")
+
+    // A cross-camera full match (score 100) raises an amber correlation alert.
+    const correlationAlert = page.locator(".cop-realtime-alert.kind-correlation")
+    await expect(correlationAlert.first()).toBeVisible({ timeout: 15_000 })
+    await expect(correlationAlert.first().getByText(/동일 인물 가능성 100%/)).toBeVisible()
+
+    // The synthetic correlation clip lands on EVENT TIMELINE as a track block.
+    await expect
+      .poll(() => page.locator(".cop-track-block").count(), { timeout: 15_000 })
+      .toBeGreaterThanOrEqual(2)
+  })
+
+  test("애매 구간 상관관계는 Codex를 자동 호출하고 알림 문구를 갱신한다", async ({ page }) => {
+    const RED_FRAME =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGO4IyICAALUAQVZcNPCAAAAAElFTkSuQmCC"
+    const BLUE_FRAME =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGMQEbkDAAFEAQUI0UFLAAAAAElFTkSuQmCC"
+    const RED_PNG = Buffer.from(RED_FRAME.split(",")[1] ?? "", "base64")
+    const BLUE_PNG = Buffer.from(BLUE_FRAME.split(",")[1] ?? "", "base64")
+
+    const cameraA = {
+      id: "CARLA-AMB-A",
+      label: "애매 A",
+      source: "carla",
+      status: "online",
+      frameCount: 1,
+      createdAt: "2026-07-03T00:00:00.000Z",
+      lastFrameAt: "2026-07-03T00:00:01.000Z",
+      latestFrameDataUrl: RED_FRAME,
+    }
+    const cameraB = {
+      id: "CARLA-AMB-B",
+      label: "애매 B",
+      source: "carla",
+      status: "online",
+      frameCount: 1,
+      createdAt: "2026-07-03T00:00:02.000Z",
+      lastFrameAt: "2026-07-03T00:00:03.000Z",
+      latestFrameDataUrl: BLUE_FRAME,
+    }
+
+    await page.route("**/api/carla-cameras**", async (route) => {
+      if (route.request().url().includes("/frame.jpg")) {
+        // The dashboard resolves each camera's actual frame image via this
+        // endpoint (not the raw latestFrameDataUrl in the JSON payload above),
+        // so the RED/BLUE split must happen here, keyed by camera id.
+        const isCameraB = route.request().url().includes("CARLA-AMB-B")
+        await route.fulfill({
+          status: 200,
+          contentType: "image/png",
+          body: isCameraB ? BLUE_PNG : RED_PNG,
+        })
+        return
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json; charset=utf-8",
+        body: JSON.stringify({ cameras: [cameraA, cameraB] }),
+      })
+    })
+
+    await page.addInitScript(() => {
+      window.__D4D_TEST_DETR_DETECTOR__ = async () => [
+        { label: "person", score: 0.9, box: { xmin: 300, ymin: 92, xmax: 366, ymax: 258 } },
+      ]
+      window.__D4D_TEST_CLIP_CLASSIFIER__ = async (_source, candidateLabels) => {
+        const first = candidateLabels[0]
+        const second = candidateLabels[1]
+        if (first === undefined || second === undefined) {
+          return []
+        }
+        return [
+          { label: first, score: 0.85 },
+          { label: second, score: 0.15 },
+        ]
+      }
+    })
+    await page.route("**/api/vision-pipeline", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json; charset=utf-8",
+        body: JSON.stringify({
+          provider: "transformers-detr",
+          sequenceId: "corr-ambiguous-sequence",
+          cameraId: "CARLA-AMB",
+          detections: [{ id: "det-amb-001", label: "person", confidence: 0.9 }],
+          tracks: [{ id: "trk-amb-001", status: "active_track" }],
+          visualAnalysisAgent: { status: "triggered", summary: "테스트 탐지" },
+          situationAnalysisAgent: { riskLevel: "watch", summary: "테스트 위험도" },
+        }),
+      })
+    })
+
+    let correlationCodexCalled = false
+    await page.route("**/api/codex-agent", async (route) => {
+      const payload = route.request().postDataJSON()
+      if ((payload?.evidence?.responseOutcome ?? "") === "상관관계 자동 판단") {
+        correlationCodexCalled = true
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json; charset=utf-8",
+        body: JSON.stringify({
+          codexMode: "local-codex-adapter",
+          decision: {
+            title: "상관관계 판단",
+            summary: "동일 인물 가능성 높음",
+            recommendedAction: "사람 확인 유지",
+            checkpoint: "correlation-review",
+          },
+          citations: ["CARLA-AMB-A", "CARLA-AMB-B"],
+          adapterNotice: "테스트 응답",
+        }),
+      })
+    })
+
+    await page.goto("/")
+
+    // A color-only mismatch (score 70) is ambiguous: a "판단 중" alert appears,
+    // Codex is consulted directly, and the alert text is rewritten with the
+    // Codex summary.
+    const correlationAlert = page.locator(".cop-realtime-alert.kind-correlation")
+    await expect(correlationAlert.first()).toBeVisible({ timeout: 15_000 })
+    await expect.poll(() => correlationCodexCalled, { timeout: 15_000 }).toBe(true)
+    await expect(correlationAlert.getByText(/Codex 판단: 동일 인물 가능성 높음/)).toBeVisible({
+      timeout: 15_000,
+    })
   })
 })
