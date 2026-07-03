@@ -232,6 +232,7 @@ export function CopDashboard(): ReactElement {
           />
           <EventTimeline
             events={timelineEvents}
+            evidenceClips={evidenceClips}
             selectedEventId={selectedClipId}
             onSelectEvent={selectTimelineEvent}
           />

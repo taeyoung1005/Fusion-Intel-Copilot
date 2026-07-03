@@ -1,5 +1,7 @@
 import { type ReactElement, useEffect, useMemo, useState } from "react"
+import { ClipPlayer } from "./ClipPlayer"
 import {
+  type EvidenceClip,
   TIMELINE_FILTERS,
   TIMELINE_LANES,
   TIMELINE_LANE_LABEL,
@@ -31,12 +33,14 @@ const nowClock = (): string => {
 
 type EventTimelineProps = {
   readonly events: readonly TimelineEvent[]
+  readonly evidenceClips: readonly EvidenceClip[]
   readonly selectedEventId: string
   readonly onSelectEvent: (event: TimelineEvent) => void
 }
 
 export function EventTimeline({
   events,
+  evidenceClips,
   selectedEventId,
   onSelectEvent,
 }: EventTimelineProps): ReactElement {
@@ -45,6 +49,7 @@ export function EventTimeline({
   // Real current time, ticking so the axis and "now" marker stay live.
   const [clock, setClock] = useState(nowClock)
   const [minute, setMinute] = useState(nowMinutes)
+  const [playingClipId, setPlayingClipId] = useState<string | null>(null)
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -57,6 +62,15 @@ export function EventTimeline({
   const viewWindow = useMemo(() => timelineWindow(range, minute), [range, minute])
   const ticks = useMemo(() => timelineTicksIn(viewWindow), [viewWindow])
   const nowPercent = timelinePercentIn(clock, viewWindow)
+
+  const clipsById = useMemo(() => {
+    const map = new Map<string, EvidenceClip>()
+    for (const clip of evidenceClips) {
+      map.set(clip.id, clip)
+    }
+    return map
+  }, [evidenceClips])
+  const playingClip = playingClipId === null ? undefined : clipsById.get(playingClipId)
 
   const matches = (tone: string): boolean => filter === "all" || filter === tone
 
@@ -128,32 +142,49 @@ export function EventTimeline({
 
           {events.length === 0 ? (
             <p className="cop-timeline-empty">
-              실시간 이벤트 없음 — 휴대폰 CCTV·DETR 탐지가 수집되면 현재 시각 기준으로 표시됩니다.
+              실시간 이벤트 없음 — CARLA 시뮬레이션 CCTV·DETR 탐지가 수집되면 현재 시각 기준으로
+              표시됩니다.
             </p>
           ) : (
-            events.map((event) => (
-              <button
-                key={event.id}
-                type="button"
-                className={`cop-track-block tone-${event.tone}${
-                  event.id === selectedEventId ? " selected" : ""
-                }`}
-                aria-pressed={event.id === selectedEventId}
-                aria-label={`${event.display} 타임라인 이벤트 선택`}
-                onClick={() => onSelectEvent(event)}
-                style={{
-                  left: `${timelinePercentIn(event.time, viewWindow)}%`,
-                  top: LANE_TOP[event.lane],
-                  opacity: matches(event.tone) ? 1 : 0.2,
-                }}
-              >
-                <strong>{TIMELINE_LANE_LABEL[event.lane]}</strong>
-                <time>{event.display}</time>
-              </button>
-            ))
+            events.map((event) => {
+              const clip = clipsById.get(event.id)
+              return (
+                <button
+                  key={event.id}
+                  type="button"
+                  className={`cop-track-block tone-${event.tone}${
+                    event.id === selectedEventId ? " selected" : ""
+                  }`}
+                  aria-pressed={event.id === selectedEventId}
+                  aria-label={`${event.display} 타임라인 이벤트 선택`}
+                  onClick={() => {
+                    onSelectEvent(event)
+                    setPlayingClipId(event.id)
+                  }}
+                  style={{
+                    left: `${timelinePercentIn(event.time, viewWindow)}%`,
+                    top: LANE_TOP[event.lane],
+                    opacity: matches(event.tone) ? 1 : 0.2,
+                  }}
+                >
+                  <strong>{TIMELINE_LANE_LABEL[event.lane]}</strong>
+                  <time>{event.display}</time>
+                  {clip !== undefined && (
+                    <span className="cop-track-tooltip">
+                      <strong>{clip.label}</strong>
+                      {clip.time} · {clip.detail}
+                    </span>
+                  )}
+                </button>
+              )
+            })
           )}
         </div>
       </div>
+
+      {playingClip !== undefined && (
+        <ClipPlayer clip={playingClip} onClose={() => setPlayingClipId(null)} />
+      )}
     </section>
   )
 }
