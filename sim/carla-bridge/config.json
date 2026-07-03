@@ -1,0 +1,119 @@
+{
+  "d4d_origin": "http://127.0.0.1:5173",
+  "carla_host": "127.0.0.1",
+  "carla_port": 2000,
+  "map": "Town10HD_Opt",
+  "frame_stride": 1,
+  "vehicle_count": 24,
+  "scene": {
+    "weather": {
+      "cloudiness": 45,
+      "precipitation": 0,
+      "sun_altitude_angle": 16,
+      "fog_density": 10,
+      "wetness": 8
+    },
+    "props": [
+      {
+        "blueprint": "static.prop.streetbarrier",
+        "location": { "x": -88.5, "y": 20.6, "z": 0.15 },
+        "rotation": { "yaw": 90 }
+      },
+      {
+        "blueprint": "static.prop.streetbarrier",
+        "location": { "x": -88.5, "y": 25.6, "z": 0.15 },
+        "rotation": { "yaw": 90 }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": { "x": -84.8, "y": 23.0, "z": 0.2 },
+        "rotation": { "yaw": 0 }
+      },
+      {
+        "blueprint": "static.prop.chainbarrierend",
+        "location": { "x": -80.8, "y": 23.0, "z": 0.2 },
+        "rotation": { "yaw": 0 }
+      },
+      {
+        "blueprint": "static.prop.trafficcone01",
+        "location": { "x": -92.0, "y": 20.0, "z": 0.1 },
+        "rotation": { "yaw": 0 }
+      },
+      {
+        "blueprint": "static.prop.trafficcone01",
+        "location": { "x": -92.0, "y": 26.0, "z": 0.1 },
+        "rotation": { "yaw": 0 }
+      },
+      {
+        "blueprint": "static.prop.warningconstruction",
+        "location": { "x": -95.0, "y": 23.0, "z": 0.1 },
+        "rotation": { "yaw": 90 }
+      },
+      {
+        "blueprint": "static.prop.container",
+        "location": { "x": -76.0, "y": 29.0, "z": 0.1 },
+        "rotation": { "yaw": 90 }
+      }
+    ],
+    "parked_vehicles": [
+      {
+        "blueprint": "vehicle.dodge.charger_police_2020",
+        "location": { "x": -99.0, "y": 17.0, "z": 0.25 },
+        "rotation": { "yaw": 12 }
+      },
+      {
+        "blueprint": "vehicle.nissan.patrol_2021",
+        "location": { "x": -73.0, "y": 20.0, "z": 0.25 },
+        "rotation": { "yaw": -88 }
+      }
+    ],
+    "walkers": [
+      {
+        "blueprint": "walker.pedestrian.0010",
+        "location": { "x": -93.85, "y": 19.78, "z": 0.16 },
+        "route": [
+          { "x": -88.57, "y": 7.17, "z": 0.16 },
+          { "x": -93.46, "y": 2.65, "z": 0.16 },
+          { "x": -92.49, "y": 19.66, "z": 0.16 }
+        ],
+        "speed": 1.1
+      },
+      {
+        "blueprint": "walker.pedestrian.0021",
+        "location": { "x": -81.49, "y": 34.02, "z": 0.16 },
+        "route": [
+          { "x": -74.65, "y": 34.03, "z": 0.16 },
+          { "x": -72.1, "y": 34.57, "z": 0.16 },
+          { "x": -88.47, "y": 34.17, "z": 0.16 }
+        ],
+        "speed": 0.9
+      }
+    ]
+  },
+  "cameras": [
+    {
+      "id": "CARLA-N-01",
+      "label": "CARLA 북측 게이트",
+      "location": { "x": -64.64, "y": 24.47, "z": 8.6 },
+      "rotation": { "pitch": -25.0, "yaw": 0.16, "roll": 0.0 }
+    },
+    {
+      "id": "CARLA-E-02",
+      "label": "CARLA 동측 도로",
+      "location": { "x": -103.18, "y": -14.43, "z": 8.6 },
+      "rotation": { "pitch": -25.0, "yaw": -89.36, "roll": 0.0 }
+    },
+    {
+      "id": "CARLA-S-03",
+      "label": "CARLA 남측 차단선",
+      "location": { "x": -87.62, "y": 12.97, "z": 8.6 },
+      "rotation": { "pitch": -25.0, "yaw": -179.84, "roll": 0.0 }
+    },
+    {
+      "id": "CARLA-W-04",
+      "label": "CARLA 서측 접근로",
+      "location": { "x": -110.96, "y": 59.69, "z": 8.6 },
+      "rotation": { "pitch": -25.0, "yaw": 90.64, "roll": 0.0 }
+    }
+  ]
+}

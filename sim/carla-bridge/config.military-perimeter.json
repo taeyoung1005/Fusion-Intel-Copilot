@@ -1,0 +1,1083 @@
+{
+  "d4d_origin": "http://127.0.0.1:5173",
+  "carla_host": "127.0.0.1",
+  "carla_port": 2000,
+  "map": "Town04_Opt",
+  "frame_stride": 1,
+  "vehicle_count": 4,
+  "scene": {
+    "weather": {
+      "cloudiness": 64,
+      "precipitation": 0,
+      "sun_altitude_angle": 18,
+      "fog_density": 10,
+      "wetness": 5
+    },
+    "props": [
+      {
+        "blueprint": "static.prop.streetbarrier",
+        "location": {
+          "x": 239.0,
+          "y": -258,
+          "z": 0.15
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 90,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.streetbarrier",
+        "location": {
+          "x": 239.0,
+          "y": -254,
+          "z": 0.15
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 90,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.streetbarrier",
+        "location": {
+          "x": 239.0,
+          "y": -250,
+          "z": 0.15
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 90,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.streetbarrier",
+        "location": {
+          "x": 239.0,
+          "y": -246,
+          "z": 0.15
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 90,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.streetbarrier",
+        "location": {
+          "x": 239.0,
+          "y": -242,
+          "z": 0.15
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 90,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.streetbarrier",
+        "location": {
+          "x": 239.0,
+          "y": -238,
+          "z": 0.15
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 90,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.streetbarrier",
+        "location": {
+          "x": 239.0,
+          "y": -234,
+          "z": 0.15
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 90,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.warningconstruction",
+        "location": {
+          "x": 236.5,
+          "y": -260,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.trafficwarning",
+        "location": {
+          "x": 232.0,
+          "y": -260,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.warningconstruction",
+        "location": {
+          "x": 236.5,
+          "y": -232,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.trafficwarning",
+        "location": {
+          "x": 232.0,
+          "y": -232,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": {
+          "x": 218,
+          "y": -267.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": {
+          "x": 218,
+          "y": -225.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": {
+          "x": 223,
+          "y": -267.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": {
+          "x": 223,
+          "y": -225.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": {
+          "x": 228,
+          "y": -267.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": {
+          "x": 228,
+          "y": -225.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": {
+          "x": 233,
+          "y": -267.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": {
+          "x": 233,
+          "y": -225.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": {
+          "x": 238,
+          "y": -267.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": {
+          "x": 238,
+          "y": -225.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": {
+          "x": 243,
+          "y": -267.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": {
+          "x": 243,
+          "y": -225.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": {
+          "x": 248,
+          "y": -267.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": {
+          "x": 248,
+          "y": -225.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": {
+          "x": 253,
+          "y": -267.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrier",
+        "location": {
+          "x": 253,
+          "y": -225.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrierend",
+        "location": {
+          "x": 214.5,
+          "y": -267.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrierend",
+        "location": {
+          "x": 256.5,
+          "y": -267.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrierend",
+        "location": {
+          "x": 214.5,
+          "y": -225.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.chainbarrierend",
+        "location": {
+          "x": 256.5,
+          "y": -225.0,
+          "z": 0.2
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.container",
+        "location": {
+          "x": 252,
+          "y": -230,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.container",
+        "location": {
+          "x": 252,
+          "y": -236,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.container",
+        "location": {
+          "x": 246,
+          "y": -230,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 90,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.box01",
+        "location": {
+          "x": 246,
+          "y": -239,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.box02",
+        "location": {
+          "x": 248,
+          "y": -241,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 27,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.box03",
+        "location": {
+          "x": 250,
+          "y": -240,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 54,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.creasedbox01",
+        "location": {
+          "x": 253,
+          "y": -242,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 81,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.box01",
+        "location": {
+          "x": 255,
+          "y": -239,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 108,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.box02",
+        "location": {
+          "x": 244,
+          "y": -234,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 135,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.box03",
+        "location": {
+          "x": 246,
+          "y": -232,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 162,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.creasedbox01",
+        "location": {
+          "x": 248,
+          "y": -233,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 9,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.constructioncone",
+        "location": {
+          "x": 224,
+          "y": -253.5,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.trafficcone01",
+        "location": {
+          "x": 224,
+          "y": -238.5,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.constructioncone",
+        "location": {
+          "x": 228,
+          "y": -253.5,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.trafficcone01",
+        "location": {
+          "x": 228,
+          "y": -238.5,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.constructioncone",
+        "location": {
+          "x": 232,
+          "y": -253.5,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.trafficcone01",
+        "location": {
+          "x": 232,
+          "y": -238.5,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.constructioncone",
+        "location": {
+          "x": 236,
+          "y": -253.5,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.trafficcone01",
+        "location": {
+          "x": 236,
+          "y": -238.5,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.constructioncone",
+        "location": {
+          "x": 240,
+          "y": -253.5,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.trafficcone01",
+        "location": {
+          "x": 240,
+          "y": -238.5,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.constructioncone",
+        "location": {
+          "x": 244,
+          "y": -253.5,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "static.prop.trafficcone01",
+        "location": {
+          "x": 244,
+          "y": -238.5,
+          "z": 0.1
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 0,
+          "roll": 0
+        }
+      }
+    ],
+    "parked_vehicles": [
+      {
+        "blueprint": "vehicle.dodge.charger_police_2020",
+        "location": {
+          "x": 222,
+          "y": -261,
+          "z": 0.25
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 8,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "vehicle.dodge.charger_police",
+        "location": {
+          "x": 252,
+          "y": -260,
+          "z": 0.25
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 178,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "vehicle.nissan.patrol_2021",
+        "location": {
+          "x": 218,
+          "y": -232,
+          "z": 0.25
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": -12,
+          "roll": 0
+        }
+      },
+      {
+        "blueprint": "vehicle.nissan.patrol",
+        "location": {
+          "x": 258,
+          "y": -232,
+          "z": 0.25
+        },
+        "rotation": {
+          "pitch": 0,
+          "yaw": 170,
+          "roll": 0
+        }
+      }
+    ],
+    "walkers": [
+      {
+        "blueprint": "walker.pedestrian.0010",
+        "location": {
+          "x": 220,
+          "y": -250,
+          "z": 0.16
+        },
+        "route": [
+          {
+            "x": 220,
+            "y": -250,
+            "z": 0.16
+          },
+          {
+            "x": 236,
+            "y": -250,
+            "z": 0.16
+          },
+          {
+            "x": 252,
+            "y": -250,
+            "z": 0.16
+          },
+          {
+            "x": 236,
+            "y": -250,
+            "z": 0.16
+          }
+        ],
+        "speed": 0.9
+      },
+      {
+        "blueprint": "walker.pedestrian.0021",
+        "location": {
+          "x": 226,
+          "y": -234,
+          "z": 0.16
+        },
+        "route": [
+          {
+            "x": 226,
+            "y": -234,
+            "z": 0.16
+          },
+          {
+            "x": 248,
+            "y": -234,
+            "z": 0.16
+          },
+          {
+            "x": 248,
+            "y": -242,
+            "z": 0.16
+          },
+          {
+            "x": 226,
+            "y": -242,
+            "z": 0.16
+          }
+        ],
+        "speed": 0.8
+      },
+      {
+        "blueprint": "walker.pedestrian.0028",
+        "location": {
+          "x": 260,
+          "y": -246,
+          "z": 0.16
+        },
+        "route": [
+          {
+            "x": 260,
+            "y": -246,
+            "z": 0.16
+          },
+          {
+            "x": 246,
+            "y": -246,
+            "z": 0.16
+          },
+          {
+            "x": 236,
+            "y": -246,
+            "z": 0.16
+          },
+          {
+            "x": 224,
+            "y": -246,
+            "z": 0.16
+          }
+        ],
+        "speed": 0.75
+      },
+      {
+        "blueprint": "walker.pedestrian.0034",
+        "location": {
+          "x": 214,
+          "y": -266,
+          "z": 0.16
+        },
+        "route": [
+          {
+            "x": 214,
+            "y": -266,
+            "z": 0.16
+          },
+          {
+            "x": 256,
+            "y": -266,
+            "z": 0.16
+          },
+          {
+            "x": 256,
+            "y": -259,
+            "z": 0.16
+          },
+          {
+            "x": 214,
+            "y": -259,
+            "z": 0.16
+          }
+        ],
+        "speed": 0.85
+      },
+      {
+        "blueprint": "walker.pedestrian.0039",
+        "location": {
+          "x": 260,
+          "y": -224,
+          "z": 0.16
+        },
+        "route": [
+          {
+            "x": 260,
+            "y": -224,
+            "z": 0.16
+          },
+          {
+            "x": 246,
+            "y": -232,
+            "z": 0.16
+          },
+          {
+            "x": 236,
+            "y": -240,
+            "z": 0.16
+          },
+          {
+            "x": 222,
+            "y": -252,
+            "z": 0.16
+          }
+        ],
+        "speed": 0.65
+      },
+      {
+        "blueprint": "walker.pedestrian.0041",
+        "location": {
+          "x": 210,
+          "y": -238,
+          "z": 0.16
+        },
+        "route": [
+          {
+            "x": 210,
+            "y": -238,
+            "z": 0.16
+          },
+          {
+            "x": 226,
+            "y": -244,
+            "z": 0.16
+          },
+          {
+            "x": 240,
+            "y": -246,
+            "z": 0.16
+          },
+          {
+            "x": 254,
+            "y": -252,
+            "z": 0.16
+          }
+        ],
+        "speed": 1.05
+      },
+      {
+        "blueprint": "walker.pedestrian.0048",
+        "location": {
+          "x": 243,
+          "y": -224,
+          "z": 0.16
+        },
+        "route": [
+          {
+            "x": 243,
+            "y": -224,
+            "z": 0.16
+          },
+          {
+            "x": 243,
+            "y": -237,
+            "z": 0.16
+          },
+          {
+            "x": 243,
+            "y": -253,
+            "z": 0.16
+          },
+          {
+            "x": 243,
+            "y": -266,
+            "z": 0.16
+          }
+        ],
+        "speed": 0.75
+      },
+      {
+        "blueprint": "walker.pedestrian.0051",
+        "location": {
+          "x": 230,
+          "y": -270,
+          "z": 0.16
+        },
+        "route": [
+          {
+            "x": 230,
+            "y": -270,
+            "z": 0.16
+          },
+          {
+            "x": 230,
+            "y": -255,
+            "z": 0.16
+          },
+          {
+            "x": 230,
+            "y": -239,
+            "z": 0.16
+          },
+          {
+            "x": 230,
+            "y": -226,
+            "z": 0.16
+          }
+        ],
+        "speed": 0.8
+      }
+    ]
+  },
+  "cameras": [
+    {
+      "id": "CARLA-N-01",
+      "label": "북측 산림 초소 CCTV",
+      "location": {
+        "x": 204,
+        "y": -224,
+        "z": 8.8
+      },
+      "rotation": {
+        "pitch": -11.62,
+        "yaw": -32.15,
+        "roll": 0.0
+      }
+    },
+    {
+      "id": "CARLA-E-02",
+      "label": "동측 탄약고 외곽 CCTV",
+      "location": {
+        "x": 260,
+        "y": -232,
+        "z": 6.0
+      },
+      "rotation": {
+        "pitch": -12.81,
+        "yaw": -151.39,
+        "roll": 0.0
+      }
+    },
+    {
+      "id": "CARLA-S-03",
+      "label": "남측 차단선 CCTV",
+      "location": {
+        "x": 208,
+        "y": -268,
+        "z": 8.2
+      },
+      "rotation": {
+        "pitch": -11.99,
+        "yaw": 36.25,
+        "roll": 0.0
+      }
+    },
+    {
+      "id": "CARLA-W-04",
+      "label": "서측 철조망 순찰로 CCTV",
+      "location": {
+        "x": 258,
+        "y": -264,
+        "z": 6.2
+      },
+      "rotation": {
+        "pitch": -11.42,
+        "yaw": 141.95,
+        "roll": 0.0
+      }
+    }
+  ]
+}

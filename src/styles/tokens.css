@@ -1,0 +1,36 @@
+:root {
+  color-scheme: dark;
+  --surface-primary: #050b0f;
+  --surface-secondary: #07131b;
+  --surface-elevated: #0b1c26;
+  --surface-inset: #03090d;
+  --text-primary: #e9f5f8;
+  --text-secondary: #9bb0ba;
+  --text-tertiary: #657882;
+  --border-default: #183344;
+  --border-subtle: #102632;
+  --accent-primary: #1f9cf0;
+  --accent-hover: #59d7ff;
+  --map-grid-line: rgba(31, 156, 240, 0.12);
+  --map-cone: rgba(31, 156, 240, 0.24);
+  --map-route: rgba(244, 181, 22, 0.92);
+  --map-blind: rgba(239, 68, 68, 0.26);
+  --map-panel: rgba(2, 10, 15, 0.82);
+  --alert-normal: #36d399;
+  --alert-watch: #f4c430;
+  --alert-warn: #f59e0b;
+  --alert-critical: #f87171;
+  --alert-uncertain: #94a3b8;
+  --focus-ring: #8bcbff;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  font-family: Inter, Arial, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+  background: radial-gradient(circle at 50% 0%, rgba(19, 61, 82, 0.34), transparent 42%),
+    linear-gradient(180deg, #041018 0%, #02070a 100%);
+  color: var(--text-primary);
+}

@@ -1,0 +1,45 @@
+{
+  "name": "d4d-perimeter-ai-harness",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --pretty false",
+    "lint": "biome check .",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "demo:cv": "tsx scripts/demo-cv.ts",
+    "demo:ledger": "tsx scripts/demo-ledger.ts",
+    "demo:agents": "tsx scripts/demo-agents.ts",
+    "demo:semantics": "tsx scripts/demo-aihub-semantics.ts",
+    "demo:reset": "tsx scripts/demo-reset.ts",
+    "qa:final": "npm run typecheck && npm run lint && npm run test && npm run build",
+    "audit:text": "npm run lint && npm run typecheck"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^4.2.0",
+    "@types/qrcode": "^1.5.6",
+    "lucide-react": "^1.22.0",
+    "qrcode": "^1.5.4",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^26.0.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@types/ws": "^8.18.1",
+    "@vitejs/plugin-react": "^6.0.3",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.0",
+    "vitest": "^4.1.9",
+    "ws": "^8.21.0"
+  }
+}

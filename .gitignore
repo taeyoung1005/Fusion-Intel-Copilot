@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+test-results/
+playwright-report/
+.vite/
+npm-debug.log*
+.omo/
+sim/falcon-bridge/__pycache__/
+sim/falcon-bridge/.venv/
+data/

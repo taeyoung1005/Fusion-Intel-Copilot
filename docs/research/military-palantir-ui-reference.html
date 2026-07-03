@@ -1,0 +1,1327 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>D4D AI 경계 하네스 UI/UX 리서치 보드</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #070a0b;
+        --bg-2: #0d1214;
+        --panel: #11181b;
+        --panel-2: #172023;
+        --line: #263338;
+        --line-2: #35464d;
+        --text: #edf4f5;
+        --muted: #9aa9ae;
+        --quiet: #68777d;
+        --cyan: #5ac6d2;
+        --amber: #d6a744;
+        --green: #7fd48b;
+        --red: #e86f61;
+        --blue: #8ab4ff;
+        --ink: #020405;
+        --radius: 8px;
+        --shadow: 0 18px 60px rgba(0, 0, 0, 0.34);
+        font-family:
+          Arial, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background:
+          linear-gradient(90deg, rgba(90, 198, 210, 0.035) 1px, transparent 1px),
+          linear-gradient(rgba(90, 198, 210, 0.028) 1px, transparent 1px),
+          radial-gradient(circle at 20% 0%, rgba(90, 198, 210, 0.12), transparent 32rem),
+          radial-gradient(circle at 80% 10%, rgba(214, 167, 68, 0.08), transparent 28rem),
+          var(--bg);
+        background-size:
+          48px 48px,
+          48px 48px,
+          auto,
+          auto,
+          auto;
+        color: var(--text);
+        line-height: 1.55;
+        word-break: keep-all;
+      }
+
+      a {
+        color: var(--cyan);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .shell {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 28px;
+      }
+
+      .topbar {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 20px;
+        align-items: end;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 20px;
+      }
+
+      .kicker,
+      .eyebrow {
+        margin: 0 0 8px;
+        color: var(--amber);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        letter-spacing: 0;
+      }
+
+      h1 {
+        max-width: 900px;
+        font-size: clamp(32px, 5vw, 68px);
+        line-height: 1.03;
+      }
+
+      h2 {
+        font-size: 24px;
+        line-height: 1.2;
+      }
+
+      h3 {
+        font-size: 16px;
+      }
+
+      .summary {
+        max-width: 760px;
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: 15px;
+      }
+
+      .status-stack {
+        display: grid;
+        gap: 8px;
+        min-width: 280px;
+      }
+
+      .status-pill,
+      .tag,
+      .score {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--line-2);
+        border-radius: 999px;
+        background: rgba(17, 24, 27, 0.88);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 6px 10px;
+        white-space: nowrap;
+      }
+
+      .status-pill strong,
+      .score strong {
+        color: var(--text);
+        margin-left: 8px;
+      }
+
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        padding: 14px 0;
+        margin: 0 0 20px;
+        background: rgba(7, 10, 11, 0.9);
+        backdrop-filter: blur(14px);
+      }
+
+      .nav a {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 8px 10px;
+        color: var(--text);
+        background: rgba(17, 24, 27, 0.8);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      section {
+        margin: 34px 0;
+      }
+
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: end;
+        border-top: 1px solid var(--line);
+        padding-top: 18px;
+        margin-bottom: 16px;
+      }
+
+      .section-head p {
+        max-width: 760px;
+        margin: 8px 0 0;
+        color: var(--muted);
+      }
+
+      .grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .grid.cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid.cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid.cols-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(23, 32, 35, 0.96), rgba(13, 18, 20, 0.96));
+        box-shadow: var(--shadow);
+        padding: 16px;
+      }
+
+      .panel.tight {
+        padding: 12px;
+      }
+
+      .panel p,
+      .panel ul {
+        margin: 10px 0 0;
+        color: var(--muted);
+      }
+
+      .panel ul {
+        padding-left: 18px;
+      }
+
+      .rec {
+        border-color: rgba(90, 198, 210, 0.55);
+        background:
+          linear-gradient(135deg, rgba(90, 198, 210, 0.12), transparent 46%),
+          linear-gradient(180deg, rgba(23, 32, 35, 0.96), rgba(13, 18, 20, 0.96));
+      }
+
+      .warn {
+        border-color: rgba(214, 167, 68, 0.6);
+      }
+
+      .danger {
+        border-color: rgba(232, 111, 97, 0.54);
+      }
+
+      .matrix {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--panel);
+      }
+
+      .matrix th,
+      .matrix td {
+        border-bottom: 1px solid var(--line);
+        padding: 12px;
+        text-align: left;
+        vertical-align: top;
+        font-size: 13px;
+      }
+
+      .matrix th {
+        color: var(--text);
+        background: #0c1113;
+        font-size: 12px;
+      }
+
+      .matrix td {
+        color: var(--muted);
+      }
+
+      .matrix tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .swatches {
+        display: grid;
+        grid-template-columns: repeat(8, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .swatch {
+        min-height: 86px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 6px;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: end;
+        color: white;
+        font-size: 11px;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+      }
+
+      .token-block {
+        font-family: "SFMono-Regular", Consolas, monospace;
+        white-space: pre-wrap;
+        background: #050708;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 14px;
+        color: #c8d7db;
+        font-size: 12px;
+        overflow-x: auto;
+      }
+
+      .ref-card {
+        min-height: 178px;
+        display: grid;
+        grid-template-rows: auto auto 1fr auto;
+        gap: 8px;
+      }
+
+      .ref-card .meta {
+        color: var(--quiet);
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .ref-card .takeaway {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .capture-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .capture-card {
+        margin: 0;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(23, 32, 35, 0.98), rgba(9, 13, 15, 0.98));
+        box-shadow: var(--shadow);
+      }
+
+      .capture-card img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+        object-position: top center;
+        border-bottom: 1px solid var(--line);
+        background: #050708;
+      }
+
+      .capture-body {
+        padding: 12px;
+      }
+
+      .capture-body h3 {
+        margin-bottom: 6px;
+      }
+
+      .capture-body p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .capture-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .capture-tag {
+        border: 1px solid var(--line-2);
+        border-radius: 4px;
+        padding: 4px 6px;
+        color: var(--quiet);
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .score {
+        justify-self: start;
+        border-radius: 5px;
+      }
+
+      .score.high {
+        color: var(--green);
+      }
+
+      .score.mid {
+        color: var(--amber);
+      }
+
+      .score.low {
+        color: var(--muted);
+      }
+
+      .layout-preview {
+        display: grid;
+        grid-template-columns: 1.1fr 1.55fr 0.95fr;
+        gap: 8px;
+        min-height: 420px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: #050708;
+        padding: 10px;
+      }
+
+      .mock-col {
+        display: grid;
+        gap: 8px;
+      }
+
+      .mock {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--panel);
+        padding: 10px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .mock.map {
+        min-height: 252px;
+        background:
+          linear-gradient(90deg, rgba(90, 198, 210, 0.08) 1px, transparent 1px),
+          linear-gradient(rgba(90, 198, 210, 0.06) 1px, transparent 1px),
+          #071012;
+        background-size: 32px 32px;
+        position: relative;
+      }
+
+      .node {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--cyan);
+        box-shadow: 0 0 0 5px rgba(90, 198, 210, 0.12);
+      }
+
+      .n1 {
+        top: 28%;
+        left: 34%;
+      }
+
+      .n2 {
+        top: 54%;
+        left: 56%;
+        background: var(--amber);
+      }
+
+      .n3 {
+        top: 70%;
+        left: 72%;
+        background: var(--red);
+      }
+
+      .line {
+        height: 8px;
+        background: #263338;
+        border-radius: 4px;
+        margin-top: 8px;
+      }
+
+      .line.short {
+        width: 62%;
+      }
+
+      .line.warnline {
+        background: rgba(214, 167, 68, 0.55);
+      }
+
+      .timeline {
+        display: grid;
+        gap: 8px;
+      }
+
+      .timeline div {
+        border-left: 3px solid var(--line-2);
+        padding-left: 10px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .footer {
+        border-top: 1px solid var(--line);
+        color: var(--quiet);
+        padding: 22px 0;
+        font-size: 12px;
+      }
+
+      @media (max-width: 1100px) {
+        .topbar,
+        .grid.cols-2,
+        .grid.cols-3,
+        .grid.cols-4,
+        .capture-grid,
+        .layout-preview {
+          grid-template-columns: 1fr;
+        }
+
+        .status-stack {
+          min-width: 0;
+        }
+
+        .swatches {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 620px) {
+        .shell {
+          padding: 18px;
+        }
+
+        .swatches {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .matrix {
+          display: block;
+          overflow-x: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div>
+          <p class="kicker">D4D AI 경계 하네스 · UI/UX 리서치 보드</p>
+          <h1>군용 COP 감성, Palantir식 데이터 밀도, 사람 승인 중심 에이전트 하네스</h1>
+          <p class="summary">
+            목표는 전투 게임 화면이 아니라, 지휘통제실에서 오래 켜놓고 보는 고신뢰 운용자 콘솔입니다.
+            이 보드는 참고 UI/UX 수십 개를 군용·SOC·관제·지도·데이터 시스템 관점으로 분류하고,
+            D4D 데모에 적용할 디자인 토큰과 화면 구조를 추천합니다.
+          </p>
+        </div>
+        <div class="status-stack">
+          <span class="status-pill">추천 방향 <strong>Mission COP + Evidence Graph</strong></span>
+          <span class="status-pill">Codex 연결 <strong>HTTP 계약 유지, SDK/CLI worker 선택</strong></span>
+          <span class="status-pill">시각 밀도 <strong>8 / 10</strong></span>
+        </div>
+      </header>
+
+      <nav class="nav" aria-label="문서 목차">
+        <a href="#codex">Codex 호출 방식</a>
+        <a href="#principles">디자인 원칙</a>
+        <a href="#tokens">토큰 추천</a>
+        <a href="#layout">화면 구조</a>
+        <a href="#style-concepts">스타일별 예시</a>
+        <a href="#captures">스크린샷 캡처</a>
+        <a href="#references">참고 UI/UX</a>
+        <a href="#recommendation">최종 추천</a>
+      </nav>
+
+      <section id="codex">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Codex harness architecture</p>
+            <h2>Python 고정이 아니라, 서버 뒤쪽 실행 어댑터를 선택한다</h2>
+            <p>
+              공식 문서 기준으로 Codex는 SDK와 CLI 비대화 실행 모두 가능하다. 이 프로젝트는 이미
+              TypeScript/Vite 서버가 있으므로 프론트 계약은 `/api/codex-agent`로 유지하고, 뒤쪽 worker만
+              교체 가능한 구조가 가장 안전하다.
+            </p>
+          </div>
+        </div>
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>방식</th>
+              <th>근거</th>
+              <th>장점</th>
+              <th>단점</th>
+              <th>D4D 추천</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>현재 HTTP provider adapter</td>
+              <td>서버 내부 `/api/codex-agent`가 외부 worker endpoint로 POST</td>
+              <td>언어 독립, 데모 안정성, mock 쉬움</td>
+              <td>실제 Codex thread/session 기능은 worker가 직접 구현해야 함</td>
+              <td><strong>유지</strong>. 프론트/서버 계약으로 남긴다.</td>
+            </tr>
+            <tr>
+              <td>TypeScript Codex SDK</td>
+              <td>
+                <a href="https://developers.openai.com/codex/sdk">OpenAI Codex SDK 문서</a>가
+                `@openai/codex-sdk` 사용 예시를 제공한다.
+              </td>
+              <td>현재 Node 서버와 언어가 맞음, thread continuation 구현이 자연스러움</td>
+              <td>서버 런타임에서 Codex 인증/샌드박스 정책 설계 필요</td>
+              <td><strong>1순위 후보</strong>. 백엔드가 TS로 남는다면 이쪽.</td>
+            </tr>
+            <tr>
+              <td>Python Codex SDK</td>
+              <td>
+                같은 공식 SDK 문서가 `openai_codex`와 `Sandbox` 예시를 제공한다.
+              </td>
+              <td>CV/YOLO/데이터 파이프라인이 Python이면 붙이기 쉬움</td>
+              <td>현재 앱에 Python worker 운영 복잡도가 추가됨</td>
+              <td>CV 분석 worker가 Python 중심으로 커질 때 채택.</td>
+            </tr>
+            <tr>
+              <td>`codex exec` 비대화 CLI</td>
+              <td>
+                <a href="https://developers.openai.com/codex/noninteractive">OpenAI non-interactive mode</a>와
+                <a href="https://developers.openai.com/codex/cli/reference">CLI reference</a>가 스크립트/CI용
+                `codex exec`를 설명한다.
+              </td>
+              <td>프로토타입 빠름, shell script로 바로 연결 가능</td>
+              <td>장기 session, streaming, 중간 상태 UI에는 SDK보다 거칠 수 있음</td>
+              <td>해커톤 데모의 빠른 proof에는 좋음. 제품형은 SDK 선호.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="principles">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Design principles</p>
+            <h2>군용 느낌을 내되, 무기 조작 UI처럼 보이면 안 된다</h2>
+            <p>
+              D4D 데모의 설득력은 “사람 대신 판단”이 아니라 “센서·증거·누락 맥락을 묶어 사람이 더 빨리
+              판단하게 한다”에 있다. 그래서 화면도 공격적 액션보다 관제·증거·승인 흐름이 중심이어야 한다.
+            </p>
+          </div>
+        </div>
+        <div class="grid cols-3">
+          <article class="panel rec">
+            <h3>1. Common Operational Picture</h3>
+            <p>지도/카메라/이벤트를 한 화면에서 상호 참조한다. 카메라별 판단보다 “시설/구역 단위 상황”이 주인공이다.</p>
+          </article>
+          <article class="panel rec">
+            <h3>2. Evidence-first agent</h3>
+            <p>Codex는 결론부터 말하지 않는다. 관측, 근거, 반례, 누락 데이터, 다음 확인 질문 순서로 표시한다.</p>
+          </article>
+          <article class="panel rec">
+            <h3>3. Human confirmation gate</h3>
+            <p>수하, 보고, 출동 같은 비용 큰 행동은 버튼 하나로 처리하지 않는다. 절차 단계와 승인 흔적을 남긴다.</p>
+          </article>
+          <article class="panel">
+            <h3>4. Dense but legible</h3>
+            <p>큰 카드와 과한 여백 대신, 작은 패널·타임라인·상태 rail로 밀도 있게 구성한다. 단 CJK 줄바꿈은 절대 깨지면 안 된다.</p>
+          </article>
+          <article class="panel">
+            <h3>5. Sensor fusion over single feed</h3>
+            <p>1개 CCTV가 아니라 카메라 그룹, blind spot handoff, 반복 출현, 거리 변화가 한 사건으로 합쳐지는 느낌을 만든다.</p>
+          </article>
+          <article class="panel">
+            <h3>6. Audit trail as product surface</h3>
+            <p>일일보고/주간보고는 부가 기능이 아니라 핵심 산출물이다. 모든 판단은 citation과 operator action으로 되돌아가야 한다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="tokens">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Design tokens</p>
+            <h2>추천 토큰: graphite base, cyan sensor, amber watch, red confirm</h2>
+            <p>
+              기존 `DESIGN.md`의 방향은 맞다. 다만 더 Palantir/군용 운용 콘솔처럼 만들려면 배경을 더 낮추고,
+              cyan은 센서/링크, amber는 주시, red는 확인된 고위험 절차에만 제한해야 한다.
+            </p>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="swatches">
+            <div class="swatch" style="background:#050708">ops-black<br />#050708</div>
+            <div class="swatch" style="background:#0b1113">graphite-950<br />#0B1113</div>
+            <div class="swatch" style="background:#11191c">panel-900<br />#11191C</div>
+            <div class="swatch" style="background:#24343a">line-700<br />#24343A</div>
+            <div class="swatch" style="background:#5ac6d2">sensor-cyan<br />#5AC6D2</div>
+            <div class="swatch" style="background:#d6a744">watch-amber<br />#D6A744</div>
+            <div class="swatch" style="background:#7fd48b">clear-green<br />#7FD48B</div>
+            <div class="swatch" style="background:#e86f61">confirm-red<br />#E86F61</div>
+          </div>
+          <p>
+            색상 비율 권장: graphite surfaces 78%, text/line 14%, cyan 4%, amber 3%, red 1%.
+            빨간색을 많이 쓰면 군용 고급감이 아니라 게임 HUD가 된다.
+          </p>
+        </div>
+        <div class="grid cols-2" style="margin-top:12px">
+          <div class="token-block">:root {
+  --ops-black: #050708;
+  --ops-graphite: #0b1113;
+  --ops-panel: #11191c;
+  --ops-panel-raised: #172124;
+  --ops-line: #24343a;
+  --ops-line-strong: #3a4e56;
+  --ops-text: #edf4f5;
+  --ops-muted: #9aa9ae;
+  --sensor-cyan: #5ac6d2;
+  --watch-amber: #d6a744;
+  --clear-green: #7fd48b;
+  --confirm-red: #e86f61;
+}</div>
+          <div class="token-block">Motion:
+--motion-fast: 120ms ease-out;
+--motion-panel: 180ms ease-in-out;
+--motion-scan: 1100ms linear;
+
+Radius:
+--radius-control: 5px;
+--radius-panel: 8px;
+
+Typography:
+display 30/1.1 700
+panel-title 16/1.25 700
+body 14/1.55 400
+mono 12/1.4 600 tabular-nums</div>
+        </div>
+      </section>
+
+      <section id="layout">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Recommended composition</p>
+            <h2>1인 다중 CCTV 통제용 3축 화면 구조</h2>
+            <p>
+              카메라 wall만 키우면 평범한 CCTV viewer가 된다. Palantir 느낌을 내려면 ontology graph,
+              facility group, agent reasoning, report ledger가 함께 보여야 한다.
+            </p>
+          </div>
+        </div>
+        <div class="layout-preview" aria-label="추천 화면 와이어프레임">
+          <div class="mock-col">
+            <div class="mock">
+              <strong>Sensor stack</strong>
+              <div class="line"></div>
+              <div class="line short"></div>
+            </div>
+            <div class="mock">
+              <strong>CCTV A/B handoff</strong>
+              <div class="line warnline"></div>
+              <div class="line"></div>
+            </div>
+            <div class="mock">
+              <strong>Ammo depot group</strong>
+              <div class="line"></div>
+              <div class="line short"></div>
+            </div>
+          </div>
+          <div class="mock-col">
+            <div class="mock map">
+              <strong>Facility COP / ontology map</strong>
+              <span class="node n1"></span>
+              <span class="node n2"></span>
+              <span class="node n3"></span>
+            </div>
+            <div class="mock">
+              <strong>Evidence timeline</strong>
+              <div class="timeline">
+                <div>22:10 camera-A person detected · 50m</div>
+                <div>22:12 camera-B handoff · direction match</div>
+                <div>22:18 camera-C/D repeat near ammo zone</div>
+              </div>
+            </div>
+          </div>
+          <div class="mock-col">
+            <div class="mock">
+              <strong>Codex agent verdict</strong>
+              <div class="line warnline"></div>
+              <div class="line"></div>
+              <div class="line short"></div>
+            </div>
+            <div class="mock">
+              <strong>Human gates</strong>
+              <div class="line"></div>
+              <div class="line"></div>
+            </div>
+            <div class="mock">
+              <strong>Daily / weekly report</strong>
+              <div class="line"></div>
+              <div class="line short"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="style-concepts">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Generated D4D style concepts</p>
+            <h2>우리 서비스에 직접 적용한 스타일별 UI/UX 예시</h2>
+            <p>
+              아래 이미지는 외부 사이트 캡처가 아니라, D4D AI 경계 하네스 화면을 각 스타일로 재해석해 생성한
+              mockup이다. 발표에서는 2번 ArcGIS Map COP가 가장 직관적이고, 실제 제품 UI로는 1번 Palantir COP와
+              3번 Elastic SOC를 섞는 방향이 가장 안정적이다.
+            </p>
+          </div>
+        </div>
+        <div class="capture-grid">
+          <figure class="capture-card">
+            <img src="captures/d4d-style-contact-sheet.png" alt="D4D 스타일별 6개 UI 콘셉트 비교 보드" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>6개 스타일 비교 보드</h3>
+              <p>Palantir COP, ArcGIS Map COP, Elastic SOC, NASA Mission Control, Sensor Fusion Tactical, Linear Command를 한 장에서 비교한다.</p>
+              <div class="capture-meta"><span class="capture-tag">comparison</span><span class="capture-tag">style matrix</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/d4d-style-palantir-cop.png" alt="D4D Palantir COP 스타일 UI mockup" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Palantir COP 추천안</h3>
+              <p>CCTV, 시설 ontology, camera group memory, Codex 판단, human gate가 한 화면에서 연결된다. 제품형 기본안으로 가장 적합하다.</p>
+              <div class="capture-meta"><span class="capture-tag">product base</span><span class="capture-tag">추천 1순위</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/d4d-style-arcgis-map-cop.png" alt="D4D ArcGIS Map COP 스타일 UI mockup" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>ArcGIS Map COP 발표안</h3>
+              <p>시설 지도, CCTV coverage cone, blind spot, handoff path가 직관적이다. 심사위원에게 문제의식을 전달하기 가장 좋다.</p>
+              <div class="capture-meta"><span class="capture-tag">demo impact</span><span class="capture-tag">발표 추천</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/d4d-style-elastic-soc.png" alt="D4D Elastic SOC 스타일 UI mockup" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Elastic SOC 조사안</h3>
+              <p>사건 타임라인, 증거 클립, audit ledger, 일일 보고 초안이 강하다. “AI가 판단 근거를 남긴다”는 메시지에 적합하다.</p>
+              <div class="capture-meta"><span class="capture-tag">investigation</span><span class="capture-tag">reporting</span></div>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="captures">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Real browser captures</p>
+            <h2>실제 스크린샷으로 보는 참고 UI/UX</h2>
+            <p>
+              아래 이미지는 Playwright Chromium으로 1440x920 viewport에서 직접 캡처한 화면이다. 각 캡처는
+              링크만 보는 것보다 빠르게 “군용/관제/Palantir 감성으로 가져올 수 있는지” 판단하기 위한 자료다.
+            </p>
+          </div>
+        </div>
+        <div class="capture-grid">
+          <figure class="capture-card">
+            <img src="captures/d4d-current.png" alt="현재 D4D AI 경계 하네스 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>현재 D4D baseline</h3>
+              <p>이미 정보 밀도와 한국어 운용자 흐름은 있다. 다음 단계는 중앙 COP/ontology map과 증거 그래프를 추가하는 것.</p>
+              <div class="capture-meta"><span class="capture-tag">baseline</span><span class="capture-tag">개선 기준</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/palantir-blueprint.png" alt="Palantir Blueprint 문서 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Palantir Blueprint</h3>
+              <p>가장 직접적인 참고. 대시보드 컴포넌트, 밀도, 테이블, popover, control pattern의 기준점으로 삼는다.</p>
+              <div class="capture-meta"><span class="capture-tag">component system</span><span class="capture-tag">10/10</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/palantir-aip.png" alt="Palantir AIP 문서 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Palantir AIP</h3>
+              <p>AI를 단독 챗봇이 아니라 운영 workflow와 연결하는 느낌. Codex panel도 “대화”보다 “판단 근거”로 보여야 한다.</p>
+              <div class="capture-meta"><span class="capture-tag">agent workflow</span><span class="capture-tag">9/10</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/palantir-foundry.png" alt="Palantir Foundry 문서 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Palantir Foundry</h3>
+              <p>데이터 lineage와 operational decision 문법을 참고. D4D의 event citation과 report ledger에 적용 가능.</p>
+              <div class="capture-meta"><span class="capture-tag">data lineage</span><span class="capture-tag">9/10</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/anduril-lattice-c2.png" alt="Anduril Lattice command and control 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Anduril Lattice C2</h3>
+              <p>다중 센서와 command/control 감성은 좋지만, D4D에서는 무기 운용처럼 보이는 표현은 빼야 한다.</p>
+              <div class="capture-meta"><span class="capture-tag">sensor fusion</span><span class="capture-tag">주의 적용</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/anduril-lattice-sdk.png" alt="Anduril Lattice SDK 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Lattice SDK</h3>
+              <p>adapter와 integration 생태계 느낌을 줄 때 참고. CV, CCTV, Codex worker를 연결하는 구조 설명에 유용하다.</p>
+              <div class="capture-meta"><span class="capture-tag">integration</span><span class="capture-tag">adapter</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/atak-about.png" alt="ATAK 소개 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>ATAK / TAK</h3>
+              <p>지도 기반 tactical awareness 문법. D4D에는 전체 시설 지도, camera handoff, blind spot overlay만 차용한다.</p>
+              <div class="capture-meta"><span class="capture-tag">tactical map</span><span class="capture-tag">COP</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/esri-dashboards.png" alt="ArcGIS Dashboards 제품 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>ArcGIS Dashboards</h3>
+              <p>real-time map과 chart를 한 화면에 묶는 방식. D4D의 facility COP 중심 재설계에 가장 좋은 참고 중 하나.</p>
+              <div class="capture-meta"><span class="capture-tag">real-time map</span><span class="capture-tag">9/10</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/arcgis-dashboard-docs.png" alt="ArcGIS Dashboards 문서 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>ArcGIS dashboard docs</h3>
+              <p>한눈에 상황을 이해하는 dashboard 정의가 명확하다. 카메라 wall보다 “상황도”를 먼저 설계해야 한다는 근거.</p>
+              <div class="capture-meta"><span class="capture-tag">dashboard model</span><span class="capture-tag">운용자 시야</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/carbon-design.png" alt="IBM Carbon Design System 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>IBM Carbon</h3>
+              <p>엔터프라이즈 절제감과 접근성의 안전장치. 군용 감성이 과해질 때 Carbon의 spacing과 component discipline으로 잡는다.</p>
+              <div class="capture-meta"><span class="capture-tag">enterprise</span><span class="capture-tag">a11y</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/carbon-charts.png" alt="IBM Carbon chart types 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Carbon chart types</h3>
+              <p>confidence trend, event count, camera correlation chart를 고를 때 참고. 색만으로 위험도를 전달하지 않는다.</p>
+              <div class="capture-meta"><span class="capture-tag">chart system</span><span class="capture-tag">semantic color</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/grafana-alerting.png" alt="Grafana alerting 문서 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Grafana Alerting</h3>
+              <p>alert rule, panel linking, silence, escalation 문법. D4D의 watch/warn/critical ladder 설계에 적용.</p>
+              <div class="capture-meta"><span class="capture-tag">alert ladder</span><span class="capture-tag">triage</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/elastic-security.png" alt="Elastic Security 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Elastic Security</h3>
+              <p>agentic SOC와 analyst workflow 감각이 D4D와 잘 맞는다. “탐지 → 조사 → 대응” 구조를 가져온다.</p>
+              <div class="capture-meta"><span class="capture-tag">SOC</span><span class="capture-tag">agent triage</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/elastic-siem.png" alt="Elastic SIEM 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Elastic SIEM</h3>
+              <p>incident investigation 화면 구조 참고. event timeline, entity list, response action을 D4D 용어로 바꿔 적용.</p>
+              <div class="capture-meta"><span class="capture-tag">investigation</span><span class="capture-tag">timeline</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/openmct.png" alt="NASA Open MCT 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>NASA Open MCT</h3>
+              <p>mission control 감성의 좋은 기준. 군용 느낌 없이도 고신뢰 관제 화면을 만들 수 있다는 점이 중요하다.</p>
+              <div class="capture-meta"><span class="capture-tag">mission control</span><span class="capture-tag">telemetry</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/mapbox.png" alt="Mapbox 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Mapbox</h3>
+              <p>지도 기반 layer styling과 geospatial storytelling 참고. D4D facility map의 시각적 polish에 사용.</p>
+              <div class="capture-meta"><span class="capture-tag">map layer</span><span class="capture-tag">geospatial</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/deckgl.png" alt="deck.gl 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>deck.gl</h3>
+              <p>arc, path, heatmap 같은 geospatial overlay 문법. CCTV 간 handoff path를 그릴 때 참고.</p>
+              <div class="capture-meta"><span class="capture-tag">overlay</span><span class="capture-tag">path</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/cesiumjs.png" alt="CesiumJS 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>CesiumJS</h3>
+              <p>3D geospatial은 강하지만 해커톤 데모에는 과할 수 있다. 시설 mini-map이나 depth cue 정도만 추천.</p>
+              <div class="capture-meta"><span class="capture-tag">3D map</span><span class="capture-tag">선택 적용</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/fluent2.png" alt="Microsoft Fluent 2 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Microsoft Fluent 2</h3>
+              <p>command bar, enterprise density, 접근성 기준 참고. 군용 느낌이 너무 거칠 때 안정감을 준다.</p>
+              <div class="capture-meta"><span class="capture-tag">enterprise</span><span class="capture-tag">command UI</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/material3.png" alt="Material 3 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Material 3</h3>
+              <p>state layer, motion, accessibility 참고. 그대로 쓰면 제품이 너무 일반 앱처럼 보이므로 motion 원칙만 가져온다.</p>
+              <div class="capture-meta"><span class="capture-tag">motion</span><span class="capture-tag">state</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/atlassian-design.png" alt="Atlassian Design System 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Atlassian Design</h3>
+              <p>workflow, issue state, audit trail을 다루는 방식. 일일/주간 보고와 action log에 참고.</p>
+              <div class="capture-meta"><span class="capture-tag">workflow</span><span class="capture-tag">audit log</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/uswds.png" alt="USWDS 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>USWDS</h3>
+              <p>정부/공공 서비스의 명확한 문서성과 접근성. 절차 문구와 보고서 화면의 tone 기준으로 쓴다.</p>
+              <div class="capture-meta"><span class="capture-tag">government</span><span class="capture-tag">a11y</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/linear.png" alt="Linear 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Linear</h3>
+              <p>고급스러운 motion과 command-first 감각 참고. D4D에서는 decorative hero가 아니라 micro-interaction만 가져온다.</p>
+              <div class="capture-meta"><span class="capture-tag">premium motion</span><span class="capture-tag">command</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/raycast.png" alt="Raycast 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Raycast</h3>
+              <p>명령 실행과 빠른 검색의 감각. 지휘관 query, evidence search, checkpoint switcher에 참고.</p>
+              <div class="capture-meta"><span class="capture-tag">command palette</span><span class="capture-tag">검색</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/datadog-monitoring.png" alt="Datadog monitoring 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Datadog monitoring</h3>
+              <p>여러 panel의 상태 요약과 drilldown 구조 참고. CCTV wall의 camera health/status chip에 적용.</p>
+              <div class="capture-meta"><span class="capture-tag">monitoring</span><span class="capture-tag">status chip</span></div>
+            </figcaption>
+          </figure>
+          <figure class="capture-card">
+            <img src="captures/splunk.png" alt="Splunk 화면 캡처" loading="lazy" />
+            <figcaption class="capture-body">
+              <h3>Splunk</h3>
+              <p>검색과 탐지 중심의 보안/관측 UI. commander query와 report filter의 구조 참고.</p>
+              <div class="capture-meta"><span class="capture-tag">search</span><span class="capture-tag">detection</span></div>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="references">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Reference board</p>
+            <h2>참고 UI/UX 32개와 적용 포인트</h2>
+            <p>
+              브랜드를 그대로 복제하지 않는다. 각 시스템에서 “데이터 밀도, 관제, 경보, 증거, 지도, 그래프, 승인 흐름”만
+              추출해서 D4D 하네스의 디자인 시스템으로 번역한다.
+            </p>
+          </div>
+        </div>
+        <div class="grid cols-4">
+          <article class="panel ref-card rec">
+            <p class="meta">01 · Palantir Blueprint</p>
+            <h3><a href="https://github.com/palantir/blueprint">Blueprint UI toolkit</a></h3>
+            <p class="takeaway">복잡하고 데이터 밀도 높은 desktop app에 최적화된 React UI toolkit. D4D의 패널·테이블·popover 기준점.</p>
+            <span class="score high">적합도 <strong>10/10</strong></span>
+          </article>
+          <article class="panel ref-card rec">
+            <p class="meta">02 · Palantir AIP</p>
+            <h3><a href="https://palantir.com/docs/foundry/aip/overview/">AIP overview</a></h3>
+            <p class="takeaway">AI를 데이터와 운영 프로세스에 연결하는 관점. “대화형 AI”보다 “운영 workflow”로 보여야 한다.</p>
+            <span class="score high">적합도 <strong>9/10</strong></span>
+          </article>
+          <article class="panel ref-card rec">
+            <p class="meta">03 · Palantir Foundry</p>
+            <h3><a href="https://palantir.com/docs/foundry/platform-overview/overview/">Platform overview</a></h3>
+            <p class="takeaway">실시간 의사결정, 데이터 lineage, operational result 표현 방식 참고.</p>
+            <span class="score high">적합도 <strong>9/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">04 · Palantir Blueprint blog</p>
+            <h3><a href="https://blog.palantir.com/scaling-product-design-with-blueprint-25492827bb4a">Scaling product design</a></h3>
+            <p class="takeaway">여러 팀이 일관된 UI를 만들기 위한 component system 관점. D4D도 토큰을 먼저 세워야 한다.</p>
+            <span class="score high">적합도 <strong>8/10</strong></span>
+          </article>
+
+          <article class="panel ref-card">
+            <p class="meta">05 · Anduril Lattice</p>
+            <h3><a href="https://www.anduril.com/lattice/command-and-control">Command & Control</a></h3>
+            <p class="takeaway">여러 센서와 시스템을 통합하는 battle management 문법. 단, 무기 운용처럼 보이는 카피는 피한다.</p>
+            <span class="score high">적합도 <strong>8/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">06 · Lattice platform</p>
+            <h3><a href="https://www.anduril.com/news/anduril-s-lattice-a-trusted-dual-use-commercial-and-military-platform-for-public-safety-security">Sensor fusion interface</a></h3>
+            <p class="takeaway">다중 센서 fusion과 단일 software interface 개념. D4D의 shared memory/camera group과 잘 맞는다.</p>
+            <span class="score mid">적합도 <strong>7/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">07 · Lattice SDK</p>
+            <h3><a href="https://www.anduril.com/lattice/lattice-sdk">Lattice SDK</a></h3>
+            <p class="takeaway">하드웨어/데이터 integration의 느낌. 데모에서는 adapter marketplace처럼 표현 가능.</p>
+            <span class="score mid">적합도 <strong>6/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">08 · ATAK / TAK</p>
+            <h3><a href="https://www.civtak.org/atak-about/">ATAK overview</a></h3>
+            <p class="takeaway">지도 기반 상황 인식, 위치 공유, FMV 계열의 밀도. 모바일보다는 COP map layer 참고.</p>
+            <span class="score high">적합도 <strong>8/10</strong></span>
+          </article>
+
+          <article class="panel ref-card">
+            <p class="meta">09 · ATAK Play Store</p>
+            <h3><a href="https://play.google.com/store/apps/details?hl=en_US&id=com.atakmap.app.civ">TAK-CIV listing</a></h3>
+            <p class="takeaway">mission planning, geospatial, FMV, admin tool 키워드 참고. D4D의 mode 분리에 유용.</p>
+            <span class="score mid">적합도 <strong>7/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">10 · Esri Dashboards</p>
+            <h3><a href="https://www.esri.com/en-us/arcgis/products/arcgis-dashboards/overview">ArcGIS Dashboards</a></h3>
+            <p class="takeaway">운영 staff가 real-time status를 이해하는 dashboard. D4D의 시설/구역 상태 map에 적용.</p>
+            <span class="score high">적합도 <strong>9/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">11 · ArcGIS docs</p>
+            <h3><a href="https://doc.arcgis.com/en/dashboards/latest/get-started/what-is-a-dashboard.htm">What is a dashboard</a></h3>
+            <p class="takeaway">여러 visualization이 한 화면에서 함께 동작하고 at-a-glance decision을 돕는 구조.</p>
+            <span class="score high">적합도 <strong>8/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">12 · ArcGIS realtime</p>
+            <h3><a href="https://www.esri.com/arcgis-blog/products/ops-dashboard/real-time/making-an-auto-focusing-real-time-dashboard">Auto-focusing dashboard</a></h3>
+            <p class="takeaway">실시간 event focus 전환. CV hook이 발생했을 때 화면이 어디로 초점을 옮길지 참고.</p>
+            <span class="score high">적합도 <strong>8/10</strong></span>
+          </article>
+
+          <article class="panel ref-card">
+            <p class="meta">13 · IBM Carbon</p>
+            <h3><a href="https://carbondesignsystem.com/">Carbon Design System</a></h3>
+            <p class="takeaway">엔터프라이즈 제품 UI의 균형. 군용 느낌이 과해질 때 Carbon식 절제와 접근성으로 잡는다.</p>
+            <span class="score mid">적합도 <strong>7/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">14 · Carbon charts</p>
+            <h3><a href="https://carbondesignsystem.com/data-visualization/chart-types/">Chart types</a></h3>
+            <p class="takeaway">목적에 따라 chart type을 고르는 기준. confidence trend, event count, distance band에 적용.</p>
+            <span class="score high">적합도 <strong>8/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">15 · Carbon palettes</p>
+            <h3><a href="https://carbondesignsystem.com/data-visualization/color-palettes/">Data palettes</a></h3>
+            <p class="takeaway">시각화 팔레트는 접근성과 조화가 우선. D4D alert 색상도 semantic palette로 제한.</p>
+            <span class="score mid">적합도 <strong>7/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">16 · Carbon anatomy</p>
+            <h3><a href="https://carbondesignsystem.com/data-visualization/chart-anatomy/">Chart anatomy</a></h3>
+            <p class="takeaway">legend, axis, tooltip, zoom bar 구조. CCTV timeline과 distance trend chart에 필요.</p>
+            <span class="score mid">적합도 <strong>7/10</strong></span>
+          </article>
+
+          <article class="panel ref-card">
+            <p class="meta">17 · Grafana Alerting</p>
+            <h3><a href="https://grafana.com/docs/grafana/latest/alerting/">Alerting docs</a></h3>
+            <p class="takeaway">alert rule, notification, triage flow. D4D의 watch/warn/critical ladder에 참고.</p>
+            <span class="score high">적합도 <strong>8/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">18 · Grafana panels</p>
+            <h3><a href="https://grafana.com/docs/grafana/latest/alerting/alerting-rules/link-alert-rules-to-panels/">Alert linked panels</a></h3>
+            <p class="takeaway">alert가 발생한 panel로 조사자가 바로 이동하는 구조. CCTV event click behavior에 적용.</p>
+            <span class="score high">적합도 <strong>8/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">19 · Elastic Security</p>
+            <h3><a href="https://www.elastic.co/security">Agentic security operations</a></h3>
+            <p class="takeaway">AI agent가 triage를 돕고 analyst가 판단·검증·승인하는 구조. D4D 하네스 철학과 가장 유사.</p>
+            <span class="score high">적합도 <strong>9/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">20 · Elastic SIEM</p>
+            <h3><a href="https://www.elastic.co/security/siem">SIEM platform</a></h3>
+            <p class="takeaway">detect, investigate, respond. D4D checkpoint naming과 incident workflow에 직접 적용 가능.</p>
+            <span class="score high">적합도 <strong>9/10</strong></span>
+          </article>
+
+          <article class="panel ref-card">
+            <p class="meta">21 · NASA Open MCT</p>
+            <h3><a href="https://nasa.github.io/openmct/">Mission control framework</a></h3>
+            <p class="takeaway">mission control telemetry 화면의 계층 구조. 군용이 아니어도 고신뢰 관제 감성을 만들 수 있다.</p>
+            <span class="score high">적합도 <strong>8/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">22 · Mapbox</p>
+            <h3><a href="https://www.mapbox.com/">Map visualization</a></h3>
+            <p class="takeaway">지도 위 sensor/entity overlay를 고급스럽게 표현하는 참고. D4D facility map에 활용.</p>
+            <span class="score mid">적합도 <strong>7/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">23 · deck.gl</p>
+            <h3><a href="https://deck.gl/">Large-scale geospatial visualization</a></h3>
+            <p class="takeaway">대규모 geospatial layer, arc, heatmap. 실제 구현보다 시각 문법 참고.</p>
+            <span class="score mid">적합도 <strong>7/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">24 · Cesium</p>
+            <h3><a href="https://cesium.com/platform/cesiumjs/">3D geospatial UI</a></h3>
+            <p class="takeaway">3D 지형/시설 맥락. 해커톤 데모에서는 과할 수 있으므로 mini-map 정도만 추천.</p>
+            <span class="score low">적합도 <strong>5/10</strong></span>
+          </article>
+
+          <article class="panel ref-card">
+            <p class="meta">25 · Microsoft Fluent</p>
+            <h3><a href="https://fluent2.microsoft.design/">Fluent 2</a></h3>
+            <p class="takeaway">enterprise app의 접근성, command bar, density. 군용 감성이 너무 강할 때 중화.</p>
+            <span class="score mid">적합도 <strong>6/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">26 · Material Design</p>
+            <h3><a href="https://m3.material.io/">Material 3</a></h3>
+            <p class="takeaway">state layer, motion, component accessibility 기준. 그대로 쓰면 군용감은 약해짐.</p>
+            <span class="score low">적합도 <strong>5/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">27 · Atlassian</p>
+            <h3><a href="https://atlassian.design/">Atlassian Design System</a></h3>
+            <p class="takeaway">workflow, issue state, audit log. Commander report와 task queue에 참고.</p>
+            <span class="score mid">적합도 <strong>6/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">28 · USWDS</p>
+            <h3><a href="https://designsystem.digital.gov/">U.S. Web Design System</a></h3>
+            <p class="takeaway">정부 서비스의 명확한 접근성·문서성. 보고서/절차 화면에 참고.</p>
+            <span class="score mid">적합도 <strong>6/10</strong></span>
+          </article>
+
+          <article class="panel ref-card">
+            <p class="meta">29 · Splunk</p>
+            <h3><a href="https://www.splunk.com/">Security/observability dashboards</a></h3>
+            <p class="takeaway">검색, 탐지, drilldown 문법. Commander natural-language query와 결합 가능.</p>
+            <span class="score mid">적합도 <strong>7/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">30 · Datadog</p>
+            <h3><a href="https://www.datadoghq.com/product/infrastructure-monitoring/">Monitoring UI</a></h3>
+            <p class="takeaway">multi-panel monitoring density와 alert state. CCTV wall의 상태 chip 참고.</p>
+            <span class="score mid">적합도 <strong>6/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">31 · Linear</p>
+            <h3><a href="https://linear.app/">Linear product UI</a></h3>
+            <p class="takeaway">motion, command menu, density, restraint. 군용은 아니지만 고급 interaction 감도 참고.</p>
+            <span class="score mid">적합도 <strong>7/10</strong></span>
+          </article>
+          <article class="panel ref-card">
+            <p class="meta">32 · Raycast</p>
+            <h3><a href="https://www.raycast.com/">Command-first interface</a></h3>
+            <p class="takeaway">빠른 command invocation. operator query/command palette에 참고.</p>
+            <span class="score mid">적합도 <strong>6/10</strong></span>
+          </article>
+        </div>
+      </section>
+
+      <section id="recommendation">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Recommendation</p>
+            <h2>최종 추천: Palantir Blueprint + ArcGIS COP + Elastic SOC + Codex SDK worker</h2>
+            <p>
+              D4D 데모를 가장 설득력 있게 만드는 조합은 “지도형 COP, 다중 CCTV sensor fusion, 증거 기반 agent reasoning,
+              사람 승인 gate, 자동 일일/주간 보고”다.
+            </p>
+          </div>
+        </div>
+        <div class="grid cols-2">
+          <article class="panel rec">
+            <h3>바로 적용할 UI 변경</h3>
+            <ul>
+              <li>현재 3열 dashboard에 중앙 “facility COP / camera graph” 패널을 추가한다.</li>
+              <li>오른쪽 Codex 패널을 “판단 → 반례 → 누락 맥락 → 권고 절차” 순서로 재구성한다.</li>
+              <li>CCTV wall은 단순 grid가 아니라 camera group, blind spot handoff, 반복 출현 rail을 표시한다.</li>
+              <li>일일보고/주간보고는 별도 report workspace로 빼고 citation table을 고정 노출한다.</li>
+            </ul>
+          </article>
+          <article class="panel warn">
+            <h3>바로 적용하지 말 것</h3>
+            <ul>
+              <li>과한 neon, crosshair, target lock, weapon HUD처럼 보이는 장식.</li>
+              <li>빨간색을 기본 상태로 쓰는 화면. 실제 경보 단계가 무뎌진다.</li>
+              <li>Palantir/Anduril 로고나 제품 화면을 직접 복제하는 것.</li>
+              <li>Codex SDK를 프론트 브라우저에서 직접 호출하는 구조. 서버 worker 뒤에 둔다.</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>Codex worker 선택 기준</h3>
+            <ul>
+              <li>현재 TS 서버 유지: TypeScript Codex SDK를 worker로 연결.</li>
+              <li>CV/YOLO Python pipeline이 주도: Python Codex SDK worker 도입.</li>
+              <li>해커톤에서 빠른 데모: `codex exec`를 queue worker로 감싸기.</li>
+              <li>제품형 확장: HTTP adapter contract 유지, worker는 SDK 기반으로 교체.</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>다음 구현 단위</h3>
+            <ul>
+              <li>`DESIGN.md`를 v2 토큰으로 갱신한다.</li>
+              <li>facility COP 컴포넌트와 camera group memory panel을 추가한다.</li>
+              <li>`/api/codex-agent` 뒤쪽에 Codex worker strategy enum을 추가한다.</li>
+              <li>Playwright visual QA를 390, 768, 1440 viewport로 다시 돌린다.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <footer class="footer">
+        작성일: 2026-06-29 · 이 문서는 D4D AI 경계 하네스 데모의 UI/UX 방향 제안을 위한 리서치 보드입니다.
+        실제 군사 작전, 무기 운용, 표적화, 신원 식별 기능을 제안하지 않습니다.
+      </footer>
+    </div>
+  </body>
+</html>

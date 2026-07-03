@@ -1,0 +1,232 @@
+.cop-range {
+  min-width: 34px;
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--panel-inset);
+  color: var(--text-tertiary);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.cop-range.active {
+  color: var(--c-cyan);
+  border-color: var(--c-cyan);
+  background: rgba(89, 215, 255, 0.12);
+}
+
+.cop-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 9px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: 11px;
+}
+
+.cop-filter.active {
+  border-color: var(--line);
+  background: var(--panel-inset);
+  color: var(--text-primary);
+}
+
+.cop-filter-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+}
+
+.cop-filter.tone-normal .cop-filter-dot {
+  background: var(--c-green);
+}
+
+.cop-filter.tone-watch .cop-filter-dot {
+  background: var(--c-amber);
+}
+
+.cop-filter.tone-alert .cop-filter-dot {
+  background: var(--c-red);
+}
+
+.cop-filter.tone-confirmed .cop-filter-dot {
+  background: var(--c-confirmed);
+}
+
+.cop-timeline-chart {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  grid-template-rows: 22px 116px;
+  column-gap: 6px;
+}
+
+.cop-chart-corner {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.cop-chart-axis {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.cop-axis-tick {
+  position: absolute;
+  top: 2px;
+  transform: translateX(-50%);
+  color: var(--text-tertiary);
+  font-family: var(--mono);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.cop-now-pill {
+  position: absolute;
+  top: -1px;
+  transform: translateX(-50%);
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: var(--c-cyan-dim);
+  color: #02080c;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  z-index: 3;
+}
+
+.cop-chart-lanes-labels {
+  position: relative;
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.cop-chart-lanes-labels span {
+  position: absolute;
+  left: 0;
+  transform: translateY(-50%);
+  color: var(--c-cyan);
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.cop-chart-track {
+  position: relative;
+  grid-column: 2;
+  grid-row: 2;
+  border: 1px solid var(--line-soft);
+  border-radius: 5px;
+  background: var(--panel-inset);
+  overflow: hidden;
+}
+
+.cop-lane-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  transform: translateY(-50%);
+  background: rgba(89, 215, 255, 0.12);
+}
+
+.cop-timeline-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 0 var(--space-4);
+  color: var(--text-tertiary);
+  font-size: 11px;
+  text-align: center;
+  word-break: keep-all;
+}
+
+.cop-now-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(89, 215, 255, 0.55);
+  z-index: 2;
+}
+
+.cop-track-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.cop-track-dot.tone-normal {
+  background: var(--c-green);
+}
+
+.cop-track-dot.tone-watch {
+  background: var(--c-amber);
+}
+
+.cop-track-dot.tone-alert {
+  background: var(--c-red);
+}
+
+.cop-track-dot.tone-confirmed {
+  background: var(--c-confirmed);
+}
+
+.cop-track-block {
+  position: absolute;
+  display: grid;
+  gap: 1px;
+  padding: 3px 7px;
+  border: 1px solid var(--line);
+  border-left-width: 3px;
+  border-radius: 4px;
+  background: rgba(6, 16, 23, 0.95);
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  z-index: 3;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.cop-track-block:hover,
+.cop-track-block:focus-visible,
+.cop-track-block.selected {
+  border-color: var(--c-cyan);
+  box-shadow: 0 0 0 1px rgba(89, 215, 255, 0.28), 0 0 12px rgba(89, 215, 255, 0.14);
+}
+
+.cop-track-block strong {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.cop-track-block time {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-tertiary);
+}
+
+.cop-track-block.tone-normal {
+  border-left-color: var(--c-green);
+}
+
+.cop-track-block.tone-watch {
+  border-left-color: var(--c-amber);
+}
+
+.cop-track-block.tone-alert {
+  border-left-color: var(--c-red);
+}

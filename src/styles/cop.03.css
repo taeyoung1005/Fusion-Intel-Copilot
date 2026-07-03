@@ -1,0 +1,274 @@
+.cop-layer-list,
+.cop-groups,
+.cop-incident-list,
+.cop-codex-metrics,
+.cop-citation-list,
+.cop-missing-list,
+.cop-gate-list {
+  display: grid;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cop-layer-list {
+  gap: 5px;
+}
+
+.cop-layer {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+}
+
+.cop-layer input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.cop-check {
+  display: inline-grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--panel-inset);
+  transition: border-color 140ms ease, background 140ms ease;
+}
+
+.cop-layer input:checked + .cop-check {
+  border-color: var(--c-cyan);
+  background: var(--c-cyan-dim);
+}
+
+.cop-layer input:checked + .cop-check::after {
+  content: "";
+  width: 8px;
+  height: 4px;
+  border-left: 1.8px solid #02080c;
+  border-bottom: 1.8px solid #02080c;
+  transform: translateY(-1px) rotate(-45deg);
+}
+
+.cop-layer input:focus-visible + .cop-check {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.cop-layer-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  word-break: keep-all;
+}
+
+.cop-layer input:checked ~ .cop-layer-label {
+  color: var(--text-primary);
+}
+
+/* ---------- Left: camera groups ---------- */
+
+.cop-groups {
+  gap: 7px;
+}
+
+.cop-group {
+  border: 1px solid var(--line-soft);
+  border-radius: 6px;
+  background: var(--panel-inset);
+  padding: 8px;
+}
+
+.cop-group-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.cop-group-title {
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+}
+
+.cop-group-title svg {
+  margin-top: 2px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.cop-group-title strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  word-break: keep-all;
+}
+
+.cop-group-title small {
+  display: block;
+  margin-top: 1px;
+  color: var(--text-tertiary);
+  font-size: 10px;
+}
+
+.cop-group-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.cop-group-badge {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.cop-group-badge.active {
+  background: rgba(54, 211, 153, 0.16);
+  color: var(--c-green);
+}
+
+.cop-group-badge.standby {
+  background: rgba(148, 163, 184, 0.16);
+  color: var(--alert-uncertain);
+}
+
+.cop-group-eye {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 20px;
+  border: 1px solid var(--line-soft);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-tertiary);
+}
+
+.cop-group-eye[aria-pressed="true"] {
+  color: var(--c-cyan);
+  border-color: rgba(89, 215, 255, 0.4);
+}
+
+.cop-group-members {
+  display: grid;
+  gap: 5px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cop-member-item {
+  display: grid;
+  gap: 4px;
+}
+
+.cop-member {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) 18px 34px;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.cop-member.selected {
+  border-color: var(--c-amber);
+  background: rgba(244, 196, 48, 0.08);
+}
+
+.cop-member-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--c-green);
+  box-shadow: 0 0 6px rgba(54, 211, 153, 0.6);
+}
+
+.cop-member.offline .cop-member-dot {
+  background: var(--text-tertiary);
+  box-shadow: none;
+}
+
+.cop-member-id {
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.cop-member-tag {
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+.cop-member-tag.tone-live {
+  color: var(--c-green);
+}
+
+.cop-member-tag.tone-waiting {
+  color: var(--c-amber);
+}
+
+.cop-member-conf {
+  color: var(--c-green);
+  text-align: right;
+}
+
+.cop-member-button.tone-waiting .cop-member-dot {
+  background: var(--c-amber);
+  box-shadow: 0 0 6px rgba(244, 196, 48, 0.42);
+}
+
+.cop-member-button.tone-waiting .cop-member-conf {
+  color: var(--c-amber);
+}
+
+.cop-member-preview {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  margin-left: 17px;
+  border: 1px solid var(--line-soft);
+  border-left: 3px solid var(--c-green);
+  border-radius: 4px;
+  background: var(--panel-inset);
+}
+
+.cop-member-preview.tone-waiting {
+  border-left-color: var(--c-amber);
+}
+
+.cop-member-preview::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 4px);
+}
+
+.cop-member-preview img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cop-member-preview span {
+  color: var(--text-tertiary);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+}
