@@ -1,5 +1,5 @@
 import { Settings2, X } from "lucide-react"
-import { type ReactElement, useEffect, useState } from "react"
+import { type ReactElement, useEffect, useRef, useState } from "react"
 import { carlaCameraStreamSrc } from "./carlaCameraClient"
 import type { RealtimeAlert } from "./realtimeAlerts"
 
@@ -42,14 +42,16 @@ function RealtimeAlertCard({
   onUpdateSettings,
 }: RealtimeAlertCardProps): ReactElement {
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const onDismissRef = useRef(onDismiss)
+  onDismissRef.current = onDismiss
 
   useEffect(() => {
     if (!alert.autoClose) {
       return
     }
-    const timer = window.setTimeout(() => onDismiss(alert.id), alert.autoCloseMs)
+    const timer = window.setTimeout(() => onDismissRef.current(alert.id), alert.autoCloseMs)
     return () => window.clearTimeout(timer)
-  }, [alert.id, alert.autoClose, alert.autoCloseMs, onDismiss])
+  }, [alert.id, alert.autoClose, alert.autoCloseMs])
 
   return (
     <div className={`cop-realtime-alert tone-${alert.clip.tone}`} role="alert">
