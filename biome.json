@@ -53,7 +53,8 @@
       "src/cop/osmSnapshot.json",
       "src/domain",
       "src/fixtures",
-      "test-results"
+      "test-results",
+      "tools/fable-harness"
     ]
   },
   "overrides": [
