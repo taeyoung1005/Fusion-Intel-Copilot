@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { type CodexAgentContext, requestCodexAgent } from "./codexAgentClient"
 import type { Citation, EvidenceClip, Incident } from "./copData"
 import type { DynamicCameraRecord } from "./dynamicMapCamera"
+import { type WindowEntry, summarizeWindow, windowMsForTone } from "./evidenceWindowSummary"
 import {
   type CorrelationCandidate,
   type CorrelationEntry,
@@ -37,6 +38,20 @@ const elapsedMinutes = (candidate: CorrelationCandidate): number =>
 
 const labelFor = (cameras: readonly DynamicCameraRecord[], cameraId: string): string =>
   cameras.find((camera) => camera.id === cameraId)?.label ?? cameraId
+
+const summaryForCamera = (
+  windowBuffer: ReadonlyMap<string, readonly WindowEntry[]>,
+  cameraId: string,
+  nowMs: number,
+): string | undefined => {
+  const entries = windowBuffer.get(cameraId)
+  if (entries === undefined || entries.length === 0) {
+    return undefined
+  }
+  const latestTone = entries[entries.length - 1]?.clip.tone ?? "normal"
+  const windowMs = windowMsForTone(latestTone)
+  return summarizeWindow(entries, nowMs, windowMs)?.text
+}
 
 // The confirmed synthetic clip carries the LATER clip's attributes and camera so
 // it lands on that camera's incident (buildIncidents → Codex evidence.summary).
@@ -100,7 +115,10 @@ const buildJudgingClip = (
   }
 }
 
-const buildCodexContext = (candidate: CorrelationCandidate): CodexAgentContext => {
+const buildCodexContext = (
+  candidate: CorrelationCandidate,
+  recentActivitySummary: string | undefined,
+): CodexAgentContext => {
   const key = pairKey(candidate.clipA.id, candidate.clipB.id)
   const incident: Incident = {
     id: `inc-corr-${key}`,
@@ -130,6 +148,7 @@ const buildCodexContext = (candidate: CorrelationCandidate): CodexAgentContext =
     citations,
     missingContext: [],
     responseOutcome: "상관관계 자동 판단",
+    ...(recentActivitySummary !== undefined ? { recentActivitySummary } : {}),
   }
 }
 
@@ -149,6 +168,7 @@ export const useCorrelationAlerts = (
   evidenceClips: readonly EvidenceClip[],
   cameras: readonly DynamicCameraRecord[],
   onCorrelationEvidence: (clip: EvidenceClip) => void,
+  windowBuffer: ReadonlyMap<string, readonly WindowEntry[]>,
 ): UseCorrelationAlertsResult => {
   const [alerts, setAlerts] = useState<readonly RealtimeAlert[]>([])
   const bufferRef = useRef<readonly CorrelationEntry[]>([])
@@ -157,6 +177,8 @@ export const useCorrelationAlerts = (
   onCorrelationEvidenceRef.current = onCorrelationEvidence
   const camerasRef = useRef(cameras)
   camerasRef.current = cameras
+  const windowBufferRef = useRef(windowBuffer)
+  windowBufferRef.current = windowBuffer
 
   const resolveAmbiguous = async (
     candidate: CorrelationCandidate,
@@ -164,7 +186,12 @@ export const useCorrelationAlerts = (
   ): Promise<void> => {
     let summary: string | undefined
     try {
-      const decision = await requestCodexAgent(buildCodexContext(candidate))
+      const recentActivitySummary = summaryForCamera(
+        windowBufferRef.current,
+        candidate.clipB.camera,
+        Date.now(),
+      )
+      const decision = await requestCodexAgent(buildCodexContext(candidate, recentActivitySummary))
       summary = decision.decision.summary
     } catch {
       // Never block evidence/alert emission on a Codex failure — fall back to
