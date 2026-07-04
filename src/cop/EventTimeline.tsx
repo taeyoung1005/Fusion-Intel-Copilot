@@ -10,6 +10,7 @@ import {
   type TimelineFilter,
   type TimelineLane,
   type TimelineRange,
+  evidenceClipWindowFor,
   timelinePercentIn,
   timelineTicksIn,
   timelineWindow,
@@ -148,6 +149,7 @@ export const EventTimeline = memo(function EventTimeline({
           ) : (
             events.map((event) => {
               const clip = clipsById.get(event.id)
+              const clipWindow = clip === undefined ? undefined : evidenceClipWindowFor(clip.time)
               return (
                 <button
                   key={event.id}
@@ -169,10 +171,10 @@ export const EventTimeline = memo(function EventTimeline({
                 >
                   <strong>{TIMELINE_LANE_LABEL[event.lane]}</strong>
                   <time>{event.display}</time>
-                  {clip !== undefined && (
+                  {clip !== undefined && clipWindow !== undefined && (
                     <span className="cop-track-tooltip">
                       <strong>{clip.label}</strong>
-                      {clip.time} · {clip.detail}
+                      {clipWindow.startTime}~{clipWindow.endTime} · {clip.detail}
                     </span>
                   )}
                 </button>
@@ -183,7 +185,11 @@ export const EventTimeline = memo(function EventTimeline({
       </div>
 
       {playingClip !== undefined && (
-        <ClipPlayer clip={playingClip} onClose={() => setPlayingClipId(null)} />
+        <ClipPlayer
+          key={playingClip.id}
+          clip={playingClip}
+          onClose={() => setPlayingClipId(null)}
+        />
       )}
     </section>
   )

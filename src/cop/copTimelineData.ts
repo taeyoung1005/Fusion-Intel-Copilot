@@ -97,6 +97,36 @@ export type TimelineEvent = {
 
 // --- Bottom: evidence clips -----------------------------------------------------
 
+export const EVIDENCE_CLIP_WINDOW_MS = 30_000
+
+export type EvidenceClipWindow = {
+  readonly startTime: string
+  readonly endTime: string
+  readonly durationMs: number
+}
+
+const secondsOf = (clock: string): number => {
+  const parts = clock.split(":")
+  const hours = Number(parts[0] ?? 0)
+  const minutes = Number(parts[1] ?? 0)
+  const seconds = Number(parts[2] ?? 0)
+  return hours * 3600 + minutes * 60 + seconds
+}
+
+const clockWithSecondsOf = (totalSeconds: number): string => {
+  const normalized = ((Math.round(totalSeconds) % 86_400) + 86_400) % 86_400
+  const hours = Math.floor(normalized / 3600)
+  const minutes = Math.floor((normalized % 3600) / 60)
+  const seconds = normalized % 60
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
+}
+
+export const evidenceClipWindowFor = (eventTime: string): EvidenceClipWindow => ({
+  startTime: eventTime,
+  endTime: clockWithSecondsOf(secondsOf(eventTime) + EVIDENCE_CLIP_WINDOW_MS / 1000),
+  durationMs: EVIDENCE_CLIP_WINDOW_MS,
+})
+
 // Evidence clips are derived from REAL sources only — live mobile CCTV frames and
 // real-time DETR detections — never from a static demo list. `detail` carries the
 // source-appropriate metric (uplink frame count for mobile, detection confidence
@@ -114,6 +144,10 @@ export type EvidenceClip = {
   readonly confidencePct: number
   readonly frameDataUrl?: string | null
   readonly attributes?: PersonAttributes
+  readonly trackId?: string
+  readonly detectionClass?: string
+  readonly cooldownKey?: string
+  readonly promotedAtMs?: number
 }
 
 export const LEGEND_ITEMS = [

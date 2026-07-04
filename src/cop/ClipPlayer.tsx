@@ -1,10 +1,9 @@
 import { Pause, Play, X } from "lucide-react"
-import { type ReactElement, useEffect, useRef, useState } from "react"
-import type { EvidenceClip } from "./copData"
+import { type ReactElement, useEffect, useMemo, useRef, useState } from "react"
+import { type EvidenceClip, evidenceClipWindowFor } from "./copData"
 
 const CLIP_WIDTH = 640
 const CLIP_HEIGHT = 360
-const LOOP_MS = 6000
 
 type ClipPlayerProps = {
   readonly clip: EvidenceClip
@@ -23,6 +22,8 @@ export function ClipPlayer({ clip, onClose }: ClipPlayerProps): ReactElement {
   const [playing, setPlaying] = useState(true)
   const [progress, setProgress] = useState(0)
   const hasFrame = clip.frameDataUrl !== null && clip.frameDataUrl !== undefined
+  const clipWindow = useMemo(() => evidenceClipWindowFor(clip.time), [clip.time])
+  const clipDurationMs = clipWindow.durationMs
 
   useEffect(() => {
     if (hasFrame) {
@@ -31,9 +32,9 @@ export function ClipPlayer({ clip, onClose }: ClipPlayerProps): ReactElement {
         if (startRef.current === undefined) {
           startRef.current = timestamp - pausedAtRef.current
         }
-        const elapsed = (timestamp - startRef.current) % LOOP_MS
+        const elapsed = (timestamp - startRef.current) % clipDurationMs
         pausedAtRef.current = elapsed
-        setProgress(elapsed / LOOP_MS)
+        setProgress(elapsed / clipDurationMs)
         rafRef.current = window.requestAnimationFrame(tick)
       }
       if (playing) {
@@ -56,24 +57,24 @@ export function ClipPlayer({ clip, onClose }: ClipPlayerProps): ReactElement {
       if (startRef.current === undefined) {
         startRef.current = timestamp - pausedAtRef.current
       }
-      const elapsed = (timestamp - startRef.current) % LOOP_MS
+      const elapsed = (timestamp - startRef.current) % clipDurationMs
       pausedAtRef.current = elapsed
-      drawSyntheticClip(context, clip, elapsed / LOOP_MS)
-      setProgress(elapsed / LOOP_MS)
+      drawSyntheticClip(context, clip, elapsed / clipDurationMs)
+      setProgress(elapsed / clipDurationMs)
       rafRef.current = window.requestAnimationFrame(render)
     }
     if (playing) {
       startRef.current = undefined
       rafRef.current = window.requestAnimationFrame(render)
     } else {
-      drawSyntheticClip(context, clip, pausedAtRef.current / LOOP_MS)
+      drawSyntheticClip(context, clip, pausedAtRef.current / clipDurationMs)
     }
     return () => {
       if (rafRef.current !== undefined) {
         window.cancelAnimationFrame(rafRef.current)
       }
     }
-  }, [clip, playing, hasFrame])
+  }, [clip, playing, hasFrame, clipDurationMs])
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent): void => {
@@ -107,7 +108,7 @@ export function ClipPlayer({ clip, onClose }: ClipPlayerProps): ReactElement {
           <div>
             <strong>{clip.label}</strong>
             <span>
-              {clip.camera} · {clip.time} · {clip.detail}
+              {clip.camera} · {clipWindow.startTime}~{clipWindow.endTime} · {clip.detail}
             </span>
           </div>
           <button type="button" className="cop-icon-btn" aria-label="재생 닫기" onClick={onClose}>

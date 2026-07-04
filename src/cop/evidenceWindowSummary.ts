@@ -1,9 +1,9 @@
 import type { AlertTone } from "./copMapBaseData"
-import type { EvidenceClip } from "./copTimelineData"
+import { EVIDENCE_CLIP_WINDOW_MS, type EvidenceClip } from "./copTimelineData"
 
-export const ALERT_WINDOW_MS = 120_000
-export const WATCH_WINDOW_MS = 300_000
-export const MAX_WINDOW_MS = 600_000
+export const ALERT_WINDOW_MS = EVIDENCE_CLIP_WINDOW_MS
+export const WATCH_WINDOW_MS = EVIDENCE_CLIP_WINDOW_MS
+export const MAX_WINDOW_MS = EVIDENCE_CLIP_WINDOW_MS
 
 export type WindowEntry = {
   readonly clip: EvidenceClip
@@ -42,7 +42,12 @@ const toneRank = (tone: AlertTone): number => {
   return 1
 }
 
-const formatMinutes = (windowMs: number): number => Math.round(windowMs / 60_000)
+const formatWindowDuration = (windowMs: number): string => {
+  if (windowMs < 60_000) {
+    return `${Math.round(windowMs / 1000)}초`
+  }
+  return `${Math.round(windowMs / 60_000)}분`
+}
 
 export const summarizeWindow = (
   entries: readonly WindowEntry[],
@@ -66,9 +71,9 @@ export const summarizeWindow = (
     first,
   )
   const escalated = toneRank(worst.clip.tone) > toneRank(first.clip.tone)
-  const minutes = formatMinutes(windowMs)
+  const duration = formatWindowDuration(windowMs)
   const trendText = escalated ? `위험도 상승(${first.clip.tone}→${worst.clip.tone})` : "위험도 유지"
-  const text = `${minutes}분간 ${sorted.length}회 탐지, ${first.clip.time}~${last.clip.time} 지속, ${trendText}`
+  const text = `${duration}간 ${sorted.length}회 탐지, ${first.clip.time}~${last.clip.time} 지속, ${trendText}`
 
   return {
     count: sorted.length,

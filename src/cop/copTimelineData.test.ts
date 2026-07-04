@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest"
-import { timelinePercentIn, timelineTicksIn, timelineWindow, toneToLane } from "./copTimelineData"
+import {
+  EVIDENCE_CLIP_WINDOW_MS,
+  evidenceClipWindowFor,
+  timelinePercentIn,
+  timelineTicksIn,
+  timelineWindow,
+  toneToLane,
+} from "./copTimelineData"
 
 // A fixed "now" (13:01) so tests are deterministic regardless of the real clock.
 const NOW = 13 * 60 + 1
@@ -57,5 +64,24 @@ describe("toneToLane", () => {
     expect(toneToLane("watch")).toBe("watch")
     expect(toneToLane("uncertain")).toBe("watch")
     expect(toneToLane("normal")).toBe("normal")
+  })
+})
+
+describe("evidenceClipWindowFor", () => {
+  it("builds a 30 second post-event window from the event timestamp", () => {
+    expect(EVIDENCE_CLIP_WINDOW_MS).toBe(30_000)
+    expect(evidenceClipWindowFor("13:01:05")).toEqual({
+      startTime: "13:01:05",
+      endTime: "13:01:35",
+      durationMs: 30_000,
+    })
+  })
+
+  it("keeps the window after the event when the end wraps past midnight", () => {
+    expect(evidenceClipWindowFor("23:59:45")).toEqual({
+      startTime: "23:59:45",
+      endTime: "00:00:15",
+      durationMs: 30_000,
+    })
   })
 })
