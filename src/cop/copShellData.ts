@@ -38,7 +38,7 @@ export const MAP_LAYERS: readonly MapLayer[] = [
 // --- Header status --------------------------------------------------------------
 
 export const HEADER = {
-  title: "D4D AI PERIMETER HARNESS",
+  title: "FUSION INTEL COPILOT",
   subtitle: "COMMON OPERATIONAL PICTURE",
   systemStatus: "SYSTEM NOMINAL",
   agents: "AI AGENTS  6 / 6",

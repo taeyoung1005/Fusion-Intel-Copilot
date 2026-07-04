@@ -66,7 +66,7 @@ export type ReportFile = {
   readonly content: string
 }
 
-const DAILY_REPORT_TITLE = "D4D AI PERIMETER HARNESS DAILY SITUATION REPORT"
+const DAILY_REPORT_TITLE = "FUSION INTEL COPILOT DAILY SITUATION REPORT"
 
 const eventClockFor = (incident: Incident, generatedAt: Date): string => {
   if (/^\d{2}:\d{2}:\d{2}$/.test(incident.time)) {
@@ -187,7 +187,7 @@ const escapePdfText = (value: string): string =>
 
 const buildPdfContentStream = (artifact: CommanderReportArtifact): string => {
   const lines = [
-    "D4D AI PERIMETER HARNESS",
+    "FUSION INTEL COPILOT",
     `Report: ${artifact.reportId}`,
     `Receipt: ${artifact.exportReceiptId}`,
     `Generated: ${artifact.generatedAtIso}`,

@@ -47,6 +47,68 @@
   scrollbar-width: thin;
 }
 
+.cop-rail-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid var(--line-soft);
+  border-radius: 7px;
+  background: var(--panel-inset);
+}
+
+.cop-rail-tab {
+  padding: 7px 8px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  word-break: keep-all;
+}
+
+.cop-rail-tab:hover {
+  color: var(--text-secondary);
+}
+
+.cop-rail-tab.active {
+  background: var(--panel-inset);
+  color: var(--c-cyan);
+  box-shadow: inset 0 0 0 1px var(--c-cyan-dim);
+}
+
+.cop-rail-group {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* Missing Context + Response Gate read as one grouped card instead of two
+   separately-bordered panels stacked back to back. */
+.cop-readiness-group {
+  display: grid;
+  gap: 0;
+}
+
+.cop-readiness-group .cop-missing {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+  padding-bottom: 6px;
+}
+
+.cop-readiness-group .cop-gate {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-top: 1px dashed var(--line-soft);
+  padding-top: 6px;
+}
+
 .cop-operational {
   gap: var(--space-2);
 }

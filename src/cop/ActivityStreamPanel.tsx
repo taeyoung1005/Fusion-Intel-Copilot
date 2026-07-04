@@ -159,8 +159,6 @@ const activityStageLabel = (stage: string): string => {
       return "요청"
     case "response:received":
       return "응답"
-    case "frame-upload:start":
-      return "업링크"
     case "frame-upload:end":
       return "완료"
     default:

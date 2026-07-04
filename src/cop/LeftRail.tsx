@@ -10,7 +10,11 @@ import {
   SlidersHorizontal,
 } from "lucide-react"
 import { type ReactElement, useState } from "react"
-import { CarlaCctvWall, type CarlaDetectionServerConnectionHandler } from "./CarlaCctvWall"
+import {
+  CarlaCctvWall,
+  type CarlaDetectionFrameChangeHandler,
+  type CarlaDetectionServerConnectionHandler,
+} from "./CarlaCctvWall"
 import { type EvidenceClip, MAP_LAYERS, type MapLayerId } from "./copData"
 import type { DynamicCameraRecord } from "./dynamicMapCamera"
 
@@ -74,6 +78,7 @@ type LeftPanelsProps = {
   readonly cctvWindowOpen: boolean
   readonly onCloseCctvWindow: () => void
   readonly onDetectionServerConnectionChange: CarlaDetectionServerConnectionHandler
+  readonly onDetectionFrameChange: CarlaDetectionFrameChangeHandler
 }
 
 export function LeftPanels({
@@ -88,6 +93,7 @@ export function LeftPanels({
   cctvWindowOpen,
   onCloseCctvWindow,
   onDetectionServerConnectionChange,
+  onDetectionFrameChange,
 }: LeftPanelsProps): ReactElement {
   return (
     <>
@@ -128,6 +134,7 @@ export function LeftPanels({
             onSelectCamera={onSelectDynamicCamera}
             onVisionEvidence={onVisionEvidence}
             onDetectionServerConnectionChange={onDetectionServerConnectionChange}
+            onDetectionFrameChange={onDetectionFrameChange}
           />
         )}
 
@@ -150,6 +157,7 @@ export function LeftPanels({
           onSelectCamera={onSelectDynamicCamera}
           onVisionEvidence={onVisionEvidence}
           onDetectionServerConnectionChange={onDetectionServerConnectionChange}
+          onDetectionFrameChange={onDetectionFrameChange}
           expanded
           onClose={onCloseCctvWindow}
         />

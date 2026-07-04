@@ -21,6 +21,7 @@ import type {
   RelationshipGraphNode,
 } from "./operationalTelemetry"
 import { buildRecommendedAction } from "./operationalTelemetry"
+import type { RightRailTab } from "./useCopDashboardActions"
 
 type RightRailProps = {
   readonly selectedClip: EvidenceClip | undefined
@@ -41,10 +42,17 @@ type RightRailProps = {
   readonly relationshipGraph: EvidenceRelationshipGraph
   readonly codexRequestFingerprint: string
   readonly recentActivitySummary: string | undefined
+  readonly activeTab: RightRailTab
+  readonly onChangeTab: (tab: RightRailTab) => void
   readonly onSelectCitation: (citationId: string) => void
   readonly onSelectIncident: (incidentId: string) => void
   readonly onSelectRelationshipNode: (node: RelationshipGraphNode) => void
 }
+
+const TABS: readonly { readonly id: RightRailTab; readonly label: string }[] = [
+  { id: "overview", label: "상황 개관" },
+  { id: "decision", label: "판단·대응" },
+]
 
 export const RightRail = memo(function RightRail({
   selectedClip,
@@ -65,6 +73,8 @@ export const RightRail = memo(function RightRail({
   relationshipGraph,
   codexRequestFingerprint,
   recentActivitySummary,
+  activeTab,
+  onChangeTab,
   onSelectCitation,
   onSelectIncident,
   onSelectRelationshipNode,
@@ -79,52 +89,78 @@ export const RightRail = memo(function RightRail({
 
   return (
     <aside className="cop-right" aria-label="운용자 명령 패널">
-      <OperationalMetricTiles metrics={operationalMetrics} />
-      <ActivityStreamPanel />
-      <ActiveIncidents
-        incidents={incidents}
-        selectedIncidentId={selectedIncident.id}
-        cameraLabel={cameraLabel}
-        onSelectIncident={onSelectIncident}
-      />
-      <RelationshipGraphPanel
-        graph={relationshipGraph}
-        selectedIncidentId={selectedIncident.id}
-        selectedCameraId={selectedCameraId}
-        selectedClipId={selectedClipId}
-        selectedCitationId={selectedCitationId}
-        onSelectNode={onSelectRelationshipNode}
-      />
-      <CodexSummary
-        selectedClip={selectedClip}
-        selectedIncident={selectedIncident}
-        metrics={codexMetrics}
-        citations={citations}
-        missingContext={missingContext}
-        telemetryFingerprint={codexRequestFingerprint}
-        recentActivitySummary={recentActivitySummary}
-      />
-      <CitationsPanel
-        citations={citations}
-        selectedCitationId={selectedCitationId}
-        cameraLabel={cameraLabel}
-        recommendedAction={recommendedAction}
-        onGoToGate={scrollToGate}
-        onSelectCitation={onSelectCitation}
-      />
-      <MissingContextPanel items={missingContext} />
-      <ResponseGatePanel selectedIncident={selectedIncident} gates={responseGates} />
-      <DailyReportPanel
-        selectedClip={selectedClip}
-        selectedIncident={selectedIncident}
-        cameraLabel={cameraLabel}
-        evidenceClips={evidenceClips}
-        citations={citations}
-        missingContext={missingContext}
-        responseGates={responseGates}
-        reportRows={reportRows}
-        reportPeriod={reportPeriod}
-      />
+      <div className="cop-rail-tabs" role="tablist" aria-label="운용자 명령 패널 탭">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === tab.id}
+            className={`cop-rail-tab${activeTab === tab.id ? " active" : ""}`}
+            onClick={() => onChangeTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Both groups stay mounted (hidden via the `hidden` attribute, not
+          conditional JSX) so panels like Codex — which run an async request
+          lifecycle independent of which tab the operator is looking at —
+          don't lose their state every time the operator switches tabs. */}
+      <div className="cop-rail-group" hidden={activeTab !== "overview"}>
+        <OperationalMetricTiles metrics={operationalMetrics} />
+        <ActivityStreamPanel />
+        <ActiveIncidents
+          incidents={incidents}
+          selectedIncidentId={selectedIncident.id}
+          cameraLabel={cameraLabel}
+          onSelectIncident={onSelectIncident}
+        />
+        <RelationshipGraphPanel
+          graph={relationshipGraph}
+          selectedIncidentId={selectedIncident.id}
+          selectedCameraId={selectedCameraId}
+          selectedClipId={selectedClipId}
+          selectedCitationId={selectedCitationId}
+          onSelectNode={onSelectRelationshipNode}
+        />
+      </div>
+
+      <div className="cop-rail-group" hidden={activeTab !== "decision"}>
+        <CodexSummary
+          selectedClip={selectedClip}
+          selectedIncident={selectedIncident}
+          metrics={codexMetrics}
+          citations={citations}
+          missingContext={missingContext}
+          telemetryFingerprint={codexRequestFingerprint}
+          recentActivitySummary={recentActivitySummary}
+        />
+        <CitationsPanel
+          citations={citations}
+          selectedCitationId={selectedCitationId}
+          cameraLabel={cameraLabel}
+          recommendedAction={recommendedAction}
+          onGoToGate={scrollToGate}
+          onSelectCitation={onSelectCitation}
+        />
+        <div className="cop-readiness-group">
+          <MissingContextPanel items={missingContext} />
+          <ResponseGatePanel selectedIncident={selectedIncident} gates={responseGates} />
+        </div>
+        <DailyReportPanel
+          selectedClip={selectedClip}
+          selectedIncident={selectedIncident}
+          cameraLabel={cameraLabel}
+          evidenceClips={evidenceClips}
+          citations={citations}
+          missingContext={missingContext}
+          responseGates={responseGates}
+          reportRows={reportRows}
+          reportPeriod={reportPeriod}
+        />
+      </div>
     </aside>
   )
 })

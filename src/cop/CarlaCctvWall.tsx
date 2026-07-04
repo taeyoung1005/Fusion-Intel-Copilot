@@ -23,6 +23,7 @@ type CarlaCctvWallProps = {
   readonly onSelectCamera: (camera: DynamicCameraRecord) => void
   readonly onVisionEvidence: (clip: EvidenceClip) => void
   readonly onDetectionServerConnectionChange?: CarlaDetectionServerConnectionHandler
+  readonly onDetectionFrameChange?: CarlaDetectionFrameChangeHandler
   readonly expanded?: boolean
   readonly onClose?: () => void
 }
@@ -30,6 +31,14 @@ type CarlaCctvWallProps = {
 export type CarlaDetectionServerConnectionHandler = (
   cameraId: string,
   connection: DetrServerConnection,
+) => void
+
+// Shares one camera's live tracking boxes with any other surface showing that
+// same feed (e.g. the realtime alert popup), so we don't run a second DETR
+// polling loop for a camera that's already being detected on in its CCTV tile.
+export type CarlaDetectionFrameChangeHandler = (
+  cameraId: string,
+  frame: Pick<CarlaCameraDetectionFrame, "width" | "height" | "objects"> | null,
 ) => void
 
 const formatLastFrame = (iso: string | null | undefined): string => {
@@ -50,6 +59,7 @@ export const CarlaCctvWall = memo(function CarlaCctvWall({
   onSelectCamera,
   onVisionEvidence,
   onDetectionServerConnectionChange,
+  onDetectionFrameChange,
   expanded = false,
   onClose,
 }: CarlaCctvWallProps): ReactElement {
@@ -149,6 +159,7 @@ export const CarlaCctvWall = memo(function CarlaCctvWall({
               {...(onDetectionServerConnectionChange !== undefined
                 ? { onDetectionServerConnectionChange }
                 : {})}
+              {...(onDetectionFrameChange !== undefined ? { onDetectionFrameChange } : {})}
             />
           ))}
         </div>
@@ -180,10 +191,11 @@ type CarlaCctvCardProps = {
   readonly onSelectCamera: (camera: DynamicCameraRecord) => void
   readonly onVisionEvidence: (clip: EvidenceClip) => void
   readonly onDetectionServerConnectionChange?: CarlaDetectionServerConnectionHandler
+  readonly onDetectionFrameChange?: CarlaDetectionFrameChangeHandler
 }
 
 type CarlaCctvDetectionOverlayProps = {
-  readonly frame: CarlaCameraDetectionFrame | null
+  readonly frame: Pick<CarlaCameraDetectionFrame, "width" | "height" | "objects"> | null
 }
 
 // DETR only returns bounding boxes here, so this is a box-based contour approximation,
@@ -246,6 +258,7 @@ const CarlaCctvCard = memo(function CarlaCctvCard({
   onSelectCamera,
   onVisionEvidence,
   onDetectionServerConnectionChange,
+  onDetectionFrameChange,
 }: CarlaCctvCardProps): ReactElement {
   const connection = cameraConnectionState(record)
   const hasFrame = record.latestFrameDataUrl !== null && record.latestFrameDataUrl !== undefined
@@ -263,23 +276,32 @@ const CarlaCctvCard = memo(function CarlaCctvCard({
   )
   const updateDetections = useCallback(
     (frame: CarlaCameraDetectionFrame): void => {
-      setDetectionFrame(frame.objects.length === 0 ? null : frame)
+      const next = frame.objects.length === 0 ? null : frame
+      setDetectionFrame(next)
+      onDetectionFrameChange?.(record.id, next)
       updateDetectionServerConnection(frame.serverConnection)
     },
-    [updateDetectionServerConnection],
+    [onDetectionFrameChange, record.id, updateDetectionServerConnection],
   )
   const selectCamera = useCallback((): void => {
     onSelectCamera(record)
   }, [onSelectCamera, record])
 
   useEffect(() => {
-    if (!hasFrame || webrtcLive) {
+    if (!hasFrame) {
       setDetectionFrame(null)
+      onDetectionFrameChange?.(record.id, null)
     }
     if (!hasFrame && detectionServerConnection !== "disabled") {
       updateDetectionServerConnection("disabled")
     }
-  }, [detectionServerConnection, hasFrame, updateDetectionServerConnection, webrtcLive])
+  }, [
+    detectionServerConnection,
+    hasFrame,
+    onDetectionFrameChange,
+    record.id,
+    updateDetectionServerConnection,
+  ])
 
   useCarlaVideoDetection(
     record.id,
@@ -288,6 +310,7 @@ const CarlaCctvCard = memo(function CarlaCctvCard({
     webrtcLive,
     onVisionEvidence,
     updateDetectionServerConnection,
+    updateDetections,
   )
   useCarlaCameraDetection(
     record.id,

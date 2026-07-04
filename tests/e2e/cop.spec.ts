@@ -25,7 +25,7 @@ test.describe("D4D COP 표면과 상호작용", () => {
       await page.goto("/")
 
       // --- Command bar ---------------------------------------------------------
-      await expect(page.getByRole("heading", { name: "D4D AI PERIMETER HARNESS" })).toBeVisible()
+      await expect(page.getByRole("heading", { name: "FUSION INTEL COPILOT" })).toBeVisible()
       await expect(page.getByText("COMMON OPERATIONAL PICTURE")).toBeVisible()
       await expect(page.getByText("SYSTEM NOMINAL")).toBeVisible()
       await expect(page.getByText(/AI AGENTS\s+6 \/ 6/)).toBeVisible()
@@ -103,6 +103,11 @@ test.describe("D4D COP 표면과 상호작용", () => {
       await expect(incidents.locator(".cop-count-badge")).toHaveText("1")
       await page.getByRole("button", { name: "VIEW ALL" }).click()
       await expect(page.getByText(/사건 큐 전체 표시: .*1건/)).toBeVisible()
+
+      // --- Right rail: switch to the decision/response tab ---------------------
+      // Codex/citations/gate/report now live under a second tab so the rail
+      // doesn't render all nine panels in one long column.
+      await page.getByRole("tab", { name: "판단·대응" }).click()
 
       // --- Right rail: Codex summary (computed from real telemetry) ------------
       const codex = page.locator(".cop-codex")
@@ -182,7 +187,7 @@ test.describe("D4D COP 표면과 상호작용", () => {
     await page.setViewportSize({ width: 390, height: 844 })
     await page.goto("/")
 
-    await expect(page.getByRole("heading", { name: "D4D AI PERIMETER HARNESS" })).toBeVisible()
+    await expect(page.getByRole("heading", { name: "FUSION INTEL COPILOT" })).toBeVisible()
     await expect(page.getByRole("img", { name: "시설 지도" })).toBeVisible()
     await expect(page.getByText("ACTIVE INCIDENTS")).toBeVisible()
 
@@ -385,12 +390,20 @@ test.describe("D4D COP 표면과 상호작용", () => {
     await page.waitForTimeout(1_000)
 
     // Switch to B here first so the actual race below starts from a real
-    // prior selection and clicking A is a genuine transition.
+    // prior selection and clicking A is a genuine transition. Incident
+    // selection lives in the overview tab; Codex's decision text lives in
+    // the decision tab. Codex keeps running/updating in the background
+    // while the operator is on the overview tab (see the RightRail comment
+    // about the two tab groups staying mounted), so switching tabs here
+    // only changes what's visible, not the race being exercised.
     await incidents.locator(".cop-incident", { hasText: "CARLA-STALE-B" }).click()
+    await page.getByRole("tab", { name: "판단·대응" }).click()
     await expect(page.getByText("판단-inc-CARLA-STALE-B")).toBeVisible({ timeout: 20_000 })
 
+    await page.getByRole("tab", { name: "상황 개관" }).click()
     await incidents.locator(".cop-incident", { hasText: "CARLA-STALE-A" }).click()
     await incidents.locator(".cop-incident", { hasText: "CARLA-STALE-B" }).click()
+    await page.getByRole("tab", { name: "판단·대응" }).click()
 
     await expect(page.locator(".cop-codex")).toHaveCount(1)
     await expect(page.getByText("판단-inc-CARLA-STALE-A")).toHaveCount(0)
@@ -733,6 +746,9 @@ test.describe("D4D COP 표면과 상호작용", () => {
     await expect(alert.getByText("CARLA-ALERT-01")).toBeVisible()
     await expect.poll(() => page.locator(".cop-track-block").count()).toBeGreaterThanOrEqual(1)
 
+    // The popup shares the CCTV tile's live tracking boxes, not a bare feed.
+    await expect(alert.locator(".cop-detection-box").first()).toBeVisible()
+
     // Closing it manually works.
     await page.getByRole("button", { name: "CARLA-ALERT-01 알림 닫기" }).click()
     await expect(alert).toHaveCount(0)
@@ -740,6 +756,10 @@ test.describe("D4D COP 표면과 상호작용", () => {
     // Clicking the resulting EVENT TIMELINE block opens the clip player modal.
     await page.locator(".cop-track-block").first().click()
     await expect(page.locator(".cop-clip-player")).toBeVisible()
+
+    // The captured frame replays with its tracked detection overlaid, not a bare image.
+    await expect(page.locator(".cop-clip-player .cop-detection-box")).toBeVisible()
+
     await page.getByRole("button", { name: "재생 닫기" }).click()
     await expect(page.locator(".cop-clip-player")).toHaveCount(0)
 

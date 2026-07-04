@@ -185,6 +185,9 @@ export const useCarlaCameraDetection = (
           source: "vision",
           confidencePct: Math.round(topObject.confidence * 100),
           frameDataUrl: source,
+          frameWidth: FRAME_WIDTH,
+          frameHeight: FRAME_HEIGHT,
+          detections: objects,
           ...detrEventEvidenceFields(promotion.metadata),
           ...(attributes !== undefined ? { attributes } : {}),
         })

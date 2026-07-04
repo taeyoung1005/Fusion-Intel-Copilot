@@ -8,6 +8,7 @@ import {
 } from "./detrVisionDetector"
 import { riskToTone } from "./evidenceData"
 import type { DetrServerConnection } from "./serverDetectionClient"
+import type { CarlaCameraDetectionsHandler } from "./useCarlaCameraDetection"
 import {
   type VisionPipelineRequest,
   type VisionPipelineResponse,
@@ -61,11 +62,14 @@ export const useCarlaVideoDetection = (
   enabled: boolean,
   onVisionEvidence: (clip: EvidenceClip) => void,
   onDetectionServerConnection?: CarlaVideoDetectionStatusHandler,
+  onDetections?: CarlaCameraDetectionsHandler,
 ): void => {
   const onVisionEvidenceRef = useRef(onVisionEvidence)
   onVisionEvidenceRef.current = onVisionEvidence
   const onDetectionServerConnectionRef = useRef(onDetectionServerConnection)
   onDetectionServerConnectionRef.current = onDetectionServerConnection
+  const onDetectionsRef = useRef(onDetections)
+  onDetectionsRef.current = onDetections
 
   const inFlightRef = useRef(false)
   const frameIndexRef = useRef(0)
@@ -102,6 +106,12 @@ export const useCarlaVideoDetection = (
         })
         const objects = detectionResult.objects
         onDetectionServerConnectionRef.current?.(detectionResult.serverConnection)
+        onDetectionsRef.current?.({
+          width: FRAME_WIDTH,
+          height: FRAME_HEIGHT,
+          objects,
+          serverConnection: detectionResult.serverConnection,
+        })
         if (objects.length === 0) {
           return
         }
@@ -164,6 +174,9 @@ export const useCarlaVideoDetection = (
           source: "vision",
           confidencePct: Math.round(topObject.confidence * 100),
           frameDataUrl: source,
+          frameWidth: FRAME_WIDTH,
+          frameHeight: FRAME_HEIGHT,
+          detections: objects,
           ...detrEventEvidenceFields(promotion.metadata),
           ...(attributes !== undefined ? { attributes } : {}),
         })

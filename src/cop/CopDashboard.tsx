@@ -8,11 +8,14 @@ import { RightRail } from "./RightRail"
 import { type EvidenceClip, LAST_UPDATED, MAP_LAYERS, type MapLayerId } from "./copData"
 import { useEvidenceWindowBuffer } from "./evidenceWindowBuffer"
 import { type DetrServerConnection, isDetrServerDisconnected } from "./serverDetectionClient"
+import type { CarlaCameraDetectionFrame } from "./useCarlaCameraDetection"
 import { useCarlaCameras } from "./useCarlaCameras"
-import { useCopDashboardActions } from "./useCopDashboardActions"
+import { type RightRailTab, useCopDashboardActions } from "./useCopDashboardActions"
 import { useCorrelationAlerts } from "./useCorrelationAlerts"
 import { useDashboardTelemetry } from "./useDashboardTelemetry"
 import { useRealtimeAlerts } from "./useRealtimeAlerts"
+
+type LiveDetectionFrame = Pick<CarlaCameraDetectionFrame, "width" | "height" | "objects">
 
 const MAX_VISION_EVIDENCE = 6
 
@@ -36,11 +39,15 @@ export function CopDashboard(): ReactElement {
   const [selectedIncidentId, setSelectedIncidentId] = useState("")
   const [selectedCameraId, setSelectedCameraId] = useState("")
   const [selectedCitationId, setSelectedCitationId] = useState("")
+  const [rightRailTab, setRightRailTab] = useState<RightRailTab>("overview")
   const [visionEvidence, setVisionEvidence] = useState<readonly EvidenceClip[]>([])
   const [cctvWindowOpen, setCctvWindowOpen] = useState(false)
   const [disconnectedDetectionCameraIds, setDisconnectedDetectionCameraIds] = useState<
     ReadonlySet<string>
   >(() => new Set())
+  const [liveDetectionFrames, setLiveDetectionFrames] = useState<
+    ReadonlyMap<string, LiveDetectionFrame>
+  >(() => new Map())
   const [commandFeedback, setCommandFeedback] = useState(
     "COP 준비 완료: 합성 CCTV와 서버 Codex 하네스 연결 대기",
   )
@@ -87,6 +94,25 @@ export function CopDashboard(): ReactElement {
     })
   }, [])
 
+  const updateLiveDetectionFrame = useCallback(
+    (cameraId: string, frame: LiveDetectionFrame | null): void => {
+      setLiveDetectionFrames((previous) => {
+        if (frame === null) {
+          if (!previous.has(cameraId)) {
+            return previous
+          }
+          const next = new Map(previous)
+          next.delete(cameraId)
+          return next
+        }
+        const next = new Map(previous)
+        next.set(cameraId, frame)
+        return next
+      })
+    },
+    [],
+  )
+
   const updateDetectionServerConnection = useCallback(
     (cameraId: string, connection: DetrServerConnection): void => {
       const disconnected = isDetrServerDisconnected(connection)
@@ -128,6 +154,7 @@ export function CopDashboard(): ReactElement {
     selectMapEvent,
     selectTimelineEvent,
     selectIncident,
+    selectCitation,
     selectRelationshipNode,
     navigateRail,
     selectDynamicCamera,
@@ -145,6 +172,7 @@ export function CopDashboard(): ReactElement {
     setSelectedIncidentId,
     setSelectedCameraId,
     setSelectedCitationId,
+    setRightRailTab,
     setCommandFeedback,
     dismissAlert,
     dismissCorrelationAlert,
@@ -183,6 +211,7 @@ export function CopDashboard(): ReactElement {
           cctvWindowOpen={cctvWindowOpen}
           onCloseCctvWindow={() => setCctvWindowOpen(false)}
           onDetectionServerConnectionChange={updateDetectionServerConnection}
+          onDetectionFrameChange={updateLiveDetectionFrame}
         />
         <main className="cop-center" aria-label="시설 지도와 증거 타임라인">
           <FacilityMap
@@ -221,7 +250,9 @@ export function CopDashboard(): ReactElement {
             relationshipGraph={relationshipGraph}
             codexRequestFingerprint={codexRequestFingerprint}
             recentActivitySummary={recentActivitySummary}
-            onSelectCitation={setSelectedCitationId}
+            activeTab={rightRailTab}
+            onChangeTab={setRightRailTab}
+            onSelectCitation={selectCitation}
             onSelectIncident={selectIncident}
             onSelectRelationshipNode={selectRelationshipNode}
           />
@@ -230,6 +261,7 @@ export function CopDashboard(): ReactElement {
       <RealtimeAlertStack
         alerts={combinedAlerts}
         escalated={recentActivityEscalated}
+        detectionFrames={liveDetectionFrames}
         onDismiss={dismissAnyAlert}
         onUpdateSettings={updateAnyAlertSettings}
       />

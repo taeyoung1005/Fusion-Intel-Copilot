@@ -1,5 +1,6 @@
 import { Pause, Play, X } from "lucide-react"
 import { type ReactElement, useEffect, useMemo, useRef, useState } from "react"
+import { CarlaCctvDetectionOverlay } from "./CarlaCctvWall"
 import { type EvidenceClip, evidenceClipWindowFor } from "./copData"
 
 const CLIP_WIDTH = 640
@@ -120,6 +121,15 @@ export function ClipPlayer({ clip, onClose }: ClipPlayerProps): ReactElement {
           {hasFrame ? (
             <div className="cop-clip-player-frame">
               <img src={clip.frameDataUrl ?? ""} alt={`${clip.id} 캡처 증거 프레임`} />
+              {clip.detections !== undefined && clip.detections.length > 0 ? (
+                <CarlaCctvDetectionOverlay
+                  frame={{
+                    width: clip.frameWidth ?? CLIP_WIDTH,
+                    height: clip.frameHeight ?? CLIP_HEIGHT,
+                    objects: clip.detections,
+                  }}
+                />
+              ) : null}
               <span
                 className="cop-clip-player-scan"
                 style={{ top: `${Math.round(progress * 100)}%` }}

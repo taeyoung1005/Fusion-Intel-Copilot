@@ -187,18 +187,30 @@ export const resetCodexAgentServerStateForTests = (): void => {
   inFlightDecisions.clear()
 }
 
+// "operator-review" is the checkpoint id the client sends for WATCH-tone
+// incidents (see checkpointForIncident in src/cop/codexAgentClient.ts) —
+// Codex still never proposes a physical action, but an elevated incident
+// must read differently from routine monitoring, and must say when it will
+// look again, or the operator has no way to tell whether Codex is actively
+// tracking the situation or has gone silent on it.
+const isElevatedCheckpoint = (checkpointId: string): boolean => checkpointId === "operator-review"
+
 const localCodexDecision = (
   request: CodexAgentRequest,
   fallbackReason?: string,
 ): CodexAgentResponse => {
   const mode = codexMode()
+  const elevated = isElevatedCheckpoint(request.checkpointId)
   return {
     codexMode: fallbackReason === undefined ? mode : "local-codex-adapter",
     decision: {
-      title: "서버 Codex 하네스 판단",
-      summary: `${request.evidence.title} 항목은 모의 증거와 누락 맥락을 함께 보존해 검토합니다.`,
-      recommendedAction:
-        "자동 결론이나 물리 대응을 제안하지 않고, 사람 검토와 인용 보존을 우선합니다.",
+      title: elevated ? "서버 Codex 하네스 판단 · 우선순위 상승" : "서버 Codex 하네스 판단",
+      summary: elevated
+        ? `${request.evidence.title} 항목은 위험도가 상승한 상태로, 모의 증거와 누락 맥락을 함께 보존해 우선 검토합니다.`
+        : `${request.evidence.title} 항목은 모의 증거와 누락 맥락을 함께 보존해 검토합니다.`,
+      recommendedAction: elevated
+        ? "자동 결론이나 물리 대응을 제안하지 않고, 사람의 즉시 검토를 요청합니다 — 다음 Codex 재판단은 15초 이내로 앞당깁니다."
+        : "자동 결론이나 물리 대응을 제안하지 않고, 사람 검토와 인용 보존을 우선합니다 — 다음 Codex 재판단은 표준 주기로 진행합니다.",
       checkpoint: request.checkpointLabel,
     },
     citations: request.evidence.citations,

@@ -190,7 +190,7 @@ function FacilityMapContent({
           <strong>LEGEND</strong>
           <ul>
             {LEGEND_ITEMS.map((item) => (
-              <li key={item.id}>
+              <li key={item.id} title={"title" in item ? item.title : undefined}>
                 <span className={`cop-legend-mark mark-${item.id}`} aria-hidden="true" />
                 {item.label}
               </li>

@@ -1,5 +1,8 @@
 import type { PersonAttributes } from "./attributeClassifier"
 import type { AlertTone } from "./copMapBaseData"
+import type { VisionPipelineRequest } from "./visionPipelineClient"
+
+export type EvidenceDetectionObject = VisionPipelineRequest["frames"][number]["objects"][number]
 
 // --- Center: event timeline -----------------------------------------------------
 
@@ -148,6 +151,9 @@ export type EvidenceClip = {
   readonly detectionClass?: string
   readonly cooldownKey?: string
   readonly promotedAtMs?: number
+  readonly frameWidth?: number
+  readonly frameHeight?: number
+  readonly detections?: readonly EvidenceDetectionObject[]
 }
 
 export const LEGEND_ITEMS = [
@@ -157,4 +163,9 @@ export const LEGEND_ITEMS = [
   { id: "blind", label: "Blind Spot" },
   { id: "cone", label: "Coverage Cone" },
   { id: "bands", label: "Distance Bands" },
+  {
+    id: "depot",
+    label: "Protected Asset",
+    title: "보호 자산 구역 — 테두리 색이 인근 최근접 이벤트의 위험도를 나타냅니다.",
+  },
 ] as const

@@ -1,5 +1,6 @@
 import { Settings2, X } from "lucide-react"
 import { type ReactElement, useEffect, useRef, useState } from "react"
+import { CarlaCctvDetectionOverlay } from "./CarlaCctvWall"
 import {
   alertIdSet,
   criticalEntryPulseAlertIds,
@@ -11,15 +12,18 @@ import {
   realtimeAlertStackPlacements,
 } from "./realtimeAlertStackOrder"
 import type { RealtimeAlert } from "./realtimeAlerts"
+import type { CarlaCameraDetectionFrame } from "./useCarlaCameraDetection"
 import { useCarlaWebrtcVideo } from "./useCarlaWebrtcVideo"
 
 const CRITICAL_ENTRY_PULSE_MS = 1_800
 
 type AlertSettings = { readonly autoClose: boolean; readonly autoCloseMs: number }
+type LiveDetectionFrame = Pick<CarlaCameraDetectionFrame, "width" | "height" | "objects">
 
 type RealtimeAlertStackProps = {
   readonly alerts: readonly RealtimeAlert[]
   readonly escalated: boolean
+  readonly detectionFrames: ReadonlyMap<string, LiveDetectionFrame>
   readonly onDismiss: (id: string) => void
   readonly onUpdateSettings: (id: string, settings: AlertSettings) => void
 }
@@ -27,6 +31,7 @@ type RealtimeAlertStackProps = {
 export function RealtimeAlertStack({
   alerts,
   escalated,
+  detectionFrames,
   onDismiss,
   onUpdateSettings,
 }: RealtimeAlertStackProps): ReactElement {
@@ -108,6 +113,7 @@ export function RealtimeAlertStack({
           depth={placement.depth}
           isTop={placement.isTop}
           pulseCriticalEntry={pulsingAlertIds.has(placement.alert.id)}
+          detectionFrame={detectionFrames.get(placement.alert.cameraId) ?? null}
           onPulseComplete={completePulse}
           onDismiss={onDismiss}
           onUpdateSettings={onUpdateSettings}
@@ -122,6 +128,7 @@ type RealtimeAlertCardProps = {
   readonly depth: RealtimeAlertStackDepth
   readonly isTop: boolean
   readonly pulseCriticalEntry: boolean
+  readonly detectionFrame: LiveDetectionFrame | null
   readonly onPulseComplete: (id: string) => void
   readonly onDismiss: (id: string) => void
   readonly onUpdateSettings: (id: string, settings: AlertSettings) => void
@@ -132,6 +139,7 @@ function RealtimeAlertCard({
   depth,
   isTop,
   pulseCriticalEntry,
+  detectionFrame,
   onPulseComplete,
   onDismiss,
   onUpdateSettings,
@@ -244,6 +252,7 @@ function RealtimeAlertCard({
           src={carlaCameraStreamSrc(alert.cameraId)}
           alt={`${alert.cameraId} 실시간 탐지 영상`}
         />
+        <CarlaCctvDetectionOverlay frame={detectionFrame} />
       </div>
       <p className="cop-realtime-alert-detail">
         {alert.clip.label} · {alert.clip.detail}

@@ -42,7 +42,7 @@ export type ResponseGate = {
 // --- Right rail: daily report ---------------------------------------------------
 
 export const DAILY_REPORT = {
-  title: "D4D AI PERIMETER HARNESS",
+  title: "FUSION INTEL COPILOT",
   subtitle: "DAILY SITUATION REPORT",
   date: "2025-05-20",
   period: "00:00 ~ 24:00",

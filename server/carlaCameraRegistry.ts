@@ -56,6 +56,34 @@ const MJPEG_BOUNDARY = "carla-frame"
 const durationMs = (startedAt: number): number =>
   Math.round((performance.now() - startedAt) * 100) / 100
 
+// Camera bridges upload frames many times per second; logging every accepted
+// frame as an activity event floods the ops log with noise that carries no
+// new information. Collapse routine accept events to one per camera per
+// window, while still logging the first frame and every rejection.
+const FRAME_ACTIVITY_THROTTLE_MS = 750
+const lastFrameActivityAt = new Map<string, number>()
+
+const shouldEmitFrameActivity = (cameraId: string): boolean => {
+  const now = Date.now()
+  const last = lastFrameActivityAt.get(cameraId)
+  if (last !== undefined && now - last < FRAME_ACTIVITY_THROTTLE_MS) {
+    return false
+  }
+  lastFrameActivityAt.set(cameraId, now)
+  return true
+}
+
+export const resetCarlaCameraRegistryForTest = (): void => {
+  cameras.clear()
+  lastFrameActivityAt.clear()
+  for (const clients of streamClients.values()) {
+    for (const client of clients) {
+      client.end()
+    }
+  }
+  streamClients.clear()
+}
+
 export const isCarlaCameraRequest = (
   method: string | undefined,
   url: string | undefined,
@@ -134,13 +162,7 @@ const acceptFrame = async (
   cameraId: string,
 ): Promise<void> => {
   const startedAt = performance.now()
-  emitActivityEvent({
-    source: "carla",
-    stage: "frame-upload:start",
-    level: "info",
-    message: "CARLA 프레임 업링크 수신을 시작했습니다.",
-    detail: { cameraId },
-  })
+  const emitFrameActivity = shouldEmitFrameActivity(cameraId)
   const rawBody = await readBody(request)
   const parsed = FrameRequestSchema.safeParse(parseJson(rawBody))
   if (!parsed.success) {
@@ -184,19 +206,21 @@ const acceptFrame = async (
   if (image !== null) {
     broadcastFrame(cameraId, image)
   }
-  emitActivityEvent({
-    source: "carla",
-    stage: "frame-upload:end",
-    level: "info",
-    message: "CARLA 프레임 업링크를 완료했습니다.",
-    detail: {
-      cameraId,
-      durationMs: durationMs(startedAt),
-      frameCount: camera.frameCount,
-      imageBytes: image?.body.length ?? 0,
-      valid: true,
-    },
-  })
+  if (emitFrameActivity) {
+    emitActivityEvent({
+      source: "carla",
+      stage: "frame-upload:end",
+      level: "info",
+      message: "CARLA 프레임 업링크를 완료했습니다.",
+      detail: {
+        cameraId,
+        durationMs: durationMs(startedAt),
+        frameCount: camera.frameCount,
+        imageBytes: image?.body.length ?? 0,
+        valid: true,
+      },
+    })
+  }
   writeJson(response, 200, { camera: snapshot(camera) })
 }
 

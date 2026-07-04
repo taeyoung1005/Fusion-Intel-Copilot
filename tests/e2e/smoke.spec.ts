@@ -7,7 +7,7 @@ test.describe("D4D COP 스모크", () => {
 
     // Then: the COP shell and core operational surfaces are visible.
     await expect(page.getByRole("main")).toBeVisible()
-    await expect(page.getByRole("heading", { name: "D4D AI PERIMETER HARNESS" })).toBeVisible()
+    await expect(page.getByRole("heading", { name: "FUSION INTEL COPILOT" })).toBeVisible()
     await expect(page.getByText("FACILITY MAP / LIVE SIM CCTV")).toBeVisible()
     await expect(page.getByRole("img", { name: "시설 지도" })).toBeVisible()
     await expect(page.getByText("EVENT TIMELINE")).toBeVisible()

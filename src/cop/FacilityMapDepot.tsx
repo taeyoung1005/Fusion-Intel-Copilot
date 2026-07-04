@@ -21,6 +21,11 @@ export function DepotFootprint({ events }: { readonly events: readonly MapEvent[
   const summaries = depotThreatSummaries(DEPOT_BUNKERS, events)
   return (
     <g>
+      <title>
+        {
+          "AMMO DEPOT — 보호 자산 구역. 각 벙커 테두리 색은 인근 최근접 이벤트의 위험도를 나타냅니다."
+        }
+      </title>
       <rect
         x={DEPOT_FOOTPRINT.x}
         y={DEPOT_FOOTPRINT.y}
@@ -37,7 +42,7 @@ export function DepotFootprint({ events }: { readonly events: readonly MapEvent[
         const color = DEPOT_TONE_COLOR[summary.tone]
         return (
           <g key={bunker.id} className={`cop-depot-bunker tone-${summary.tone}`}>
-            <title>{`${bunker.id} threat state ${summary.statusLabel}`}</title>
+            <title>{`${bunker.id} · 보호 자산 · 인근 위협 상태: ${summary.statusLabel}`}</title>
             <rect
               x={bunker.x}
               y={bunker.y}

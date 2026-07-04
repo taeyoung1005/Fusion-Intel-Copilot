@@ -66,6 +66,13 @@
   border-radius: 50%;
 }
 
+.mark-depot {
+  border: 1px solid var(--c-cyan);
+  border-radius: 2px;
+  width: 10px;
+  height: 8px;
+}
+
 .cop-map-zoom {
   position: absolute;
   top: 12px;

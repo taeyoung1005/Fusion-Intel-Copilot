@@ -1,5 +1,5 @@
 import { GitBranch, MousePointer2 } from "lucide-react"
-import type { ReactElement } from "react"
+import { type ReactElement, useMemo, useState } from "react"
 import type {
   EvidenceRelationshipGraph,
   RelationshipGraphNode,
@@ -45,9 +45,32 @@ export function RelationshipGraphPanel({
   selectedCitationId,
   onSelectNode,
 }: RelationshipGraphPanelProps): ReactElement {
+  const [showAll, setShowAll] = useState(false)
   const nodeById = new Map(graph.nodes.map((node) => [node.id, node]))
   const activeContext = { selectedIncidentId, selectedCameraId, selectedClipId, selectedCitationId }
   const nodeLabel = (nodeId: string): string => nodeById.get(nodeId)?.label ?? nodeId
+
+  // Every incident repeats the same 4-5 node chain (incident->camera->track
+  // ->detection->citation), so showing all of them at once is mostly
+  // repetition of the same shape — default to just the incident the operator
+  // is already looking at, with an explicit toggle back to everything.
+  const hasSelectedIncidentNodes = graph.nodes.some(
+    (node) => node.incidentId === selectedIncidentId,
+  )
+  const scoped = !showAll && hasSelectedIncidentNodes
+  const visibleNodes = useMemo(
+    () =>
+      scoped ? graph.nodes.filter((node) => node.incidentId === selectedIncidentId) : graph.nodes,
+    [graph.nodes, scoped, selectedIncidentId],
+  )
+  const visibleNodeIds = useMemo(() => new Set(visibleNodes.map((node) => node.id)), [visibleNodes])
+  const visibleEdges = useMemo(
+    () =>
+      scoped
+        ? graph.edges.filter((edge) => visibleNodeIds.has(edge.from) && visibleNodeIds.has(edge.to))
+        : graph.edges,
+    [graph.edges, scoped, visibleNodeIds],
+  )
 
   return (
     <section
@@ -58,11 +81,11 @@ export function RelationshipGraphPanel({
       <div className="cop-panel-head">
         <h2 id="cop-relationship-title">
           RELATION GRAPH
-          <span className="cop-count-badge">{graph.nodes.length}</span>
+          <span className="cop-count-badge">{visibleNodes.length}</span>
         </h2>
         <span className="cop-relationship-stat" aria-label="관계 엣지 수">
           <GitBranch size={13} aria-hidden="true" />
-          {graph.edges.length}E
+          {visibleEdges.length}E
         </span>
       </div>
 
@@ -73,8 +96,17 @@ export function RelationshipGraphPanel({
         </p>
       ) : (
         <div className="cop-relationship-layout">
+          {hasSelectedIncidentNodes && (
+            <button
+              type="button"
+              className="cop-link-button cop-relationship-toggle"
+              onClick={() => setShowAll((previous) => !previous)}
+            >
+              {showAll ? "선택 사건만 보기" : `전체 ${graph.nodes.length}건 보기`}
+            </button>
+          )}
           <div className="cop-relationship-nodes" aria-label="관계 그래프 노드">
-            {graph.nodes.map((node) => (
+            {visibleNodes.map((node) => (
               <button
                 key={node.id}
                 type="button"
@@ -96,7 +128,7 @@ export function RelationshipGraphPanel({
           </div>
 
           <ol className="cop-relationship-edges" aria-label="관계 그래프 엣지">
-            {graph.edges.map((edge) => (
+            {visibleEdges.map((edge) => (
               <li key={edge.id}>
                 <span>{edge.label}</span>
                 <code>

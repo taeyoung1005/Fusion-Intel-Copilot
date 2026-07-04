@@ -174,12 +174,21 @@ export const useCodexSummaryDecision = ({
 
       try {
         const response = await requestCodexAgent(entry.context)
-        if (!mountedRef.current || latestEntryRef.current.key !== entry.key) {
+        if (!mountedRef.current) {
           return
         }
-        lastSuccessfulKeyRef.current = entry.key
+        // Telemetry (evidence ticks from unrelated cameras) can change the
+        // request key faster than a round trip completes. A newer key only
+        // means a fresh request is already scheduled via the effect below —
+        // it does not mean this response is wrong, so it must still be
+        // shown (as "stale") rather than discarded, or the panel can be
+        // starved into "loading" forever under continuous live telemetry.
+        const isLatest = latestEntryRef.current.key === entry.key
+        if (isLatest) {
+          lastSuccessfulKeyRef.current = entry.key
+        }
         lastResponseRef.current = response
-        setState({ kind: "ready", response, freshness: "fresh" })
+        setState({ kind: "ready", response, freshness: isLatest ? "fresh" : "stale" })
       } catch (error) {
         if (!mountedRef.current || latestEntryRef.current.key !== entry.key) {
           return

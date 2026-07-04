@@ -3,6 +3,7 @@ import { type ViteDevServer, createServer as createViteServer } from "vite"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { z } from "zod"
 import { activityStream } from "./activityStream"
+import { resetCarlaCameraRegistryForTest } from "./carlaCameraRegistry"
 import { codexAgentPlugin } from "./viteCodexAgentPlugin"
 
 type StartedCarlaServer = {
@@ -22,11 +23,13 @@ const CameraListSchema = z.object({ cameras: z.array(z.object({ id: z.string() }
 
 beforeEach(() => {
   activityStream.clear()
+  resetCarlaCameraRegistryForTest()
 })
 
 afterEach(async () => {
   await Promise.all(startedServers.splice(0).map(stopCarlaServer))
   activityStream.clear()
+  resetCarlaCameraRegistryForTest()
 })
 
 describe("carla camera registry HTTP boundary", () => {
@@ -174,6 +177,39 @@ describe("carla camera registry HTTP boundary", () => {
         }),
       ]),
     )
+  })
+
+  it("throttles routine frame-upload activity events per camera to avoid log floods", async () => {
+    // Given: the activity buffer is empty and the Vite middleware server is running.
+    const server = await startCarlaServer()
+
+    // When: the CARLA bridge posts many frames for the same camera in quick succession.
+    for (let i = 0; i < 20; i += 1) {
+      const frame = await postJson(`${server.url}/api/carla-cameras/CAM-CARLA-01/frame`, {
+        frameDataUrl: "data:image/jpeg;base64,QUJDRA==",
+      })
+      expect(frame.status).toBe(200)
+    }
+
+    // Then: the registry still upserts every frame, but only logs the burst once.
+    const listed = await getJson(`${server.url}/api/carla-cameras`)
+    expect(listed.body).toMatchObject({
+      cameras: [expect.objectContaining({ id: "CAM-CARLA-01", frameCount: 20 })],
+    })
+    const acceptedEvents = activityStream
+      .snapshot()
+      .filter((event) => event.stage === "frame-upload:end" && event.level === "info")
+    expect(acceptedEvents).toHaveLength(1)
+
+    // And: a different camera still gets its own first-frame log.
+    const otherFrame = await postJson(`${server.url}/api/carla-cameras/CAM-CARLA-02/frame`, {
+      frameDataUrl: "data:image/jpeg;base64,QUJDRA==",
+    })
+    expect(otherFrame.status).toBe(200)
+    const acceptedAfterOther = activityStream
+      .snapshot()
+      .filter((event) => event.stage === "frame-upload:end" && event.level === "info")
+    expect(acceptedAfterOther).toHaveLength(2)
   })
 
   it("removes a CARLA camera from the registry", async () => {

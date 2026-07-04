@@ -13,6 +13,24 @@ import type { RelationshipGraphNode } from "./operationalTelemetry"
 
 type AlertSettings = { readonly autoClose: boolean; readonly autoCloseMs: number }
 
+export type RightRailTab = "overview" | "decision"
+
+// Which right-rail tab a given panel section id lives under, so icon-rail /
+// relationship-graph shortcuts can switch tabs before scrolling to a panel
+// that's currently hidden in the other tab.
+const DECISION_TAB_TARGET_IDS = new Set(["cop-codex-panel", "cop-gate", "cop-report-panel"])
+const OVERVIEW_TAB_TARGET_IDS = new Set(["cop-incidents-panel", "cop-relationship-graph-panel"])
+
+const tabForTargetId = (targetId: string): RightRailTab | undefined => {
+  if (DECISION_TAB_TARGET_IDS.has(targetId)) {
+    return "decision"
+  }
+  if (OVERVIEW_TAB_TARGET_IDS.has(targetId)) {
+    return "overview"
+  }
+  return undefined
+}
+
 type CopDashboardActionArgs = {
   readonly evidenceClips: readonly EvidenceClip[]
   readonly selectedClipId: string
@@ -26,6 +44,7 @@ type CopDashboardActionArgs = {
   readonly setSelectedIncidentId: Dispatch<SetStateAction<string>>
   readonly setSelectedCameraId: Dispatch<SetStateAction<string>>
   readonly setSelectedCitationId: Dispatch<SetStateAction<string>>
+  readonly setRightRailTab: Dispatch<SetStateAction<RightRailTab>>
   readonly setCommandFeedback: Dispatch<SetStateAction<string>>
   readonly dismissAlert: (id: string) => void
   readonly dismissCorrelationAlert: (id: string) => void
@@ -41,6 +60,7 @@ type CopDashboardActions = {
   readonly selectMapEvent: (event: MapEvent) => void
   readonly selectTimelineEvent: (event: TimelineEvent) => void
   readonly selectIncident: (incidentId: string) => void
+  readonly selectCitation: (citationId: string) => void
   readonly selectRelationshipNode: (node: RelationshipGraphNode) => void
   readonly navigateRail: (targetId: string, label: string) => void
   readonly selectDynamicCamera: (camera: DynamicCameraRecord) => void
@@ -60,6 +80,7 @@ export const useCopDashboardActions = ({
   setSelectedIncidentId,
   setSelectedCameraId,
   setSelectedCitationId,
+  setRightRailTab,
   setCommandFeedback,
   dismissAlert,
   dismissCorrelationAlert,
@@ -171,6 +192,51 @@ export const useCopDashboardActions = ({
     [incidents, setSelectedCameraId, setSelectedIncidentId],
   )
 
+  const selectCitation = useCallback(
+    (citationId: string): void => {
+      setSelectedCitationId(citationId)
+      const citation = citations.find((entry) => entry.id === citationId)
+      const clip = evidenceClips.find((entry) => entry.id === citationId.replace(/^cite-/, ""))
+      if (clip !== undefined) {
+        setSelectedClipId(clip.id)
+        setSelectedCameraId(clip.camera)
+        document.getElementById("cop-timeline-panel")?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        })
+      }
+      setCommandFeedback(
+        citation === undefined
+          ? "인용 선택: 시스템 근거를 확인했습니다."
+          : `${citation.label} 인용 선택: 관련 증거 클립을 확인했습니다.`,
+      )
+    },
+    [
+      citations,
+      evidenceClips,
+      setCommandFeedback,
+      setSelectedCameraId,
+      setSelectedCitationId,
+      setSelectedClipId,
+    ],
+  )
+
+  // The right rail is now split into two tabs, so a panel a shortcut wants to
+  // scroll to may currently be hidden in the other tab. Switch tabs first (if
+  // needed) and defer the scroll a frame so it targets the now-rendered DOM.
+  const scrollToPanel = useCallback(
+    (targetId: string): void => {
+      const requiredTab = tabForTargetId(targetId)
+      if (requiredTab !== undefined) {
+        setRightRailTab(requiredTab)
+      }
+      requestAnimationFrame(() => {
+        document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "center" })
+      })
+    },
+    [setRightRailTab],
+  )
+
   const selectRelationshipNode = useCallback(
     (node: RelationshipGraphNode): void => {
       if (
@@ -184,16 +250,13 @@ export const useCopDashboardActions = ({
       }
       if (node.clipId !== undefined) {
         setSelectedClipId(node.clipId)
-        document.getElementById("cop-timeline-panel")?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        })
+        scrollToPanel("cop-timeline-panel")
       }
       if (node.citationId !== undefined) {
         setSelectedCitationId(node.citationId)
       }
       if (node.responseGateId !== undefined) {
-        document.getElementById("cop-gate")?.scrollIntoView({ behavior: "smooth", block: "center" })
+        scrollToPanel("cop-gate")
       }
       setCommandFeedback(
         `${node.label} 관계 그래프 노드 선택: 실제 증거 컨텍스트를 동기화했습니다.`,
@@ -201,6 +264,7 @@ export const useCopDashboardActions = ({
     },
     [
       incidents,
+      scrollToPanel,
       setCommandFeedback,
       setSelectedCameraId,
       setSelectedCitationId,
@@ -211,10 +275,10 @@ export const useCopDashboardActions = ({
 
   const navigateRail = useCallback(
     (targetId: string, label: string): void => {
-      document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "center" })
+      scrollToPanel(targetId)
       setCommandFeedback(`${label} 패널로 이동했습니다.`)
     },
-    [setCommandFeedback],
+    [scrollToPanel, setCommandFeedback],
   )
 
   const selectDynamicCamera = useCallback(
@@ -237,6 +301,7 @@ export const useCopDashboardActions = ({
     selectMapEvent,
     selectTimelineEvent,
     selectIncident,
+    selectCitation,
     selectRelationshipNode,
     navigateRail,
     selectDynamicCamera,
