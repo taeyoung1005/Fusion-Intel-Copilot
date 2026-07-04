@@ -29,24 +29,34 @@ export const MAX_TRAVEL_WINDOW_MS = 240_000
 // Reuse the map's own scale: band-50 = PERIMETER.rx * 0.86 px = 50m.
 export const METERS_PER_PX = 50 / (PERIMETER.rx * 0.86)
 
+// Weights sum to 100 when every attribute matches with full confidence. There
+// is no cross-camera "build" signal: a bounding box's height ratio reflects
+// how close a person is to that particular camera, not their physical size,
+// so it was pure noise when comparing detections from different cameras.
+const TOP_COLOR_WEIGHT = 35
+const BAG_WEIGHT = 25
+const SLEEVE_WEIGHT = 20
+const HAT_WEIGHT = 20
+
 export const computeSimilarityScore = (a: PersonAttributes, b: PersonAttributes): number => {
   let score = 0
   if (a.topColor === b.topColor) {
-    score += 30
+    score += TOP_COLOR_WEIGHT
   }
+  // CLIP's zero-shot judgment on a tiny cropped frame can be barely above a
+  // coin flip. Weight each matching attribute by how confident both sides
+  // actually were, so two shaky guesses matching by luck doesn't score the
+  // same as two confident ones.
   if (a.bagCarried === b.bagCarried) {
-    score += 20
+    score += BAG_WEIGHT * Math.min(a.bagCarriedConfidence, b.bagCarriedConfidence)
   }
   if (a.sleeveLength === b.sleeveLength) {
-    score += 20
+    score += SLEEVE_WEIGHT * Math.min(a.sleeveLengthConfidence, b.sleeveLengthConfidence)
   }
   if (a.hat === b.hat) {
-    score += 20
+    score += HAT_WEIGHT * Math.min(a.hatConfidence, b.hatConfidence)
   }
-  if (a.build === b.build) {
-    score += 10
-  }
-  return score
+  return Math.round(score)
 }
 
 export const bandForScore = (score: number): CorrelationBand | undefined => {

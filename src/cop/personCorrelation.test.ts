@@ -15,11 +15,12 @@ import {
 
 const attrs = (over: Partial<PersonAttributes> = {}): PersonAttributes => ({
   hat: "no_hat",
+  hatConfidence: 1,
   sleeveLength: "short_sleeve",
+  sleeveLengthConfidence: 1,
   bagCarried: "carrying_bag",
+  bagCarriedConfidence: 1,
   topColor: "red",
-  build: "medium",
-  attributeConfidence: 0.9,
   ...over,
 })
 
@@ -44,25 +45,21 @@ const entry = (
 ): CorrelationEntry => ({ clip: clip(id, cameraId, attributes), cameraId, observedAtMs, node })
 
 describe("computeSimilarityScore", () => {
-  it("returns 100 when every attribute matches", () => {
+  it("returns 100 when every attribute matches with full confidence", () => {
     expect(computeSimilarityScore(attrs(), attrs())).toBe(100)
   })
 
-  it("subtracts only the top-color weight (30) when top color differs", () => {
-    expect(computeSimilarityScore(attrs(), attrs({ topColor: "blue" }))).toBe(70)
+  it("subtracts only the top-color weight (35) when top color differs", () => {
+    expect(computeSimilarityScore(attrs(), attrs({ topColor: "blue" }))).toBe(65)
   })
 
   it("subtracts only the hat weight (20) when hat differs", () => {
     expect(computeSimilarityScore(attrs(), attrs({ hat: "wearing_hat" }))).toBe(80)
   })
 
-  it("subtracts hat (20) and build (10) together", () => {
-    expect(computeSimilarityScore(attrs(), attrs({ hat: "wearing_hat", build: "large" }))).toBe(70)
-  })
-
-  it("subtracts top color (30) and bag (20) together", () => {
+  it("subtracts top color (35) and bag (25) together", () => {
     expect(computeSimilarityScore(attrs(), attrs({ topColor: "blue", bagCarried: "no_bag" }))).toBe(
-      50,
+      40,
     )
   })
 
@@ -75,10 +72,24 @@ describe("computeSimilarityScore", () => {
           sleeveLength: "long_sleeve",
           bagCarried: "no_bag",
           topColor: "blue",
-          build: "large",
         }),
       ),
     ).toBe(0)
+  })
+
+  it("scales a matching attribute's contribution by the weaker side's confidence", () => {
+    // hat matches on both sides, but one side was only 50% sure -> 20 * 0.5 = 10.
+    expect(computeSimilarityScore(attrs(), attrs({ hatConfidence: 0.5 }))).toBe(90)
+  })
+
+  it("uses the minimum of the two confidences when both sides are uncertain", () => {
+    // bag weight 25 * min(0.4, 0.9) = 10, plus the other three at full weight (35+20+20).
+    expect(
+      computeSimilarityScore(
+        attrs({ bagCarriedConfidence: 0.4 }),
+        attrs({ bagCarriedConfidence: 0.9 }),
+      ),
+    ).toBe(85)
   })
 })
 
@@ -147,7 +158,7 @@ describe("findCorrelationCandidates", () => {
     ]
     const [candidate] = findCorrelationCandidates(entries, 3_000, new Set())
     expect(candidate?.band).toBe("ambiguous")
-    expect(candidate?.score).toBe(70)
+    expect(candidate?.score).toBe(65)
   })
 
   it("excludes pairs whose observation gap exceeds the travel window", () => {
@@ -167,7 +178,7 @@ describe("findCorrelationCandidates", () => {
         2_000,
         nodeFar,
         attrs({ topColor: "blue", bagCarried: "no_bag", sleeveLength: "long_sleeve" }),
-      ), // 100-30-20-20 = 30 < 55
+      ), // 100-35-25-20 = 20 < 55
     ]
     expect(findCorrelationCandidates(entries, 3_000, new Set())).toEqual([])
   })

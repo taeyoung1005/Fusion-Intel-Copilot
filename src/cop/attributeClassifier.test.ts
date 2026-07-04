@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest"
-import {
-  buildFromRatio,
-  describeAttributes,
-  pickBinaryLabel,
-  rgbToNamedColor,
-} from "./attributeClassifier"
+import { describeAttributes, pickBinaryLabel, rgbToNamedColor } from "./attributeClassifier"
 
 describe("rgbToNamedColor", () => {
   it("recognizes red", () => {
@@ -37,24 +32,6 @@ describe("rgbToNamedColor", () => {
 
   it("falls back to other for hues outside the named buckets (magenta)", () => {
     expect(rgbToNamedColor(180, 0, 180)).toBe("other")
-  })
-})
-
-describe("buildFromRatio", () => {
-  it("classifies a small bounding box ratio as small", () => {
-    expect(buildFromRatio(72, 360)).toBe("small")
-  })
-
-  it("classifies a mid bounding box ratio as medium", () => {
-    expect(buildFromRatio(162, 360)).toBe("medium")
-  })
-
-  it("classifies a large bounding box ratio as large", () => {
-    expect(buildFromRatio(270, 360)).toBe("large")
-  })
-
-  it("defaults to medium when frameHeight is zero", () => {
-    expect(buildFromRatio(100, 0)).toBe("medium")
   })
 })
 
@@ -91,11 +68,12 @@ describe("describeAttributes", () => {
   it("composes a Korean description from all five attributes", () => {
     const text = describeAttributes({
       hat: "no_hat",
+      hatConfidence: 0.8,
       sleeveLength: "short_sleeve",
+      sleeveLengthConfidence: 0.8,
       bagCarried: "carrying_bag",
+      bagCarriedConfidence: 0.8,
       topColor: "red",
-      build: "medium",
-      attributeConfidence: 0.8,
     })
     expect(text).toBe("빨간 상의 · 배낭 소지 · 모자 없음 · 반팔")
   })
@@ -103,11 +81,12 @@ describe("describeAttributes", () => {
   it("omits the color prefix when topColor is other", () => {
     const text = describeAttributes({
       hat: "wearing_hat",
+      hatConfidence: 0.6,
       sleeveLength: "long_sleeve",
+      sleeveLengthConfidence: 0.6,
       bagCarried: "no_bag",
+      bagCarriedConfidence: 0.6,
       topColor: "other",
-      build: "large",
-      attributeConfidence: 0.6,
     })
     expect(text).toBe("상의 · 소지품 없음 · 모자 착용 · 긴팔")
   })

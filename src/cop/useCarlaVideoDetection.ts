@@ -125,12 +125,7 @@ export const useCarlaVideoDetection = (
 
           const attributes =
             personObject !== undefined
-              ? await extractPersonAttributesSafely(
-                  source,
-                  personObject.bbox,
-                  FRAME_HEIGHT,
-                  isDetrMemoryFailure,
-                )
+              ? await extractPersonAttributesSafely(source, personObject.bbox, isDetrMemoryFailure)
               : undefined
           const attributeSuffix =
             attributes !== undefined ? ` · ${describeAttributes(attributes)}` : ""

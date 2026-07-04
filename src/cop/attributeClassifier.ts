@@ -1,30 +1,13 @@
 export type TopColor = "red" | "blue" | "black" | "white" | "gray" | "green" | "yellow" | "other"
-export type Build = "small" | "medium" | "large"
 
 export type PersonAttributes = {
   readonly hat: "wearing_hat" | "no_hat"
+  readonly hatConfidence: number
   readonly sleeveLength: "short_sleeve" | "long_sleeve"
+  readonly sleeveLengthConfidence: number
   readonly bagCarried: "carrying_bag" | "no_bag"
+  readonly bagCarriedConfidence: number
   readonly topColor: TopColor
-  readonly build: Build
-  readonly attributeConfidence: number
-}
-
-const BUILD_SMALL_MAX_RATIO = 0.3
-const BUILD_LARGE_MIN_RATIO = 0.6
-
-export const buildFromRatio = (bboxHeight: number, frameHeight: number): Build => {
-  if (frameHeight <= 0) {
-    return "medium"
-  }
-  const ratio = bboxHeight / frameHeight
-  if (ratio < BUILD_SMALL_MAX_RATIO) {
-    return "small"
-  }
-  if (ratio >= BUILD_LARGE_MIN_RATIO) {
-    return "large"
-  }
-  return "medium"
 }
 
 export const rgbToNamedColor = (r: number, g: number, b: number): TopColor => {
@@ -194,12 +177,41 @@ const decodeAndCropToCanvas = (source: string, bbox: Bbox): Promise<HTMLCanvasEl
     image.src = source
   })
 
-const averageColorOf = (canvas: HTMLCanvasElement): { r: number; g: number; b: number } => {
+// Sampling the whole bbox for "top color" pulls in head, legs, and background
+// bleed at the crop edges. Restrict to a torso-ish band: below the head, above
+// the legs, and inset from both side edges.
+const TORSO_TOP_RATIO = 0.15
+const TORSO_BOTTOM_RATIO = 0.55
+const TORSO_SIDE_INSET_RATIO = 0.2
+
+type PixelRegion = {
+  readonly x: number
+  readonly y: number
+  readonly width: number
+  readonly height: number
+}
+
+const torsoRegion = (canvas: HTMLCanvasElement): PixelRegion => {
+  const top = Math.round(canvas.height * TORSO_TOP_RATIO)
+  const bottom = Math.round(canvas.height * TORSO_BOTTOM_RATIO)
+  const insetX = Math.round(canvas.width * TORSO_SIDE_INSET_RATIO)
+  return {
+    x: insetX,
+    y: top,
+    width: Math.max(1, canvas.width - insetX * 2),
+    height: Math.max(1, bottom - top),
+  }
+}
+
+const averageColorOfRegion = (
+  canvas: HTMLCanvasElement,
+  region: PixelRegion,
+): { r: number; g: number; b: number } => {
   const context = canvas.getContext("2d")
   if (context === null) {
     return { r: 128, g: 128, b: 128 }
   }
-  const { data } = context.getImageData(0, 0, canvas.width, canvas.height)
+  const { data } = context.getImageData(region.x, region.y, region.width, region.height)
   let r = 0
   let g = 0
   let b = 0
@@ -215,13 +227,11 @@ const averageColorOf = (canvas: HTMLCanvasElement): { r: number; g: number; b: n
 export const extractPersonAttributes = async (input: {
   readonly source: string
   readonly bbox: Bbox
-  readonly frameHeight: number
 }): Promise<PersonAttributes> => {
   const canvas = await decodeAndCropToCanvas(input.source, input.bbox)
   const croppedDataUrl = canvas.toDataURL("image/jpeg", 0.8)
-  const { r, g, b } = averageColorOf(canvas)
+  const { r, g, b } = averageColorOfRegion(canvas, torsoRegion(canvas))
   const topColor = rgbToNamedColor(r, g, b)
-  const build = buildFromRatio(input.bbox.height, input.frameHeight)
 
   const [hat, sleeveLength, bagCarried] = await Promise.all([
     classifyBinary(croppedDataUrl, HAT_LABELS, ["wearing_hat", "no_hat"] as const),
@@ -231,11 +241,12 @@ export const extractPersonAttributes = async (input: {
 
   return {
     hat: hat.value,
+    hatConfidence: hat.score,
     sleeveLength: sleeveLength.value,
+    sleeveLengthConfidence: sleeveLength.score,
     bagCarried: bagCarried.value,
+    bagCarriedConfidence: bagCarried.score,
     topColor,
-    build,
-    attributeConfidence: (hat.score + sleeveLength.score + bagCarried.score) / 3,
   }
 }
 
@@ -245,14 +256,13 @@ let attributesDisableWarningShown = false
 export const extractPersonAttributesSafely = async (
   source: string,
   bbox: Bbox,
-  frameHeight: number,
   isMemoryFailure: (error: unknown) => boolean,
 ): Promise<PersonAttributes | undefined> => {
   if (attributesDisabled) {
     return undefined
   }
   try {
-    return await extractPersonAttributes({ source, bbox, frameHeight })
+    return await extractPersonAttributes({ source, bbox })
   } catch (error: unknown) {
     if (isMemoryFailure(error)) {
       attributesDisabled = true
