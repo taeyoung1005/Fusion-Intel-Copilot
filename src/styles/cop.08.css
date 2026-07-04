@@ -47,6 +47,112 @@
   scrollbar-width: thin;
 }
 
+.cop-operational {
+  gap: var(--space-2);
+}
+
+.cop-operational-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.cop-operational-tile {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+  padding: var(--space-2);
+  border: 1px solid var(--line-soft);
+  border-left: 4px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel-inset);
+}
+
+.cop-operational-tile.tone-normal {
+  border-left-color: var(--c-green);
+}
+
+.cop-operational-tile.tone-watch {
+  border-left-color: var(--c-amber);
+}
+
+.cop-operational-tile.tone-alert {
+  border-left-color: var(--c-red);
+}
+
+.cop-operational-tile.tone-uncertain {
+  border-left-color: var(--text-tertiary);
+}
+
+.cop-operational-tile dt,
+.cop-operational-tile dd {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  margin: 0;
+}
+
+.cop-operational-label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+  word-break: keep-all;
+}
+
+.cop-operational-caption,
+.cop-operational-detail,
+.cop-operational-value {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.cop-operational-caption {
+  color: var(--text-tertiary);
+}
+
+.cop-operational-value {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.cop-operational-detail {
+  color: var(--text-tertiary);
+  overflow-wrap: anywhere;
+}
+
+.cop-operational-meter {
+  display: block;
+  height: var(--space-1);
+  margin-top: 2px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--line);
+}
+
+.cop-operational-meter span {
+  display: block;
+  height: 100%;
+}
+
+.cop-operational-meter .tone-normal {
+  background: var(--c-green);
+}
+
+.cop-operational-meter .tone-watch {
+  background: var(--c-amber);
+}
+
+.cop-operational-meter .tone-alert {
+  background: var(--c-red);
+}
+
+.cop-operational-meter .tone-uncertain {
+  background: var(--text-tertiary);
+}
+
 .cop-incident-list {
   gap: 6px;
 }
