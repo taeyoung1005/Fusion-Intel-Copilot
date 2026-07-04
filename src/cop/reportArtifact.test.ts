@@ -9,7 +9,7 @@ import {
 
 const incident = {
   id: "inc-CARLA-N-01",
-  tone: "WATCH",
+  tone: "watch",
   zone: "CARLA-N-01",
   title: "CARLA-N-01 person approaching",
   meta: "북측 CARLA CCTV",

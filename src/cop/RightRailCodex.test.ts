@@ -11,7 +11,7 @@ import type { Citation, EvidenceClip, Incident, MissingContext } from "./copData
 
 const selectedIncident = {
   id: "inc-test",
-  tone: "WATCH",
+  tone: "watch",
   zone: "PERIMETER EAST",
   title: "Camera Handoff Event",
   meta: "CAM-N-02 -> CAM-E-01",

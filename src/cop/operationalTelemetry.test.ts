@@ -42,7 +42,7 @@ describe("buildIncidents", () => {
     expect(incidents[0]?.title).toBe("활성 사건 없음")
   })
 
-  it("derives a real incident per camera and sorts WATCH first", () => {
+  it("derives a real incident per camera and preserves its true severity", () => {
     const cams = [camera("PHONE-001", 4, "2026-06-30T00:00:04Z")]
     const evid: EvidenceClip[] = [
       evidence({ camera: "PHONE-001", source: "vision", tone: "alert", confidencePct: 91 }),
@@ -51,8 +51,29 @@ describe("buildIncidents", () => {
     const incidents = buildIncidents(cams, evid)
     expect(incidents).toHaveLength(2)
     expect(incidents[0]?.id).toBe("inc-PHONE-001")
-    expect(incidents[0]?.tone).toBe("WATCH")
+    expect(incidents[0]?.tone).toBe("alert")
     expect(incidents[0]?.confidence).toBe(91)
+    expect(incidents[1]?.id).toBe("inc-PHONE-002")
+    expect(incidents[1]?.tone).toBe("uncertain")
+  })
+
+  it("sorts incidents by descending severity, not just watch-vs-normal", () => {
+    const cams = [
+      camera("CAM-A", 1, "2026-06-30T00:00:01Z"),
+      camera("CAM-B", 1, "2026-06-30T00:00:01Z"),
+      camera("CAM-C", 1, "2026-06-30T00:00:01Z"),
+    ]
+    const evid: EvidenceClip[] = [
+      evidence({ camera: "CAM-A", source: "vision", tone: "watch", confidencePct: 70 }),
+      evidence({ camera: "CAM-B", source: "vision", tone: "confirmed", confidencePct: 70 }),
+      evidence({ camera: "CAM-C", source: "vision", tone: "normal", confidencePct: 70 }),
+    ]
+    const incidents = buildIncidents(cams, evid)
+    expect(incidents.map((incident) => incident.id)).toEqual([
+      "inc-CAM-B",
+      "inc-CAM-A",
+      "inc-CAM-C",
+    ])
   })
 })
 
@@ -193,7 +214,7 @@ describe("buildDailyReportRows", () => {
 describe("buildResponseGates", () => {
   const incident = (over: Partial<Incident>): Incident => ({
     id: "inc-PHONE-001",
-    tone: "WATCH",
+    tone: "watch",
     zone: "PHONE-001",
     title: "person",
     meta: "PHONE-001",
@@ -204,7 +225,7 @@ describe("buildResponseGates", () => {
 
   it("leaves fact/data PENDING and passes context/assess for a quiet standby incident", () => {
     const gates = buildResponseGates(
-      incident({ id: "inc-standby", tone: "NORMAL", zone: "PERIMETER" }),
+      incident({ id: "inc-standby", tone: "normal", zone: "PERIMETER" }),
       [],
       [],
     )
@@ -224,14 +245,14 @@ describe("buildResponseGates", () => {
     const byId = Object.fromEntries(gates.map((g) => [g.id, g.initial]))
     expect(byId["gate-fact"]).toBe("PASS")
     expect(byId["gate-data"]).toBe("PASS")
-    expect(byId["gate-assess"]).toBe("PENDING") // WATCH incident still needs review
+    expect(byId["gate-assess"]).toBe("PENDING") // non-normal incident still needs review
   })
 })
 
 describe("buildRecommendedAction", () => {
   const incident = {
     id: "inc-PHONE-001",
-    tone: "WATCH",
+    tone: "watch",
     zone: "PHONE-001",
     title: "person",
     meta: "PHONE-001",

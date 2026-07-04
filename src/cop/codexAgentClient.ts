@@ -72,18 +72,27 @@ const checkpointForIncident = (
   incident: Incident,
 ): { readonly id: string; readonly label: string } => {
   switch (incident.tone) {
-    case "WATCH":
+    case "watch":
       return { id: "operator-review", label: "운용자 검토 필요" }
-    case "NORMAL":
+    case "alert":
+      return { id: "operator-review", label: "운용자 검토 필요" }
+    case "confirmed":
+      return { id: "operator-review", label: "운용자 검토 필요" }
+    case "uncertain":
+      return { id: "operator-review", label: "운용자 검토 필요" }
+    case "normal":
       return { id: "routine-monitoring", label: "정상 감시 유지" }
   }
 }
 
 const statusForIncident = (incident: Incident): string => {
   switch (incident.tone) {
-    case "WATCH":
+    case "watch":
+    case "alert":
+    case "confirmed":
+    case "uncertain":
       return "판단 보류: 사람 검토 필요"
-    case "NORMAL":
+    case "normal":
       return "정상 감시 유지"
   }
 }

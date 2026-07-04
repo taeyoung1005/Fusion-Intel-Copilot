@@ -2,6 +2,14 @@ import { CheckCircle2, ChevronRight } from "lucide-react"
 import { type ReactElement, useState } from "react"
 import type { Incident } from "./copData"
 
+const TONE_DISPLAY_LABEL: Record<Incident["tone"], string> = {
+  normal: "NORMAL",
+  uncertain: "UNCERTAIN",
+  watch: "WATCH",
+  alert: "ALERT",
+  confirmed: "CONFIRMED",
+}
+
 type ActiveIncidentsProps = {
   readonly incidents: readonly Incident[]
   readonly selectedIncidentId: string
@@ -71,7 +79,7 @@ function IncidentRow({
   selected,
   onSelect,
 }: IncidentRowProps): ReactElement {
-  const tone = incident.tone === "NORMAL" ? "normal" : "watch"
+  const tone = incident.tone
   const meta = incident.meta.includes("CAM-") ? cameraLabel : incident.meta
   return (
     <button
@@ -83,7 +91,7 @@ function IncidentRow({
       <header>
         <span className="cop-incident-tone">
           <CheckCircle2 size={13} aria-hidden="true" />
-          {incident.tone}
+          {TONE_DISPLAY_LABEL[incident.tone]}
         </span>
         <time>{incident.time}</time>
       </header>

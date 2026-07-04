@@ -32,7 +32,7 @@ export type DailyReportRow = { readonly id: string; readonly label: string; read
 
 const STANDBY_INCIDENT: Incident = {
   id: "inc-standby",
-  tone: "NORMAL",
+  tone: "normal",
   zone: "PERIMETER",
   title: "활성 사건 없음",
   meta: "실시간 탐지·업링크 대기",
@@ -40,15 +40,19 @@ const STANDBY_INCIDENT: Incident = {
   confidence: 0,
 }
 
-const toneRank = (tone: EvidenceClip["tone"]): number => {
-  if (tone === "alert") {
-    return 3
-  }
-  if (tone === "watch") {
-    return 2
-  }
-  return 1
+const TONE_SEVERITY: Record<EvidenceClip["tone"], number> = {
+  normal: 0,
+  uncertain: 1,
+  watch: 2,
+  alert: 3,
+  confirmed: 4,
 }
+
+const worstTone = (clips: readonly EvidenceClip[]): EvidenceClip["tone"] =>
+  clips.reduce<EvidenceClip["tone"]>(
+    (worst, clip) => (TONE_SEVERITY[clip.tone] > TONE_SEVERITY[worst] ? clip.tone : worst),
+    "normal",
+  )
 
 export const buildIncidents = (
   cameras: readonly DynamicCameraRecord[],
@@ -63,12 +67,12 @@ export const buildIncidents = (
 
   const incidents: Incident[] = []
   for (const [camera, clips] of byCamera) {
-    const worst = clips.reduce((max, clip) => Math.max(max, toneRank(clip.tone)), 1)
+    const tone = worstTone(clips)
     const latest = clips[0]
     const cameraRecord = cameras.find((record) => record.id === camera)
     incidents.push({
       id: `inc-${camera}`,
-      tone: worst >= 2 ? "WATCH" : "NORMAL",
+      tone,
       zone: camera,
       title: latest?.label ?? "라이브 업링크",
       meta: cameraRecord?.label ?? `증거 ${clips.length}건`,
@@ -78,8 +82,9 @@ export const buildIncidents = (
   }
 
   incidents.sort((left, right) => {
-    if (left.tone !== right.tone) {
-      return left.tone === "WATCH" ? -1 : 1
+    const severityDiff = TONE_SEVERITY[right.tone] - TONE_SEVERITY[left.tone]
+    if (severityDiff !== 0) {
+      return severityDiff
     }
     return right.confidence - left.confidence
   })
@@ -147,7 +152,7 @@ export const buildResponseGates = (
     { id: "gate-fact", label: "이벤트 사실 확인", initial: pass(hasEvidence) },
     { id: "gate-context", label: "맥락 검토 완료", initial: pass(!hasGap) },
     { id: "gate-data", label: "추가 데이터 검토", initial: pass(hasDetection) },
-    { id: "gate-assess", label: "상황 평가 완료", initial: pass(incident.tone === "NORMAL") },
+    { id: "gate-assess", label: "상황 평가 완료", initial: pass(incident.tone === "normal") },
   ]
 }
 

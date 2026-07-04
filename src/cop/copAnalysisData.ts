@@ -2,7 +2,7 @@ import type { AlertTone } from "./copMapBaseData"
 
 export type Incident = {
   readonly id: string
-  readonly tone: "WATCH" | "NORMAL"
+  readonly tone: AlertTone
   readonly zone: string
   readonly title: string
   readonly meta: string
