@@ -1,23 +1,34 @@
 .cop-realtime-alert-stack {
   position: fixed;
-  right: 16px;
-  bottom: 16px;
+  top: 50%;
+  left: 50%;
   z-index: 60;
   display: flex;
-  flex-direction: column-reverse;
-  gap: 10px;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: min(560px, calc(100vw - var(--space-8)));
+  max-height: min(720px, calc(100dvh - 96px));
+  padding: var(--space-1);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  transform: translate(-50%, -50%);
   pointer-events: none;
 }
 
 .cop-realtime-alert {
   pointer-events: auto;
-  width: 280px;
-  background: rgba(6, 16, 23, 0.97);
+  width: clamp(360px, 42vw, 520px);
+  min-width: min(360px, calc(100vw - var(--space-8)));
+  max-width: min(520px, calc(100vw - var(--space-8)));
+  background: rgba(6, 16, 23, 0.98);
   border: 1px solid var(--line);
-  border-left-width: 3px;
+  border-left-width: 4px;
   border-radius: 8px;
-  padding: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  padding: var(--space-4);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.46);
 }
 
 .cop-realtime-alert.tone-normal {
@@ -37,26 +48,43 @@
   align-items: center;
   justify-content: space-between;
   font-family: var(--mono);
-  font-size: 11px;
-  margin-bottom: 6px;
+  font-size: 12px;
+  line-height: 1.35;
+  margin-bottom: var(--space-2);
 }
 
 .cop-realtime-alert-actions {
   display: flex;
-  gap: 4px;
+  gap: var(--space-2);
+}
+
+.cop-realtime-alert .cop-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--line-soft);
+  border-radius: 6px;
+  background: var(--panel-inset);
+  color: var(--text-secondary);
+}
+
+.cop-realtime-alert .cop-icon-btn:hover {
+  color: var(--c-cyan);
+  border-color: var(--c-cyan-dim);
 }
 
 .cop-realtime-alert-settings {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 11px;
-  margin-bottom: 6px;
+  gap: var(--space-3);
+  font-size: 12px;
+  margin-bottom: var(--space-2);
   color: var(--text-secondary);
 }
 
 .cop-realtime-alert-settings input[type="number"] {
-  width: 48px;
+  width: 60px;
 }
 
 .cop-realtime-alert-media {
@@ -64,7 +92,7 @@
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: 6px;
   background: var(--surface-inset);
 }
 
@@ -92,9 +120,25 @@
 }
 
 .cop-realtime-alert-detail {
-  margin-top: 6px;
-  font-size: 11px;
+  margin-top: var(--space-2);
+  font-size: 13px;
+  line-height: 1.45;
   color: var(--text-secondary);
+  word-break: keep-all;
+}
+
+@media (max-width: 640px) {
+  .cop-realtime-alert-stack {
+    width: calc(100vw - var(--space-4));
+    max-height: calc(100dvh - var(--space-6));
+  }
+
+  .cop-realtime-alert {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: var(--space-3);
+  }
 }
 
 .cop-activity-stream {
