@@ -13,9 +13,15 @@ const FRAME_WIDTH = 640
 const FRAME_HEIGHT = 360
 const SEMANTIC_FRAME_HISTORY_LIMIT = 4
 const EVIDENCE_EVERY_FRAMES = 3
-const DETECTION_INTERVAL_MS = 1_200
+const DETECTION_INTERVAL_MS = 1_500
 
 type VisionPipelineFrame = VisionPipelineRequest["frames"][number]
+export type CarlaCameraDetectionFrame = {
+  readonly width: number
+  readonly height: number
+  readonly objects: VisionPipelineFrame["objects"]
+}
+export type CarlaCameraDetectionsHandler = (frame: CarlaCameraDetectionFrame) => void
 
 let carlaDetrDisabled = false
 let carlaDetrDisableWarningShown = false
@@ -58,15 +64,19 @@ export const useCarlaCameraDetection = (
   latestFrameDataUrl: string | null,
   lastFrameAt: string | null,
   onVisionEvidence: (clip: EvidenceClip) => void,
+  onDetections?: CarlaCameraDetectionsHandler,
 ): void => {
   const onVisionEvidenceRef = useRef(onVisionEvidence)
   onVisionEvidenceRef.current = onVisionEvidence
+  const onDetectionsRef = useRef(onDetections)
+  onDetectionsRef.current = onDetections
 
   const inFlightRef = useRef(false)
   const frameIndexRef = useRef(0)
   const lastInferenceStartedAtRef = useRef(-DETECTION_INTERVAL_MS)
   const lastEvidenceFrameRef = useRef(-EVIDENCE_EVERY_FRAMES)
   const frameHistoryRef = useRef<readonly VisionPipelineFrame[]>([])
+  const lastInferenceFrameKeyRef = useRef<string | null>(null)
 
   useEffect(() => {
     if (
@@ -81,7 +91,12 @@ export const useCarlaCameraDetection = (
     if (startedAt - lastInferenceStartedAtRef.current < DETECTION_INTERVAL_MS) {
       return
     }
+    const frameKey = `${cameraId}:${lastFrameAt}:${latestFrameDataUrl}`
+    if (lastInferenceFrameKeyRef.current === frameKey) {
+      return
+    }
     lastInferenceStartedAtRef.current = startedAt
+    lastInferenceFrameKeyRef.current = frameKey
     inFlightRef.current = true
     const frameIndex = frameIndexRef.current + 1
     frameIndexRef.current = frameIndex
@@ -93,6 +108,11 @@ export const useCarlaCameraDetection = (
           source,
           frameWidth: FRAME_WIDTH,
           frameHeight: FRAME_HEIGHT,
+        })
+        onDetectionsRef.current?.({
+          width: FRAME_WIDTH,
+          height: FRAME_HEIGHT,
+          objects,
         })
         if (objects.length === 0) {
           return

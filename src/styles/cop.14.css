@@ -160,3 +160,60 @@
   font-size: 10px;
   line-height: 1.35;
 }
+
+.cop-detection-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.cop-mobile-live-status {
+  z-index: 4;
+}
+
+.cop-detection-object {
+  color: var(--alert-watch);
+  filter: drop-shadow(0 0 5px rgba(244, 196, 48, 0.42));
+}
+
+.cop-mobile-live-card.tone-live .cop-detection-object {
+  color: var(--alert-normal);
+  filter: drop-shadow(0 0 5px rgba(54, 211, 153, 0.38));
+}
+
+.cop-mobile-live-card.selected .cop-detection-object {
+  color: var(--accent-hover);
+  filter: drop-shadow(0 0 6px rgba(125, 208, 218, 0.44));
+}
+
+.cop-detection-box {
+  fill: color-mix(in srgb, currentColor 12%, transparent);
+  stroke: currentColor;
+  stroke-width: 1.35;
+  vector-effect: non-scaling-stroke;
+}
+
+.cop-detection-corners {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  stroke-width: 2.6;
+  vector-effect: non-scaling-stroke;
+}
+
+.cop-detection-label {
+  fill: currentColor;
+  paint-order: stroke;
+  stroke: var(--surface-primary);
+  stroke-linejoin: round;
+  stroke-width: 3;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
