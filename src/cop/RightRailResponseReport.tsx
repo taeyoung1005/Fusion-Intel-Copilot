@@ -140,6 +140,13 @@ export function DailyReportPanel({
     reportPeriod,
     cameraLabel,
   })
+  const receiptText =
+    actionState.kind === "idle"
+      ? null
+      : actionState.kind === "exported" || actionState.kind === "pdf"
+        ? `${actionState.message} / ${actionState.fileName} / ${actionState.sizeBytes} bytes`
+        : actionState.message
+  const isPdfLoading = actionState.kind === "pdf-loading"
 
   return (
     <section
@@ -215,18 +222,29 @@ export function DailyReportPanel({
         </div>
       </div>
       <div className="cop-report-actions">
-        <button type="button" className="cop-button" onClick={createPdfPreview}>
+        <button
+          type="button"
+          className="cop-button"
+          onClick={() => {
+            void createPdfPreview()
+          }}
+          disabled={isPdfLoading}
+          aria-busy={isPdfLoading}
+        >
           <FileText size={14} aria-hidden="true" />
-          PDF 미리보기
+          {isPdfLoading ? "PDF 생성 중" : "PDF 미리보기"}
         </button>
         <button type="button" className="cop-button accent" onClick={exportReport}>
           <FileDown size={14} aria-hidden="true" />
           보고서 내보내기
         </button>
       </div>
-      {actionState.kind !== "idle" && (
-        <p className="cop-report-receipt" aria-live="polite">
-          {actionState.message} / {actionState.fileName} / {actionState.sizeBytes} bytes
+      {receiptText !== null && (
+        <p
+          className={`cop-report-receipt ${actionState.kind === "pdf-error" ? "is-error" : ""}`}
+          aria-live="polite"
+        >
+          {receiptText}
         </p>
       )}
       {actionState.kind === "pdf" && (

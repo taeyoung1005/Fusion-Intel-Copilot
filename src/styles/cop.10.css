@@ -30,6 +30,10 @@
   word-break: keep-all;
 }
 
+.cop-report-receipt.is-error {
+  color: var(--c-red);
+}
+
 /* Daily report */
 .cop-report-card {
   display: grid;

@@ -9,6 +9,7 @@ import {
 import { handleCarlaCameraRequest, isCarlaCameraRequest } from "./carlaCameraRegistry"
 import { handleCarlaWebrtcRequest, isCarlaWebrtcRequest } from "./carlaWebrtcSignaling"
 import { handleCodexAgentRequest } from "./codexAgent"
+import { handleReportPdfRequest, isReportPdfPost } from "./reportTypstPlugin"
 import { handleVisionPipelineRequest } from "./visionPipeline"
 
 const writeJsonError = (response: ServerResponse, message: string): void => {
@@ -74,6 +75,17 @@ const createCodexAgentMiddleware =
       handleVisionPipelineRequest(request, response).catch((error: unknown) => {
         if (error instanceof Error) {
           writeJsonError(response, "비전 파이프라인 처리 중 오류가 발생했습니다.")
+          return
+        }
+        throw error
+      })
+      return
+    }
+
+    if (isReportPdfPost(request.method, request.url)) {
+      handleReportPdfRequest(request, response).catch((error: unknown) => {
+        if (error instanceof Error) {
+          writeJsonError(response, "보고서 PDF 처리 중 오류가 발생했습니다.")
           return
         }
         throw error

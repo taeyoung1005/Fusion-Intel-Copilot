@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type { Citation, EvidenceClip, Incident, MissingContext, ResponseGate } from "./copData"
 import type { DailyReportRow } from "./operationalTelemetry"
 import {
@@ -6,8 +6,8 @@ import {
   type ReportFile,
   buildCommanderReportArtifact,
   buildReportExportFile,
-  buildReportPdfFile,
 } from "./reportArtifact"
+import { requestReportPdf } from "./reportPdfClient"
 
 export type ReportActionState =
   | { readonly kind: "idle" }
@@ -16,6 +16,14 @@ export type ReportActionState =
       readonly message: string
       readonly fileName: string
       readonly sizeBytes: number
+    }
+  | {
+      readonly kind: "pdf-loading"
+      readonly message: string
+    }
+  | {
+      readonly kind: "pdf-error"
+      readonly message: string
     }
   | {
       readonly kind: "pdf"
@@ -40,7 +48,7 @@ export type ReportActionInput = {
 type ReportActionResult = {
   readonly artifact: CommanderReportArtifact
   readonly actionState: ReportActionState
-  readonly createPdfPreview: () => void
+  readonly createPdfPreview: () => Promise<void>
   readonly exportReport: () => void
 }
 
@@ -73,6 +81,8 @@ export const useReportArtifactActions = ({
   reportPeriod,
 }: ReportActionInput): ReportActionResult => {
   const [actionState, setActionState] = useState<ReportActionState>({ kind: "idle" })
+  const previewRequestId = useRef(0)
+  const activePdfUrl = useRef<string | null>(null)
   const artifact = useMemo(
     () =>
       buildCommanderReportArtifact({
@@ -99,34 +109,63 @@ export const useReportArtifactActions = ({
   )
 
   const reportScope = artifact.reportId
+  const revokeActivePdfUrl = useCallback((): void => {
+    if (activePdfUrl.current !== null) {
+      URL.revokeObjectURL(activePdfUrl.current)
+      activePdfUrl.current = null
+    }
+  }, [])
+
   useEffect(() => {
     if (reportScope.length > 0) {
+      previewRequestId.current += 1
+      revokeActivePdfUrl()
       setActionState({ kind: "idle" })
     }
-  }, [reportScope])
+  }, [reportScope, revokeActivePdfUrl])
 
   useEffect(() => {
-    return () => {
-      if (actionState.kind === "pdf") {
-        URL.revokeObjectURL(actionState.url)
-      }
-    }
-  }, [actionState])
+    return revokeActivePdfUrl
+  }, [revokeActivePdfUrl])
 
-  const createPdfPreview = useCallback((): void => {
-    const file = buildReportPdfFile(artifact)
-    const blob = blobForReportFile(file)
-    const url = URL.createObjectURL(blob)
+  const createPdfPreview = useCallback(async (): Promise<void> => {
+    const requestId = previewRequestId.current + 1
+    previewRequestId.current = requestId
+    revokeActivePdfUrl()
     setActionState({
-      kind: "pdf",
-      message: `PDF 미리보기 생성: ${artifact.reportId} / ${selectedIncident.id} / ${
-        selectedClip === undefined ? "선택 클립 없음" : cameraLabel
-      }`,
-      fileName: file.fileName,
-      sizeBytes: blob.size,
-      url,
+      kind: "pdf-loading",
+      message: `PDF 미리보기 생성 중: ${artifact.reportId}`,
     })
-  }, [artifact, cameraLabel, selectedClip, selectedIncident.id])
+
+    try {
+      const file = await requestReportPdf(artifact)
+      if (previewRequestId.current !== requestId) {
+        return
+      }
+      const url = URL.createObjectURL(file.blob)
+      activePdfUrl.current = url
+      setActionState({
+        kind: "pdf",
+        message: `PDF 미리보기 생성: ${artifact.reportId} / ${selectedIncident.id} / ${
+          selectedClip === undefined ? "선택 클립 없음" : cameraLabel
+        }`,
+        fileName: file.fileName,
+        sizeBytes: file.blob.size,
+        url,
+      })
+    } catch (error) {
+      if (previewRequestId.current !== requestId) {
+        return
+      }
+      setActionState({
+        kind: "pdf-error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "PDF 미리보기 생성 실패: 알 수 없는 오류가 발생했습니다.",
+      })
+    }
+  }, [artifact, cameraLabel, revokeActivePdfUrl, selectedClip, selectedIncident.id])
 
   const exportReport = useCallback((): void => {
     const file = buildReportExportFile(artifact)

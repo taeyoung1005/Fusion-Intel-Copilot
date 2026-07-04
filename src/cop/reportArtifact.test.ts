@@ -1,11 +1,7 @@
 import { describe, expect, it } from "vitest"
 import type { Citation, EvidenceClip, Incident, MissingContext, ResponseGate } from "./copData"
 import type { DailyReportRow } from "./operationalTelemetry"
-import {
-  buildCommanderReportArtifact,
-  buildReportExportFile,
-  buildReportPdfFile,
-} from "./reportArtifact"
+import { buildCommanderReportArtifact, buildReportExportFile } from "./reportArtifact"
 
 const incident = {
   id: "inc-CARLA-N-01",
@@ -86,7 +82,7 @@ describe("buildCommanderReportArtifact", () => {
 })
 
 describe("report files", () => {
-  it("creates JSON export and PDF preview payloads", () => {
+  it("creates JSON export payloads", () => {
     const artifact = buildCommanderReportArtifact({
       selectedIncident: incident,
       selectedClip,
@@ -106,11 +102,5 @@ describe("report files", () => {
       reportId: "RPT-20260705-INC-CARLA-N-01-140305",
       exportReceiptId: "EXP-20260705-INC-CARLA-N-01-140305",
     })
-
-    const pdf = buildReportPdfFile(artifact)
-    expect(pdf.fileName).toBe("d4d-report-RPT-20260705-INC-CARLA-N-01-140305.pdf")
-    expect(pdf.mimeType).toBe("application/pdf")
-    expect(pdf.content.startsWith("%PDF-1.4")).toBe(true)
-    expect(pdf.content).toContain("/Type /Catalog")
   })
 })
