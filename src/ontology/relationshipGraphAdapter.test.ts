@@ -20,7 +20,7 @@ const incident = {
   meta: "CARLA gate camera",
   time: "09:44:11",
   title: "DETR person",
-  tone: "WATCH",
+  tone: "watch",
   zone: "CARLA-01",
 } satisfies Incident
 

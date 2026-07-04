@@ -23,8 +23,7 @@ const SOURCE_LABEL: Record<EvidenceClip["source"], string> = {
   correlation: "CORR",
 } as const
 
-const incidentTone = (incident: Incident): AlertTone =>
-  incident.tone === "WATCH" ? "watch" : "normal"
+const incidentTone = (incident: Incident): AlertTone => incident.tone
 
 const graphId = (kind: RelationshipGraphNodeKind, id: string): string => `${kind}:${id}`
 
