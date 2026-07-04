@@ -20,6 +20,15 @@ D4D COP 대시보드의 우측 "사람 확인 게이트" 패널(`RightRailRespon
   - `src/cop/codexAgentClient.ts`: `checkpointForIncident`, `statusForIncident`의 switch문에 `alert`/`confirmed`/`uncertain` 케이스 추가
   - `src/cop/operationalTelemetry.ts`: `gate-assess` PASS 조건(`incident.tone === "NORMAL"` → `"normal"`)
 
+## 1-1. 선행 수정: confirmed/uncertain 톤이 실제로 발생하도록
+
+`riskToTone`(`evidenceData.ts`)은 `alert`/`watch`/`normal` 세 값만 반환하고, `useCorrelationAlerts.ts`의 상관관계 클립 빌더 세 개(`buildConfirmedClip`, `buildAmbiguousClip`, `buildJudgingClip`)는 전부 `tone: "watch"`로 하드코딩돼 있다. 즉 지금 코드베이스에서 `confirmed`/`uncertain` 톤은 타입에만 존재할 뿐 실제로는 단 한 번도 만들어지지 않는다 — 이대로면 "5분대기조+발칸 사격 준비" 단계는 데모에서 절대 뜨지 않는다.
+
+**변경**: 의미가 정확히 맞는 두 곳을 고친다.
+- `buildConfirmedClip`(두 카메라에서 동일 인물 고신뢰 확인) → `tone: "confirmed"`
+- `buildJudgingClip`(Codex가 아직 판단 중) → `tone: "uncertain"`
+- `buildAmbiguousClip`(Codex 판단이 이미 도착한 뒤)은 그대로 `"watch"` 유지 — 판단이 끝났으면 더 이상 "불확실" 상태가 아니라 사람이 검토할 감시 대상이므로.
+
 ## 2. 대응 행동 카탈로그
 
 새 모듈 `src/cop/responseActionCatalog.ts`:
