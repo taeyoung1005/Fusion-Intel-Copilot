@@ -124,6 +124,11 @@ export function DailyReportPanel({
   readonly reportRows: readonly DailyReportRow[]
   readonly reportPeriod: string
 }): ReactElement {
+  const rows = useMemo(
+    () => [...reportRows, responseActionReportRow(takenResponseAction)],
+    [reportRows, takenResponseAction],
+  )
+
   const { actionState, artifact, createPdfPreview, exportReport } = useReportArtifactActions({
     selectedIncident,
     selectedClip,
@@ -131,15 +136,10 @@ export function DailyReportPanel({
     citations,
     missingContext,
     responseGates,
-    reportRows,
+    reportRows: rows,
     reportPeriod,
     cameraLabel,
   })
-
-  const rows = useMemo(
-    () => [...reportRows, responseActionReportRow(takenResponseAction)],
-    [reportRows, takenResponseAction],
-  )
 
   return (
     <section

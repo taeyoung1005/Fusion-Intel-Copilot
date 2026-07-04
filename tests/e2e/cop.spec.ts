@@ -774,6 +774,16 @@ test.describe("D4D COP 표면과 상호작용", () => {
     await expect(page.getByRole("button", { name: "순찰 강화 지시" })).toHaveCount(0)
     await expect(page.getByText(/대응 조치 완료/)).toBeVisible()
 
+    // The response action reaches the exported report artifact, not just the on-screen preview.
+    const responseActionExportPromise = page.waitForEvent("download")
+    await page.getByRole("button", { name: /보고서 내보내기/ }).click()
+    const responseActionExport = await responseActionExportPromise
+    const responseActionExportPath = await responseActionExport.path()
+    expect(responseActionExportPath).not.toBeNull()
+    const responseActionExportContent =
+      responseActionExportPath === null ? "" : await readFile(responseActionExportPath, "utf8")
+    expect(responseActionExportContent).toContain("순찰 강화 지시")
+
     // Hovering a block reveals its tooltip.
     await page.locator(".cop-track-block").first().hover()
     await expect(page.locator(".cop-track-tooltip").first()).toBeVisible()
