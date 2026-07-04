@@ -42,11 +42,13 @@
   },
   "files": {
     "ignore": [
+      ".claude",
       "artifacts",
       "coverage",
       "dist",
       ".omo",
       "docs",
+      "graphify-out",
       "node_modules",
       "package-lock.json",
       "playwright-report",

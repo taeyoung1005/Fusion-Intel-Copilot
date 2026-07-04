@@ -13,6 +13,7 @@
     "test:e2e": "playwright test",
     "demo:cv": "tsx scripts/demo-cv.ts",
     "demo:ledger": "tsx scripts/demo-ledger.ts",
+    "demo:ontology": "tsx scripts/demo-ontology.ts",
     "demo:agents": "tsx scripts/demo-agents.ts",
     "demo:semantics": "tsx scripts/demo-aihub-semantics.ts",
     "demo:reset": "tsx scripts/demo-reset.ts",

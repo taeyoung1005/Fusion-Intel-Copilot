@@ -1,6 +1,7 @@
 node_modules/
 dist/
 coverage/
+graphify-out/
 test-results/
 playwright-report/
 .vite/

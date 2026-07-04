@@ -1,0 +1,222 @@
+{
+  "$schema": "n/a",
+  "documentVersion": 1,
+  "generatedFor": "palantir-ready-ontology plan, Wave 2 Todo 6",
+  "notes": [
+    "This manifest is a local, credential-free description of a planned Foundry mapping.",
+    "No object, link, or action here is connected to a live Foundry environment.",
+    "src/ontology/contracts.ts (plan Todo 1) is not present in this repository yet; names below come from the Scope section of .omo/plans/palantir-ready-ontology.md and must be kept in sync with src/ontology/contracts.ts once it exists.",
+    "foundryStatus is always 'deferred_until_enrollment' for every entry in this file."
+  ],
+  "objectTypes": [
+    {
+      "localName": "Sensor",
+      "primaryKey": "cameraId",
+      "keyProperties": ["label", "zone", "status", "coverageNote"],
+      "sourceFiles": ["src/domain/topology.ts"],
+      "futureFoundryObjectType": "PerimeterSensor",
+      "localStatus": "implemented_pre_ontology_as_Camera",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "SensorGroup",
+      "primaryKey": "groupId",
+      "keyProperties": ["label", "cameraIds", "purpose"],
+      "sourceFiles": ["src/domain/topology.ts"],
+      "futureFoundryObjectType": "PerimeterSensorGroup",
+      "localStatus": "implemented_pre_ontology_as_CameraGroup",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "Observation",
+      "primaryKey": "eventId",
+      "keyProperties": ["simTime", "cameraId", "trackId", "objectLabel", "confidence", "distanceBand"],
+      "sourceFiles": ["src/domain/events.ts"],
+      "futureFoundryObjectType": "SensorObservation",
+      "localStatus": "implemented_pre_ontology",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "Track",
+      "primaryKey": "trackId",
+      "keyProperties": ["cameraId", "firstSeen", "lastSeen", "confidence", "observationEventIds"],
+      "sourceFiles": ["src/domain/track.ts"],
+      "futureFoundryObjectType": "SubjectTrack",
+      "localStatus": "implemented_pre_ontology",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "TrackSession",
+      "primaryKey": "sessionId",
+      "keyProperties": ["trackIds", "cameraIds", "currentStage", "stateHistory"],
+      "sourceFiles": ["src/domain/track.ts"],
+      "futureFoundryObjectType": "TrackSession",
+      "localStatus": "implemented_pre_ontology",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "Incident",
+      "primaryKey": "id",
+      "keyProperties": ["tone", "zone", "title", "meta", "time", "confidence"],
+      "sourceFiles": ["src/cop/copAnalysisData.ts"],
+      "futureFoundryObjectType": "PerimeterIncident",
+      "localStatus": "implemented_pre_ontology",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "EvidenceClip",
+      "primaryKey": "id",
+      "keyProperties": ["time", "camera", "tone", "source", "confidencePct", "frameDataUrl"],
+      "sourceFiles": ["src/cop/copTimelineData.ts"],
+      "futureFoundryObjectType": "IncidentEvidenceClip",
+      "localStatus": "implemented_pre_ontology",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "Citation",
+      "primaryKey": "id",
+      "keyProperties": ["label", "time"],
+      "sourceFiles": ["src/cop/copAnalysisData.ts"],
+      "futureFoundryObjectType": "IncidentCitation",
+      "localStatus": "implemented_pre_ontology",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "Assessment",
+      "primaryKey": "id",
+      "keyProperties": ["incidentId", "decisionTitle", "summary", "recommendedAction", "checkpoint"],
+      "sourceFiles": ["src/cop/codexAgentClient.ts"],
+      "futureFoundryObjectType": "IncidentAssessment",
+      "localStatus": "planned_ontology_module_not_in_repo",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "ResponseGate",
+      "primaryKey": "id",
+      "keyProperties": ["label", "initial"],
+      "sourceFiles": ["src/cop/copAnalysisData.ts"],
+      "futureFoundryObjectType": "ResponseGate",
+      "localStatus": "implemented_pre_ontology",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "CommanderReport",
+      "primaryKey": "id",
+      "keyProperties": ["title", "subtitle", "date", "period", "rows"],
+      "sourceFiles": ["src/cop/copAnalysisData.ts"],
+      "futureFoundryObjectType": "CommanderSituationReport",
+      "localStatus": "planned_ontology_module_not_in_repo",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "Asset",
+      "primaryKey": "cameraId",
+      "keyProperties": ["label", "zone", "status"],
+      "sourceFiles": ["src/domain/topology.ts"],
+      "futureFoundryObjectType": "PerimeterAsset",
+      "localStatus": "planned_ontology_module_not_in_repo",
+      "foundryStatus": "deferred_until_enrollment"
+    }
+  ],
+  "linkTypes": [
+    {
+      "localName": "sensor_observed_observation",
+      "from": "Sensor",
+      "to": "Observation",
+      "cardinality": "one_to_many",
+      "sourceFiles": ["src/domain/events.ts"],
+      "futureFoundryLinkType": "sensorObservedObservation",
+      "localStatus": "implemented_pre_ontology_implicit_fk",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "observation_supports_track",
+      "from": "Observation",
+      "to": "Track",
+      "cardinality": "many_to_one",
+      "sourceFiles": ["src/domain/track.ts"],
+      "futureFoundryLinkType": "observationSupportsTrack",
+      "localStatus": "implemented_pre_ontology_implicit_fk",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "track_raised_incident",
+      "from": "Track",
+      "to": "Incident",
+      "cardinality": "many_to_one",
+      "sourceFiles": ["src/cop/relationshipGraph.ts"],
+      "futureFoundryLinkType": "trackRaisedIncident",
+      "localStatus": "implemented_pre_ontology_in_relationship_graph",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "incident_has_evidence",
+      "from": "Incident",
+      "to": "EvidenceClip",
+      "cardinality": "one_to_many",
+      "sourceFiles": ["src/cop/relationshipGraph.ts"],
+      "futureFoundryLinkType": "incidentHasEvidence",
+      "localStatus": "implemented_pre_ontology_in_relationship_graph",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "incident_has_assessment",
+      "from": "Incident",
+      "to": "Assessment",
+      "cardinality": "one_to_many",
+      "sourceFiles": ["src/cop/codexAgentClient.ts"],
+      "futureFoundryLinkType": "incidentHasAssessment",
+      "localStatus": "planned_ontology_module_not_in_repo",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "incident_has_response_gate",
+      "from": "Incident",
+      "to": "ResponseGate",
+      "cardinality": "one_to_many",
+      "sourceFiles": ["src/cop/relationshipGraph.ts"],
+      "futureFoundryLinkType": "incidentHasResponseGate",
+      "localStatus": "implemented_pre_ontology_in_relationship_graph",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "report_summarizes_incident",
+      "from": "CommanderReport",
+      "to": "Incident",
+      "cardinality": "many_to_many",
+      "sourceFiles": ["src/cop/copAnalysisData.ts"],
+      "futureFoundryLinkType": "reportSummarizesIncident",
+      "localStatus": "planned_ontology_module_not_in_repo",
+      "foundryStatus": "deferred_until_enrollment"
+    }
+  ],
+  "actionTypes": [
+    {
+      "localName": "recordAssessment",
+      "primaryInputKeys": ["incidentId", "decision", "citations"],
+      "output": "Assessment",
+      "sourceFiles": ["src/cop/codexAgentClient.ts"],
+      "futureFoundryActionType": "record-assessment",
+      "localStatus": "planned_currently_a_network_call_not_local_action",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "submitResponseGate",
+      "primaryInputKeys": ["responseGateId", "incidentId", "transitionTo"],
+      "output": "ResponseGate",
+      "sourceFiles": ["src/cop/copAnalysisData.ts"],
+      "futureFoundryActionType": "submit-response-gate",
+      "localStatus": "planned_ontology_module_not_in_repo",
+      "foundryStatus": "deferred_until_enrollment"
+    },
+    {
+      "localName": "generateCommanderReport",
+      "primaryInputKeys": ["windowType", "startsAt", "endsAt", "incidentIds"],
+      "output": "CommanderReport",
+      "sourceFiles": ["src/cop/copAnalysisData.ts", "src/domain/scenario.ts"],
+      "futureFoundryActionType": "generate-commander-report",
+      "localStatus": "planned_ontology_module_not_in_repo",
+      "foundryStatus": "deferred_until_enrollment"
+    }
+  ]
+}
