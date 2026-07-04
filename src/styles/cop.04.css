@@ -287,14 +287,6 @@
   letter-spacing: 0.08em;
 }
 
-.cop-svg-gate {
-  fill: var(--c-green);
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-
 .cop-svg-blind {
   fill: var(--c-red);
   font-family: var(--mono);

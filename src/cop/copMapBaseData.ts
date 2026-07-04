@@ -183,7 +183,3 @@ export const DEPOT_BUNKERS: readonly DepotBunker[] = [
 ] as const
 
 export const DEPOT_TITLE_POINT: Point = { x: 562, y: 307 }
-
-// --- Main gate ------------------------------------------------------------------
-
-export const MAIN_GATE = { label: "MAIN GATE", point: { x: 458, y: 488 } } as const

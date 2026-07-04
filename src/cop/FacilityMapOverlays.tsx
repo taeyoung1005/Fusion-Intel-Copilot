@@ -3,7 +3,6 @@ import {
   type AlertTone,
   BLIND_SPOTS,
   HANDOFF_PATH,
-  MAIN_GATE,
   MAP_VIEW,
   type MapCamera,
   type MapEvent,
@@ -35,28 +34,6 @@ const runOnKeyboardSelect = (event: KeyboardEvent<SVGGElement>, action: () => vo
   }
   event.preventDefault()
   action()
-}
-
-export function MainGate(): ReactElement {
-  return (
-    <g transform={`translate(${MAIN_GATE.point.x}, ${MAIN_GATE.point.y})`}>
-      <rect
-        x={0}
-        y={0}
-        width={74}
-        height={18}
-        rx={3}
-        fill="rgba(6,20,14,0.92)"
-        stroke="#36d399"
-        strokeWidth={1}
-      />
-      <rect x={7} y={5} width={8} height={8} fill="none" stroke="#36d399" strokeWidth={1.1} />
-      <line x1="11" y1="4" x2="11" y2="14" stroke="#36d399" strokeWidth={1.1} />
-      <text x={44} y={12.5} className="cop-svg-gate" textAnchor="middle">
-        {MAIN_GATE.label}
-      </text>
-    </g>
-  )
 }
 
 // Real camera-handoff routes: dashed links between consecutive connected camera

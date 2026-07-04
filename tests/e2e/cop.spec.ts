@@ -34,7 +34,32 @@ test.describe("D4D COP 표면과 상호작용", () => {
 
       // --- Left rail: map layers + live phone CCTV -----------------------------
       await expect(page.getByText("MAP LAYERS")).toBeVisible()
-      await expect(page.getByRole("checkbox")).toHaveCount(12)
+      await expect(page.getByRole("checkbox")).toHaveCount(15)
+
+      // Protected Assets (AMMO DEPOT) is gated by its own layer toggle now.
+      await expect(page.getByText("AMMO DEPOT", { exact: true })).toBeVisible()
+      await page.locator("label.cop-layer", { hasText: "Protected Assets" }).click()
+      await expect(page.getByText("AMMO DEPOT", { exact: true })).toHaveCount(0)
+      await page.locator("label.cop-layer", { hasText: "Protected Assets" }).click()
+      await expect(page.getByText("AMMO DEPOT", { exact: true })).toBeVisible()
+
+      // Legend and Minimap are toggleable from Map Layers too.
+      await expect(page.locator(".cop-map-legend")).toBeVisible()
+      await page.locator("label.cop-layer", { hasText: "Legend" }).click()
+      await expect(page.locator(".cop-map-legend")).toHaveCount(0)
+      await page.locator("label.cop-layer", { hasText: "Legend" }).click()
+      await expect(page.locator(".cop-map-legend")).toBeVisible()
+
+      await expect(page.locator(".cop-mini-frame")).toBeVisible()
+      await page.locator("label.cop-layer", { hasText: "Minimap" }).click()
+      await expect(page.locator(".cop-mini-frame")).toHaveCount(0)
+      // The 2D/3D/expand controls stay usable even with the minimap preview hidden.
+      await expect(page.getByRole("button", { name: "2D", exact: true })).toBeVisible()
+      await page.locator("label.cop-layer", { hasText: "Minimap" }).click()
+      await expect(page.locator(".cop-mini-frame")).toBeVisible()
+
+      // MAIN GATE was removed entirely, not just gated behind a layer toggle.
+      await expect(page.getByText("MAIN GATE")).toHaveCount(0)
 
       const cones = page.locator('polygon[fill="#59d7ff"]')
       await expect(cones).toHaveCount(0)

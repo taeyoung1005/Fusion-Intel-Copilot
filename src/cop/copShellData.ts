@@ -8,6 +8,9 @@ export type MapLayerId =
   | "cameraHandoff"
   | "blindSpots"
   | "distanceBands"
+  | "protectedAssets"
+  | "legend"
+  | "minimap"
   | "terrainContours"
   | "roads"
   | "buildings"
@@ -28,6 +31,9 @@ export const MAP_LAYERS: readonly MapLayer[] = [
   { id: "cameraHandoff", label: "Camera Handoff", defaultOn: true },
   { id: "blindSpots", label: "Blind Spots", defaultOn: true },
   { id: "distanceBands", label: "Distance Bands (50/30/10m)", defaultOn: true },
+  { id: "protectedAssets", label: "Protected Assets", defaultOn: true },
+  { id: "legend", label: "Legend", defaultOn: true },
+  { id: "minimap", label: "Minimap", defaultOn: true },
   { id: "terrainContours", label: "Terrain Contours", defaultOn: false },
   { id: "roads", label: "Roads", defaultOn: false },
   { id: "buildings", label: "Buildings", defaultOn: false },

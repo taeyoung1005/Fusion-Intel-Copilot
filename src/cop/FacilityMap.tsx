@@ -186,17 +186,19 @@ function FacilityMapContent({
 
         {has("weather") && <WeatherReadout weather={weather} />}
 
-        <div className="cop-map-legend" aria-label="범례">
-          <strong>LEGEND</strong>
-          <ul>
-            {LEGEND_ITEMS.map((item) => (
-              <li key={item.id} title={"title" in item ? item.title : undefined}>
-                <span className={`cop-legend-mark mark-${item.id}`} aria-hidden="true" />
-                {item.label}
-              </li>
-            ))}
-          </ul>
-        </div>
+        {has("legend") && (
+          <div className="cop-map-legend" aria-label="범례">
+            <strong>LEGEND</strong>
+            <ul>
+              {LEGEND_ITEMS.map((item) => (
+                <li key={item.id} title={"title" in item ? item.title : undefined}>
+                  <span className={`cop-legend-mark mark-${item.id}`} aria-hidden="true" />
+                  {item.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <div className="cop-map-zoom" aria-label="지도 확대 제어">
           <button type="button" aria-label="확대" onClick={viewportControls.zoomIn}>
@@ -221,14 +223,18 @@ function FacilityMapContent({
         </div>
 
         <div className="cop-map-mini" aria-label="미니맵과 보기 모드">
-          <div className="cop-mini-frame" aria-hidden="true">
-            <span className="cop-mini-shape" />
-            <span className="cop-mini-view" style={viewportControls.minimapStyle} />
-          </div>
-          <div className="cop-mini-meta">
-            <span>{viewportControls.minimapCoveragePercent}% VIEW</span>
-            <span>{viewportControls.viewport.zoom.toFixed(1)}x</span>
-          </div>
+          {has("minimap") && (
+            <>
+              <div className="cop-mini-frame" aria-hidden="true">
+                <span className="cop-mini-shape" />
+                <span className="cop-mini-view" style={viewportControls.minimapStyle} />
+              </div>
+              <div className="cop-mini-meta">
+                <span>{viewportControls.minimapCoveragePercent}% VIEW</span>
+                <span>{viewportControls.viewport.zoom.toFixed(1)}x</span>
+              </div>
+            </>
+          )}
           <div className="cop-mini-controls">
             <button
               type="button"

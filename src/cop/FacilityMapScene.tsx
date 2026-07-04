@@ -6,7 +6,6 @@ import {
   CameraNode,
   DroneIsrOverlay,
   EventMarkers,
-  MainGate,
   PoiMarkers,
   TerrainContours,
   ThreatVisualization,
@@ -69,7 +68,7 @@ export function MapScene({
         />
       )}
 
-      <DepotFootprint events={detectionMarkers} />
+      {has("protectedAssets") && <DepotFootprint events={detectionMarkers} />}
 
       {has("cameraCoverage") &&
         dynamicCameraRecords.map((record) => (
@@ -93,10 +92,10 @@ export function MapScene({
 
       {has("poi") && <PoiMarkers />}
 
-      <MainGate />
-
       {detectionMarkers.length > 0 && <ThreatVisualization events={detectionMarkers} />}
-      {detectionMarkers.length > 0 && <DroneIsrOverlay events={detectionMarkers} />}
+      {detectionMarkers.length > 0 && has("cctvCameras") && (
+        <DroneIsrOverlay events={detectionMarkers} />
+      )}
       <EventMarkers events={detectionMarkers} onSelectEvent={onSelectEvent} />
 
       {has("cctvCameras") &&
