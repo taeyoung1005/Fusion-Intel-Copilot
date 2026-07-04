@@ -88,6 +88,10 @@
   min-width: 0;
 }
 
+.cop-rail-group[hidden] {
+  display: none;
+}
+
 /* Missing Context + Response Gate read as one grouped card instead of two
    separately-bordered panels stacked back to back. */
 .cop-readiness-group {
