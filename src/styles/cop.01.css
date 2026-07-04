@@ -27,6 +27,42 @@
   margin: 5px var(--space-4) 0;
 }
 
+.cop-server-disconnected {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: flex-start;
+  max-width: calc(100% - var(--space-8));
+  min-height: 28px;
+  margin: var(--space-2) var(--space-4) 0;
+  padding: 0 var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--alert-critical) 58%, transparent);
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--alert-critical) 10%, var(--panel-inset));
+  color: var(--alert-critical);
+  font-size: 13px;
+  line-height: 1.35;
+  word-break: keep-all;
+}
+
+.cop-server-disconnected strong,
+.cop-server-disconnected span {
+  min-width: 0;
+}
+
+.cop-server-disconnected span:last-child {
+  color: var(--text-secondary);
+}
+
+.cop-server-disconnected-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: var(--alert-critical);
+}
+
 /* ---------- Command bar ---------- */
 
 .cop-bar {

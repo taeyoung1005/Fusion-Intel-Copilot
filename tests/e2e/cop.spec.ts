@@ -876,10 +876,19 @@ test.describe("D4D COP 표면과 상호작용", () => {
       })
     })
 
-    await page.addInitScript(() => {
-      window.__D4D_TEST_DETR_DETECTOR__ = async () => [
-        { label: "person", score: 0.9, box: { xmin: 300, ymin: 92, xmax: 366, ymax: 258 } },
-      ]
+    const corrDetections: readonly D4dTestDetrDetection[] = [
+      { label: "person", score: 0.9, box: { xmin: 300, ymin: 92, xmax: 366, ymax: 258 } },
+    ]
+    await page.route("**/detect", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json; charset=utf-8",
+        body: JSON.stringify(corrDetections),
+      })
+    })
+
+    await page.addInitScript((detections: readonly D4dTestDetrDetection[]) => {
+      window.__D4D_TEST_DETR_DETECTOR__ = async () => detections
       window.__D4D_TEST_CLIP_CLASSIFIER__ = async (_source, candidateLabels) => {
         const first = candidateLabels[0]
         const second = candidateLabels[1]
@@ -887,11 +896,11 @@ test.describe("D4D COP 표면과 상호작용", () => {
           return []
         }
         return [
-          { label: first, score: 0.85 },
-          { label: second, score: 0.15 },
+          { label: first, score: 1 },
+          { label: second, score: 0 },
         ]
       }
-    })
+    }, corrDetections)
     await page.route("**/api/vision-pipeline", async (route) => {
       await route.fulfill({
         status: 200,

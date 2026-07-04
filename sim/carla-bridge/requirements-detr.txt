@@ -1,0 +1,8 @@
+Pillow
+fastapi
+httpx2[http2,brotli,zstd]
+pydantic
+torch
+timm
+transformers
+uvicorn[standard]

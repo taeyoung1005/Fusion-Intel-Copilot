@@ -1,3 +1,7 @@
+import { type ClipClassification, ClipClassificationSchema } from "./clipClassificationSchema"
+import type { VisionFrameObject } from "./detrVisionDetector"
+import { DETR_ONDEVICE_FALLBACK_ENABLED } from "./serverDetectionClient"
+
 export type TopColor = "red" | "blue" | "black" | "white" | "gray" | "green" | "yellow" | "other"
 
 export type PersonAttributes = {
@@ -87,10 +91,7 @@ export const describeAttributes = (attributes: PersonAttributes): string => {
   return `${colorPrefix}상의 · ${bagText} · ${hatText} · ${sleeveText}`
 }
 
-import { z } from "zod"
-import type { VisionFrameObject } from "./detrVisionDetector"
-
-const CLIP_MODEL_ID = "Xenova/clip-vit-base-patch32"
+const ON_DEVICE_CLIP_CLASSIFIER_MODULE = "./onDeviceClipClassifier.ts"
 
 const HAT_LABELS: readonly [string, string] = [
   "a person wearing a hat",
@@ -105,16 +106,11 @@ const BAG_LABELS: readonly [string, string] = [
   "a person without a bag",
 ]
 
-const ClipClassificationSchema = z
-  .array(z.object({ label: z.string(), score: z.number() }))
-  .readonly()
+type OnDeviceClipClassifierModule = typeof import("./onDeviceClipClassifier")
 
-const createClipClassifier = async () => {
-  const { pipeline } = await import("@huggingface/transformers")
-  return pipeline("zero-shot-image-classification", CLIP_MODEL_ID)
+class OnDeviceClipClassifierDisabledError extends Error {
+  readonly name = "OnDeviceClipClassifierDisabledError"
 }
-
-let clipClassifierPromise: ReturnType<typeof createClipClassifier> | undefined
 
 const testClipClassifier = (): D4dTestClipClassifier | undefined => {
   if (typeof window === "undefined") {
@@ -123,18 +119,22 @@ const testClipClassifier = (): D4dTestClipClassifier | undefined => {
   return window.__D4D_TEST_CLIP_CLASSIFIER__
 }
 
+const loadOnDeviceClipClassifier = async (): Promise<OnDeviceClipClassifierModule> =>
+  import(/* @vite-ignore */ ON_DEVICE_CLIP_CLASSIFIER_MODULE)
+
 const runClipClassification = async (
   source: string,
   candidateLabels: readonly [string, string],
-): Promise<readonly { label: string; score: number }[]> => {
+): Promise<readonly ClipClassification[]> => {
   const testFn = testClipClassifier()
   if (testFn !== undefined) {
     return ClipClassificationSchema.parse(await testFn(source, candidateLabels))
   }
-  clipClassifierPromise ??= createClipClassifier()
-  const classifier = await clipClassifierPromise
-  const output = await classifier(source, candidateLabels as unknown as string[])
-  return ClipClassificationSchema.parse(output)
+  if (!DETR_ONDEVICE_FALLBACK_ENABLED) {
+    throw new OnDeviceClipClassifierDisabledError("On-device CLIP classification is disabled")
+  }
+  const { runOnDeviceClipClassification } = await loadOnDeviceClipClassifier()
+  return runOnDeviceClipClassification(source, candidateLabels)
 }
 
 const classifyBinary = async <A extends string, B extends string>(
@@ -264,6 +264,9 @@ export const extractPersonAttributesSafely = async (
   try {
     return await extractPersonAttributes({ source, bbox })
   } catch (error: unknown) {
+    if (error instanceof OnDeviceClipClassifierDisabledError) {
+      return undefined
+    }
     if (isMemoryFailure(error)) {
       attributesDisabled = true
       if (!attributesDisableWarningShown) {

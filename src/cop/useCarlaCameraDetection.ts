@@ -3,6 +3,7 @@ import { describeAttributes, extractPersonAttributesSafely } from "./attributeCl
 import type { EvidenceClip } from "./copData"
 import { detectFrameObjectsWithDetr } from "./detrVisionDetector"
 import { riskToTone } from "./evidenceData"
+import type { DetrServerConnection } from "./serverDetectionClient"
 import {
   type VisionPipelineRequest,
   type VisionPipelineResponse,
@@ -20,6 +21,7 @@ export type CarlaCameraDetectionFrame = {
   readonly width: number
   readonly height: number
   readonly objects: VisionPipelineFrame["objects"]
+  readonly serverConnection: DetrServerConnection
 }
 export type CarlaCameraDetectionsHandler = (frame: CarlaCameraDetectionFrame) => void
 
@@ -104,15 +106,17 @@ export const useCarlaCameraDetection = (
     const inferOneFrame = async (): Promise<void> => {
       try {
         const source = await normalizeToFixedFrame(latestFrameDataUrl)
-        const objects = await detectFrameObjectsWithDetr({
+        const detectionResult = await detectFrameObjectsWithDetr({
           source,
           frameWidth: FRAME_WIDTH,
           frameHeight: FRAME_HEIGHT,
         })
+        const objects = detectionResult.objects
         onDetectionsRef.current?.({
           width: FRAME_WIDTH,
           height: FRAME_HEIGHT,
           objects,
+          serverConnection: detectionResult.serverConnection,
         })
         if (objects.length === 0) {
           return

@@ -1,8 +1,8 @@
 import { z } from "zod"
+import type { DetrServerConnection } from "./serverDetectionClient"
 import type { VisionPipelineRequest } from "./visionPipelineClient"
 
-const DETR_MODEL_ID = "Xenova/detr-resnet-50"
-const DETR_THRESHOLD = 0.5
+const ON_DEVICE_DETR_FALLBACK_MODULE = "./onDeviceDetrFallback.ts"
 
 const DetrBoxSchema = z
   .object({
@@ -14,7 +14,7 @@ const DetrBoxSchema = z
   .strict()
   .readonly()
 
-const DetrDetectionSchema = z
+export const DetrDetectionSchema = z
   .object({
     label: z.string().min(1),
     score: z.number().min(0).max(1),
@@ -23,10 +23,16 @@ const DetrDetectionSchema = z
   .strict()
   .readonly()
 
-const DetrDetectionArraySchema = z.array(DetrDetectionSchema).readonly()
+export const DetrDetectionArraySchema = z.array(DetrDetectionSchema).readonly()
 
 export type DetrDetection = Readonly<z.infer<typeof DetrDetectionSchema>>
 export type VisionFrameObject = VisionPipelineRequest["frames"][number]["objects"][number]
+export type DetrDetectionSource = "server" | "on-device" | "skipped"
+export type DetrDetectionResult = {
+  readonly objects: readonly VisionFrameObject[]
+  readonly serverConnection: DetrServerConnection
+  readonly source: DetrDetectionSource
+}
 
 type NormalizeFrame = {
   readonly frameWidth: number
@@ -37,12 +43,7 @@ type DetectFrameInput = NormalizeFrame & {
   readonly source: string
 }
 
-const createDetrDetector = async () => {
-  const { pipeline } = await import("@huggingface/transformers")
-  return pipeline("object-detection", DETR_MODEL_ID)
-}
-
-let detrDetectorPromise: ReturnType<typeof createDetrDetector> | undefined
+type OnDeviceDetrFallbackModule = typeof import("./onDeviceDetrFallback")
 
 const clamp = (value: number, min: number, max: number): number =>
   Math.min(Math.max(value, min), max)
@@ -82,29 +83,65 @@ export const normalizeDetrDetections = (
     }
   })
 
-const testDetector = (): D4dTestDetrDetector | undefined => {
-  if (typeof window === "undefined") {
-    return undefined
-  }
-  return window.__D4D_TEST_DETR_DETECTOR__
-}
+const loadOnDeviceDetrFallback = async (): Promise<OnDeviceDetrFallbackModule> =>
+  import(/* @vite-ignore */ ON_DEVICE_DETR_FALLBACK_MODULE)
 
-const runDetrPipeline = async (source: string): Promise<readonly DetrDetection[]> => {
-  detrDetectorPromise ??= createDetrDetector()
-  const detector = await detrDetectorPromise
-  const output = await detector(source, { threshold: DETR_THRESHOLD, percentage: false })
-  return DetrDetectionArraySchema.parse(output)
+const runOptInOnDeviceDetr = async (
+  source: string,
+  frame: NormalizeFrame,
+  serverConnection: DetrServerConnection,
+): Promise<DetrDetectionResult> => {
+  const { runFallbackDetrPipeline } = await loadOnDeviceDetrFallback()
+  const detections = await runFallbackDetrPipeline(source)
+  return {
+    objects: normalizeDetrDetections(detections, frame),
+    serverConnection,
+    source: "on-device",
+  }
 }
 
 export const detectFrameObjectsWithDetr = async ({
   source,
   frameWidth,
   frameHeight,
-}: DetectFrameInput): Promise<readonly VisionFrameObject[]> => {
-  const detector = testDetector()
-  const detections =
-    detector === undefined
-      ? await runDetrPipeline(source)
-      : DetrDetectionArraySchema.parse(await detector(source))
-  return normalizeDetrDetections(detections, { frameWidth, frameHeight })
+}: DetectFrameInput): Promise<DetrDetectionResult> => {
+  const frame = { frameWidth, frameHeight }
+  const {
+    DETR_ONDEVICE_FALLBACK_ENABLED,
+    DETR_SERVER_CONNECTION,
+    DETR_SERVER_DETECTION_ENABLED,
+    detectFrameObjectsWithServerDetr,
+  } = await import("./serverDetectionClient")
+
+  if (DETR_SERVER_DETECTION_ENABLED) {
+    try {
+      return {
+        objects: await detectFrameObjectsWithServerDetr({ source, frameWidth, frameHeight }),
+        serverConnection: DETR_SERVER_CONNECTION.connected,
+        source: "server",
+      }
+    } catch (error: unknown) {
+      if (!(error instanceof Error)) {
+        throw error
+      }
+      if (DETR_ONDEVICE_FALLBACK_ENABLED) {
+        return runOptInOnDeviceDetr(source, frame, DETR_SERVER_CONNECTION.disconnected)
+      }
+      return {
+        objects: [],
+        serverConnection: DETR_SERVER_CONNECTION.disconnected,
+        source: "skipped",
+      }
+    }
+  }
+
+  if (DETR_ONDEVICE_FALLBACK_ENABLED) {
+    return runOptInOnDeviceDetr(source, frame, DETR_SERVER_CONNECTION.disabled)
+  }
+
+  return {
+    objects: [],
+    serverConnection: DETR_SERVER_CONNECTION.disabled,
+    source: "skipped",
+  }
 }

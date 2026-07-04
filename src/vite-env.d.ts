@@ -23,6 +23,12 @@ type D4dTestClipClassifier = (
   candidateLabels: readonly string[],
 ) => Promise<readonly D4dTestClipClassification[]>
 
+interface ImportMetaEnv {
+  readonly VITE_DETR_SERVER_URL?: string
+  readonly VITE_DETR_SERVER_DETECTION_ENABLED?: string
+  readonly VITE_DETR_ONDEVICE_FALLBACK_ENABLED?: string
+}
+
 interface Window {
   __D4D_TEST_DETR_DETECTOR__?: D4dTestDetrDetector
   __D4D_TEST_CLIP_CLASSIFIER__?: D4dTestClipClassifier

@@ -3,6 +3,7 @@ import { describeAttributes, extractPersonAttributesSafely } from "./attributeCl
 import type { EvidenceClip } from "./copData"
 import { detectFrameObjectsWithDetr } from "./detrVisionDetector"
 import { riskToTone } from "./evidenceData"
+import type { DetrServerConnection } from "./serverDetectionClient"
 import {
   type VisionPipelineRequest,
   type VisionPipelineResponse,
@@ -16,6 +17,7 @@ const EVIDENCE_EVERY_FRAMES = 3
 const DETECTION_INTERVAL_MS = 1_200
 
 type VisionPipelineFrame = VisionPipelineRequest["frames"][number]
+export type CarlaVideoDetectionStatusHandler = (connection: DetrServerConnection) => void
 
 let carlaVideoDetrDisabled = false
 let carlaVideoDetrDisableWarningShown = false
@@ -54,9 +56,12 @@ export const useCarlaVideoDetection = (
   videoRef: RefObject<HTMLVideoElement | null>,
   enabled: boolean,
   onVisionEvidence: (clip: EvidenceClip) => void,
+  onDetectionServerConnection?: CarlaVideoDetectionStatusHandler,
 ): void => {
   const onVisionEvidenceRef = useRef(onVisionEvidence)
   onVisionEvidenceRef.current = onVisionEvidence
+  const onDetectionServerConnectionRef = useRef(onDetectionServerConnection)
+  onDetectionServerConnectionRef.current = onDetectionServerConnection
 
   const inFlightRef = useRef(false)
   const frameIndexRef = useRef(0)
@@ -85,11 +90,13 @@ export const useCarlaVideoDetection = (
       frameIndexRef.current = frameIndex
 
       try {
-        const objects = await detectFrameObjectsWithDetr({
+        const detectionResult = await detectFrameObjectsWithDetr({
           source,
           frameWidth: FRAME_WIDTH,
           frameHeight: FRAME_HEIGHT,
         })
+        const objects = detectionResult.objects
+        onDetectionServerConnectionRef.current?.(detectionResult.serverConnection)
         if (objects.length === 0) {
           return
         }
