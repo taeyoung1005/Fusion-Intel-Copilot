@@ -1,5 +1,5 @@
 import { Crosshair, Expand, Minus, Plus } from "lucide-react"
-import { type ReactElement, useState } from "react"
+import { type ReactElement, memo, useCallback, useState } from "react"
 import { MapDefs } from "./FacilityMapDefs"
 import { MapScene } from "./FacilityMapScene"
 import { WeatherCanvas, WeatherReadout } from "./FacilityMapWeather"
@@ -25,7 +25,7 @@ type FacilityMapProps = {
   readonly onSelectEvent: (event: MapEvent) => void
 }
 
-export function FacilityMap({
+export const FacilityMap = memo(function FacilityMap({
   activeLayers,
   selectedCameraId,
   dynamicCameraRecords,
@@ -40,7 +40,7 @@ export function FacilityMap({
   const osmFeatures = useOsmFeatures()
   const weather = useWeather()
 
-  const has = (id: MapLayerId): boolean => activeLayers.has(id)
+  const has = useCallback((id: MapLayerId): boolean => activeLayers.has(id), [activeLayers])
   const clampZoom = (next: number): number => Math.min(1.6, Math.max(0.7, next))
 
   return (
@@ -167,4 +167,4 @@ export function FacilityMap({
       </div>
     </section>
   )
-}
+})

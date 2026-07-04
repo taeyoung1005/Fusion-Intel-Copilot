@@ -18,9 +18,9 @@ type CarlaCameraRegistry = {
   readonly carlaCameras: readonly DynamicCameraRecord[]
 }
 
-const CARLA_CAMERA_POLL_INTERVAL_MS = 250
+export const CARLA_CAMERA_POLL_INTERVAL_MS = 1_000
 
-const snapshotsEqual = (
+export const areCarlaCameraSnapshotsEqual = (
   left: readonly CarlaCameraSnapshot[],
   right: readonly CarlaCameraSnapshot[],
 ): boolean =>
@@ -31,10 +31,8 @@ const snapshotsEqual = (
       other !== undefined &&
       camera.id === other.id &&
       camera.label === other.label &&
-      camera.status === other.status &&
       camera.lastFrameAt === other.lastFrameAt &&
-      camera.frameCount === other.frameCount &&
-      camera.latestFrameDataUrl === other.latestFrameDataUrl
+      camera.frameCount === other.frameCount
     )
   })
 
@@ -49,10 +47,9 @@ export const useCarlaCameras = ({
       try {
         const cameras = await listCarlaCameras()
         if (active) {
-          // Skip the state update when nothing actually changed — polling
-          // every 250ms would otherwise hand downstream consumers (like the
-          // Codex auto-request effect) a new array reference every tick.
-          setCarlaSnapshots((previous) => (snapshotsEqual(previous, cameras) ? previous : cameras))
+          setCarlaSnapshots((previous) =>
+            areCarlaCameraSnapshotsEqual(previous, cameras) ? previous : cameras,
+          )
         }
       } catch (error: unknown) {
         if (active && error instanceof Error) {

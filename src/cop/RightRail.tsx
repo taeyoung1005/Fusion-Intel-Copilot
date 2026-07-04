@@ -1,4 +1,4 @@
-import type { ReactElement } from "react"
+import { type ReactElement, memo, useCallback } from "react"
 import { ActivityStreamPanel } from "./ActivityStreamPanel"
 import { OperationalMetricTiles } from "./OperationalMetricTilesPanel"
 import { CodexSummary } from "./RightRailCodex"
@@ -43,7 +43,7 @@ type RightRailProps = {
   readonly onSelectRelationshipNode: (node: RelationshipGraphNode) => void
 }
 
-export function RightRail({
+export const RightRail = memo(function RightRail({
   selectedClip,
   selectedIncident,
   incidents,
@@ -64,9 +64,9 @@ export function RightRail({
   onSelectIncident,
   onSelectRelationshipNode,
 }: RightRailProps): ReactElement {
-  const scrollToGate = (): void => {
+  const scrollToGate = useCallback((): void => {
     document.getElementById("cop-gate")?.scrollIntoView({ behavior: "smooth", block: "center" })
-  }
+  }, [])
 
   return (
     <aside className="cop-right" aria-label="운용자 명령 패널">
@@ -112,4 +112,4 @@ export function RightRail({
       />
     </aside>
   )
-}
+})

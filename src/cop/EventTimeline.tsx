@@ -1,4 +1,4 @@
-import { type ReactElement, useEffect, useMemo, useState } from "react"
+import { type ReactElement, memo, useEffect, useMemo, useState } from "react"
 import { ClipPlayer } from "./ClipPlayer"
 import {
   type EvidenceClip,
@@ -38,7 +38,7 @@ type EventTimelineProps = {
   readonly onSelectEvent: (event: TimelineEvent) => void
 }
 
-export function EventTimeline({
+export const EventTimeline = memo(function EventTimeline({
   events,
   evidenceClips,
   selectedEventId,
@@ -187,4 +187,4 @@ export function EventTimeline({
       )}
     </section>
   )
-}
+})
