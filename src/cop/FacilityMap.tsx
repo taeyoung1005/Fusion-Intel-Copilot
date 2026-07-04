@@ -11,7 +11,6 @@ import {
   useState,
 } from "react"
 import { MapDefs } from "./FacilityMapDefs"
-import { FacilityMapRoadview } from "./FacilityMapRoadview"
 import { MapScene } from "./FacilityMapScene"
 import { WeatherCanvas, WeatherReadout } from "./FacilityMapWeather"
 import {
@@ -113,7 +112,7 @@ function FacilityMapContent({
   const [viewMode, setViewMode] = useState<"2D" | "3D">("2D")
   const [expanded, setExpanded] = useState(false)
   const svgRef = useRef<SVGSVGElement | null>(null)
-  const viewportControls = useFacilityMapViewport(viewMode)
+  const viewportControls = useFacilityMapViewport()
   const osmFeatures = useOsmFeatures()
   const weather = useWeather()
 
@@ -182,16 +181,6 @@ function FacilityMapContent({
               />
             </g>
           </svg>
-          {viewMode === "3D" && (
-            <FacilityMapRoadview
-              selectedCameraId={selectedCameraId}
-              dynamicCameraRecords={dynamicCameraRecords}
-              detectionMarkers={detectionMarkers}
-              onSelectCamera={onSelectCamera}
-              onSelectDynamicCamera={onSelectDynamicCamera}
-              onSelectEvent={onSelectEvent}
-            />
-          )}
           {has("weather") && weather !== null && <WeatherCanvas weather={weather} />}
         </div>
 

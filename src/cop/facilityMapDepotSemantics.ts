@@ -4,11 +4,16 @@ export type DepotThreatSummary = {
   readonly bunkerId: string
   readonly nearestEventId: string | null
   readonly tone: AlertTone
-  readonly distanceMeters: number | null
   readonly statusLabel: string
 }
 
-const MAP_METERS_PER_UNIT = 0.33
+const DEPOT_STATUS_LABEL: Record<AlertTone, string> = {
+  normal: "CLEAR",
+  watch: "WATCH",
+  alert: "ALERT",
+  confirmed: "CONFIRMED",
+  uncertain: "REVIEW",
+}
 
 export const depotThreatSummaries = (
   bunkers: readonly DepotBunker[],
@@ -21,17 +26,14 @@ export const depotThreatSummaries = (
         bunkerId: bunker.id,
         nearestEventId: null,
         tone: "normal",
-        distanceMeters: null,
-        statusLabel: "CLEAR",
+        statusLabel: DEPOT_STATUS_LABEL.normal,
       }
     }
-    const distanceMeters = Math.max(1, Math.round(nearest.distance * MAP_METERS_PER_UNIT))
     return {
       bunkerId: bunker.id,
       nearestEventId: nearest.event.id,
       tone: nearest.event.tone,
-      distanceMeters,
-      statusLabel: `${distanceMeters}m`,
+      statusLabel: DEPOT_STATUS_LABEL[nearest.event.tone],
     }
   })
 

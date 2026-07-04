@@ -8,12 +8,12 @@
 }
 
 .cop-map.is-3d .cop-map-svg {
-  opacity: 0.18;
-  transform: none;
+  opacity: 1;
+  transform: perspective(900px) rotateX(20deg) scale(1.04);
 }
 
 .cop-map.is-3d .cop-map-weather-canvas {
-  opacity: 0.34;
+  opacity: 0.68;
 }
 
 .cop-map-legend,

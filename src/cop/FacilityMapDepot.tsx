@@ -19,8 +19,6 @@ const DEPOT_TONE_COLOR: Record<AlertTone, string> = {
 
 export function DepotFootprint({ events }: { readonly events: readonly MapEvent[] }): ReactElement {
   const summaries = depotThreatSummaries(DEPOT_BUNKERS, events)
-  const nearestStatus =
-    summaries.find((summary) => summary.distanceMeters !== null)?.statusLabel ?? "CLEAR"
   return (
     <g>
       <rect
@@ -39,7 +37,7 @@ export function DepotFootprint({ events }: { readonly events: readonly MapEvent[
         const color = DEPOT_TONE_COLOR[summary.tone]
         return (
           <g key={bunker.id} className={`cop-depot-bunker tone-${summary.tone}`}>
-            <title>{`${bunker.id} threat proximity ${summary.statusLabel}`}</title>
+            <title>{`${bunker.id} threat state ${summary.statusLabel}`}</title>
             <rect
               x={bunker.x}
               y={bunker.y}
@@ -64,14 +62,6 @@ export function DepotFootprint({ events }: { readonly events: readonly MapEvent[
             >
               {bunker.id}
             </text>
-            <text
-              x={bunker.labelPoint.x}
-              y={bunker.labelPoint.y + 12}
-              className="cop-svg-depot-status"
-              textAnchor="middle"
-            >
-              {summary.statusLabel}
-            </text>
           </g>
         )
       })}
@@ -82,14 +72,6 @@ export function DepotFootprint({ events }: { readonly events: readonly MapEvent[
         textAnchor="middle"
       >
         AMMO DEPOT
-      </text>
-      <text
-        x={DEPOT_TITLE_POINT.x}
-        y={DEPOT_TITLE_POINT.y + 14}
-        className="cop-svg-depot-status"
-        textAnchor="middle"
-      >
-        {nearestStatus}
       </text>
     </g>
   )
@@ -103,6 +85,5 @@ const summaryForBunker = (
     bunkerId: bunker.id,
     nearestEventId: null,
     tone: "normal",
-    distanceMeters: null,
     statusLabel: "CLEAR",
   }

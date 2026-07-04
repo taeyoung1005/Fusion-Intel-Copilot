@@ -20,8 +20,6 @@ import {
   zoomFacilityViewport,
 } from "./facilityMapViewport"
 
-type ViewMode = "2D" | "3D"
-
 type DragSnapshot = {
   readonly pointerId: number
   readonly clientX: number
@@ -48,7 +46,7 @@ export type FacilityMapViewportControls = {
   readonly endPointerDrag: (event: ReactPointerEvent<SVGSVGElement>) => void
 }
 
-export const useFacilityMapViewport = (viewMode: ViewMode): FacilityMapViewportControls => {
+export const useFacilityMapViewport = (): FacilityMapViewportControls => {
   const [viewport, setViewport] = useState(DEFAULT_FACILITY_VIEWPORT)
   const dragSnapshotRef = useRef<DragSnapshot | null>(null)
   const minimap = minimapViewportIndicator(viewport)
@@ -115,7 +113,7 @@ export const useFacilityMapViewport = (viewMode: ViewMode): FacilityMapViewportC
   }, [])
   const handlePointerDown = useCallback(
     (event: ReactPointerEvent<SVGSVGElement>) => {
-      if (event.button !== 0 || viewMode !== "2D") {
+      if (event.button !== 0) {
         return
       }
       const rect = event.currentTarget.getBoundingClientRect()
@@ -129,7 +127,7 @@ export const useFacilityMapViewport = (viewMode: ViewMode): FacilityMapViewportC
       }
       event.currentTarget.setPointerCapture(event.pointerId)
     },
-    [viewMode, viewport],
+    [viewport],
   )
   const handlePointerMove = useCallback((event: ReactPointerEvent<SVGSVGElement>) => {
     const snapshot = dragSnapshotRef.current

@@ -87,6 +87,48 @@
   background: #03090d;
 }
 
+.cop-map-error {
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 8px;
+  min-height: 320px;
+  height: 100%;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel-inset);
+  color: var(--text-secondary);
+}
+
+.cop-map-error strong {
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.cop-map-error span {
+  max-width: 42ch;
+  font-size: 12px;
+  line-height: 1.45;
+  word-break: keep-all;
+}
+
+.cop-map-error button {
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--panel);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cop-map-error button:hover {
+  border-color: var(--c-cyan-dim);
+  color: var(--c-cyan);
+}
+
 .cop-map-stage {
   position: absolute;
   inset: 0;
