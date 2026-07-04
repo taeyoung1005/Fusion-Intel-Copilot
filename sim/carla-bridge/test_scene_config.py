@@ -87,6 +87,90 @@ class LoadSceneConfigTests(unittest.TestCase):
         self.assertEqual(scene.props, ())
         self.assertEqual(scene.parked_vehicles, ())
         self.assertEqual(scene.walkers, ())
+        self.assertIsNone(scene.timeline)
+
+    def test_parses_deterministic_demo_timeline_when_present(self) -> None:
+        # Given: a three-minute deterministic penetration demo timeline.
+        raw = {
+            "scene": {
+                "timeline": {
+                    "name": "deterministic",
+                    "seed": 44,
+                    "duration_seconds": 180,
+                    "events": [
+                        {
+                            "id": "evt-normal-surveillance",
+                            "at_seconds": 0,
+                            "stage": "normal_surveillance",
+                            "activity_stage": "receive",
+                            "source": "carla",
+                            "level": "normal",
+                            "message": "정상 감시",
+                            "camera_id": "CARLA-N-01",
+                            "alert_tone": "normal",
+                            "map_effect": "baseline",
+                        },
+                        {
+                            "id": "evt-drone-handoff",
+                            "at_seconds": 75,
+                            "stage": "drone_handoff",
+                            "activity_stage": "handoff",
+                            "source": "drone-isr",
+                            "level": "warn",
+                            "message": "공중 자산 인계",
+                            "camera_id": "CARLA-DRONE-ISR",
+                            "asset_id": "DRONE-ISR-01",
+                            "alert_tone": "watch",
+                            "map_effect": "handoff-route",
+                        },
+                    ],
+                    "actors": [
+                        {
+                            "id": "intruder-01",
+                            "kind": "walker",
+                            "blueprint": "walker.pedestrian.0039",
+                            "role": "intruder-crossing",
+                            "spawn_at_seconds": 35,
+                            "location": {"x": 260, "y": -224, "z": 0.16},
+                            "route": [
+                                {"x": 246, "y": -232, "z": 0.16},
+                                {"x": 236, "y": -240, "z": 0.16},
+                            ],
+                            "speed": 0.65,
+                        },
+                        {
+                            "id": "drone-isr-01",
+                            "kind": "drone",
+                            "blueprint": "sensor.camera.rgb",
+                            "role": "drone-isr-asset",
+                            "spawn_at_seconds": 75,
+                            "location": {"x": 250, "y": -222, "z": 32},
+                            "rotation": {"pitch": -60, "yaw": -140, "roll": 0},
+                            "route": [
+                                {"x": 236, "y": -240, "z": 32, "pitch": -60, "yaw": -140, "roll": 0}
+                            ],
+                            "speed": 8.0,
+                        },
+                    ],
+                }
+            }
+        }
+
+        # When: the bridge parses the scene boundary.
+        scene = load_scene_config(raw)
+
+        # Then: the deterministic replay contract is represented as typed config.
+        self.assertIsNotNone(scene.timeline)
+        timeline = scene.timeline
+        self.assertEqual(timeline.name, "deterministic")
+        self.assertEqual(timeline.seed, 44)
+        self.assertEqual(timeline.duration_seconds, 180.0)
+        self.assertEqual([event.stage for event in timeline.events], ["normal_surveillance", "drone_handoff"])
+        self.assertEqual(timeline.events[1].asset_id, "DRONE-ISR-01")
+        self.assertEqual([actor.id for actor in timeline.actors], ["intruder-01", "drone-isr-01"])
+        self.assertEqual(timeline.actors[0].kind, "walker")
+        self.assertEqual(timeline.actors[1].kind, "drone")
+        self.assertEqual(timeline.actors[1].transform.z, 32.0)
 
 
 if __name__ == "__main__":

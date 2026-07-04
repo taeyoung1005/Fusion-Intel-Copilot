@@ -3,10 +3,12 @@ import {
   BlindSpots,
   CameraHandoffRoutes,
   CameraNode,
+  DroneIsrOverlay,
   EventMarkers,
   MainGate,
   PoiMarkers,
   TerrainContours,
+  ThreatVisualization,
 } from "./FacilityMapOverlays"
 import { SatelliteBase, SatelliteTiles } from "./FacilityMapTerrain"
 import { cameraConnectionState } from "./cameraConnectionStatus"
@@ -95,6 +97,8 @@ export function MapScene({
 
       <MainGate />
 
+      {detectionMarkers.length > 0 && <ThreatVisualization events={detectionMarkers} />}
+      {detectionMarkers.length > 0 && <DroneIsrOverlay events={detectionMarkers} />}
       <EventMarkers events={detectionMarkers} onSelectEvent={onSelectEvent} />
 
       {has("cctvCameras") &&

@@ -3,8 +3,15 @@
   "carla_host": "127.0.0.1",
   "carla_port": 2000,
   "map": "Town04_Opt",
+  "scenario": "deterministic",
   "frame_stride": 1,
   "vehicle_count": 4,
+  "webrtc": {
+    "enabled": false,
+    "host": "0.0.0.0",
+    "port": 8765,
+    "fps": 10
+  },
   "scene": {
     "weather": {
       "cloudiness": 64,
@@ -12,6 +19,229 @@
       "sun_altitude_angle": 18,
       "fog_density": 10,
       "wetness": 5
+    },
+    "timeline": {
+      "name": "deterministic",
+      "seed": 44,
+      "duration_seconds": 180,
+      "events": [
+        {
+          "id": "evt-normal-surveillance",
+          "at_seconds": 0,
+          "stage": "normal_surveillance",
+          "activity_stage": "receive",
+          "source": "carla",
+          "level": "normal",
+          "message": "정상 감시: 초소 CCTV와 순찰 동선 정상",
+          "camera_id": "CARLA-N-01",
+          "alert_tone": "normal",
+          "map_effect": "baseline"
+        },
+        {
+          "id": "evt-perimeter-approach",
+          "at_seconds": 35,
+          "stage": "perimeter_approach_detected",
+          "activity_stage": "detect",
+          "source": "vision",
+          "level": "warn",
+          "message": "외곽 접근 탐지: 북동측 경계선 미상 보행자",
+          "camera_id": "CARLA-N-01",
+          "asset_id": "intruder-01",
+          "alert_tone": "watch",
+          "map_effect": "perimeter-marker"
+        },
+        {
+          "id": "evt-drone-handoff",
+          "at_seconds": 75,
+          "stage": "drone_handoff",
+          "activity_stage": "handoff",
+          "source": "drone-isr",
+          "level": "warn",
+          "message": "드론 ISR 인계: 지상 CCTV 사각지대 공중 추적 시작",
+          "camera_id": "CARLA-DRONE-ISR",
+          "asset_id": "drone-isr-01",
+          "alert_tone": "watch",
+          "map_effect": "handoff-route"
+        },
+        {
+          "id": "evt-vision-stream",
+          "at_seconds": 95,
+          "stage": "vision_analysis_streaming",
+          "activity_stage": "classify",
+          "source": "vision",
+          "level": "warn",
+          "message": "비전 분석 스트리밍: DETR 객체 후보와 이동 방향 갱신",
+          "camera_id": "CARLA-E-02",
+          "asset_id": "intruder-01",
+          "alert_tone": "watch",
+          "map_effect": "evidence-track"
+        },
+        {
+          "id": "evt-alert-escalation",
+          "at_seconds": 120,
+          "stage": "alert_escalation",
+          "activity_stage": "escalate",
+          "source": "correlation",
+          "level": "alert",
+          "message": "경보 에스컬레이션: 접근 경로와 탄약고 외곽 카메라 상관",
+          "camera_id": "CARLA-E-02",
+          "asset_id": "intruder-01",
+          "alert_tone": "alert",
+          "map_effect": "alert-zone"
+        },
+        {
+          "id": "evt-challenge-procedure",
+          "at_seconds": 145,
+          "stage": "challenge_procedure",
+          "activity_stage": "respond",
+          "source": "operator",
+          "level": "alert",
+          "message": "수하 절차: 경고 방송, 차단선 유지, 현장 확인 단계 제시",
+          "camera_id": "CARLA-S-03",
+          "asset_id": "guard-challenge-01",
+          "alert_tone": "alert",
+          "map_effect": "response-gate"
+        },
+        {
+          "id": "evt-report-generated",
+          "at_seconds": 170,
+          "stage": "report_generated",
+          "activity_stage": "report",
+          "source": "report",
+          "level": "normal",
+          "message": "보고서 생성: 증거 클립, 상관 근거, 수하 절차 요약",
+          "camera_id": "CARLA-W-04",
+          "asset_id": "report-demo-001",
+          "alert_tone": "normal",
+          "map_effect": "report-summary"
+        }
+      ],
+      "actors": [
+        {
+          "id": "intruder-01",
+          "kind": "walker",
+          "blueprint": "walker.pedestrian.0039",
+          "role": "intruder-crossing",
+          "spawn_at_seconds": 35,
+          "location": {
+            "x": 260,
+            "y": -224,
+            "z": 0.16
+          },
+          "route": [
+            {
+              "x": 246,
+              "y": -232,
+              "z": 0.16
+            },
+            {
+              "x": 236,
+              "y": -240,
+              "z": 0.16
+            },
+            {
+              "x": 222,
+              "y": -252,
+              "z": 0.16
+            }
+          ],
+          "speed": 0.65
+        },
+        {
+          "id": "approach-vehicle-01",
+          "kind": "vehicle",
+          "blueprint": "vehicle.nissan.patrol_2021",
+          "role": "perimeter-approach-vehicle",
+          "spawn_at_seconds": 50,
+          "location": {
+            "x": 272,
+            "y": -226,
+            "z": 0.25
+          },
+          "rotation": {
+            "pitch": 0,
+            "yaw": -155,
+            "roll": 0
+          },
+          "route": [
+            {
+              "x": 260,
+              "y": -232,
+              "z": 0.25,
+              "yaw": -155
+            },
+            {
+              "x": 248,
+              "y": -238,
+              "z": 0.25,
+              "yaw": -155
+            }
+          ],
+          "speed": 4.2
+        },
+        {
+          "id": "drone-isr-01",
+          "kind": "drone",
+          "blueprint": "sensor.camera.rgb",
+          "role": "공중 ISR 드론",
+          "camera_id": "CARLA-DRONE-ISR",
+          "spawn_at_seconds": 75,
+          "location": {
+            "x": 250,
+            "y": -222,
+            "z": 32
+          },
+          "rotation": {
+            "pitch": -60,
+            "yaw": -140,
+            "roll": 0
+          },
+          "route": [
+            {
+              "x": 236,
+              "y": -240,
+              "z": 32,
+              "pitch": -60,
+              "yaw": -140,
+              "roll": 0
+            },
+            {
+              "x": 224,
+              "y": -254,
+              "z": 34,
+              "pitch": -62,
+              "yaw": -132,
+              "roll": 0
+            }
+          ],
+          "speed": 8.0
+        },
+        {
+          "id": "guard-challenge-01",
+          "kind": "walker",
+          "blueprint": "walker.pedestrian.0010",
+          "role": "guard-challenge",
+          "spawn_at_seconds": 135,
+          "location": {
+            "x": 222,
+            "y": -260,
+            "z": 0.16
+          },
+          "route": [
+            {
+              "x": 224,
+              "y": -254,
+              "z": 0.16
+            },
+            {
+              "x": 226,
+              "y": -250,
+              "z": 0.16
+            }
+          ],
+          "speed": 1.2
+        }
+      ]
     },
     "props": [
       {
@@ -774,6 +1004,7 @@
     "walkers": [
       {
         "blueprint": "walker.pedestrian.0010",
+        "role": "guard-patrol",
         "location": {
           "x": 220,
           "y": -250,
@@ -805,6 +1036,7 @@
       },
       {
         "blueprint": "walker.pedestrian.0021",
+        "role": "guard-patrol",
         "location": {
           "x": 226,
           "y": -234,
@@ -836,6 +1068,7 @@
       },
       {
         "blueprint": "walker.pedestrian.0028",
+        "role": "guard-patrol",
         "location": {
           "x": 260,
           "y": -246,
@@ -867,6 +1100,7 @@
       },
       {
         "blueprint": "walker.pedestrian.0034",
+        "role": "guard-patrol",
         "location": {
           "x": 214,
           "y": -266,
@@ -895,130 +1129,6 @@
           }
         ],
         "speed": 0.85
-      },
-      {
-        "blueprint": "walker.pedestrian.0039",
-        "location": {
-          "x": 260,
-          "y": -224,
-          "z": 0.16
-        },
-        "route": [
-          {
-            "x": 260,
-            "y": -224,
-            "z": 0.16
-          },
-          {
-            "x": 246,
-            "y": -232,
-            "z": 0.16
-          },
-          {
-            "x": 236,
-            "y": -240,
-            "z": 0.16
-          },
-          {
-            "x": 222,
-            "y": -252,
-            "z": 0.16
-          }
-        ],
-        "speed": 0.65
-      },
-      {
-        "blueprint": "walker.pedestrian.0041",
-        "location": {
-          "x": 210,
-          "y": -238,
-          "z": 0.16
-        },
-        "route": [
-          {
-            "x": 210,
-            "y": -238,
-            "z": 0.16
-          },
-          {
-            "x": 226,
-            "y": -244,
-            "z": 0.16
-          },
-          {
-            "x": 240,
-            "y": -246,
-            "z": 0.16
-          },
-          {
-            "x": 254,
-            "y": -252,
-            "z": 0.16
-          }
-        ],
-        "speed": 1.05
-      },
-      {
-        "blueprint": "walker.pedestrian.0048",
-        "location": {
-          "x": 243,
-          "y": -224,
-          "z": 0.16
-        },
-        "route": [
-          {
-            "x": 243,
-            "y": -224,
-            "z": 0.16
-          },
-          {
-            "x": 243,
-            "y": -237,
-            "z": 0.16
-          },
-          {
-            "x": 243,
-            "y": -253,
-            "z": 0.16
-          },
-          {
-            "x": 243,
-            "y": -266,
-            "z": 0.16
-          }
-        ],
-        "speed": 0.75
-      },
-      {
-        "blueprint": "walker.pedestrian.0051",
-        "location": {
-          "x": 230,
-          "y": -270,
-          "z": 0.16
-        },
-        "route": [
-          {
-            "x": 230,
-            "y": -270,
-            "z": 0.16
-          },
-          {
-            "x": 230,
-            "y": -255,
-            "z": 0.16
-          },
-          {
-            "x": 230,
-            "y": -239,
-            "z": 0.16
-          },
-          {
-            "x": 230,
-            "y": -226,
-            "z": 0.16
-          }
-        ],
-        "speed": 0.8
       }
     ]
   },

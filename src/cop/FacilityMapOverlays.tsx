@@ -205,6 +205,70 @@ export function EventMarkers({
   )
 }
 
+export function ThreatVisualization({
+  events,
+}: {
+  readonly events: readonly MapEvent[]
+}): ReactElement {
+  return (
+    <g data-testid="map-threat-visualization">
+      {events.map((event) => {
+        const color = TONE_COLOR[event.tone]
+        return (
+          <g key={`threat-${event.id}`} className="cop-map-threat">
+            <circle
+              cx={event.point.x}
+              cy={event.point.y}
+              r={34}
+              fill="none"
+              stroke={color}
+              strokeWidth={1.1}
+              strokeDasharray="5 4"
+              opacity={0.74}
+            />
+            <circle cx={event.point.x} cy={event.point.y} r={21} fill={color} opacity={0.08} />
+          </g>
+        )
+      })}
+    </g>
+  )
+}
+
+export function DroneIsrOverlay({
+  events,
+}: {
+  readonly events: readonly MapEvent[]
+}): ReactElement {
+  const first = events[0]
+  if (first === undefined) {
+    return <g data-testid="drone-isr-overlay" />
+  }
+  const droneX = clamp(first.point.x - 118, 48, MAP_VIEW.width - 48)
+  const droneY = clamp(first.point.y - 86, 48, MAP_VIEW.height - 48)
+  return (
+    <g data-testid="drone-isr-overlay" className="cop-drone-isr">
+      <path
+        d={`M${droneX},${droneY} L${first.point.x},${first.point.y}`}
+        fill="none"
+        stroke="#59d7ff"
+        strokeWidth={1.2}
+        strokeDasharray="4 5"
+      />
+      <g transform={`translate(${droneX}, ${droneY})`}>
+        <circle r={16} fill="rgba(89,215,255,0.12)" stroke="#59d7ff" strokeWidth={1.1} />
+        <path
+          d="M-12 0 H12 M0 -10 V10 M-6 -5 L6 5 M6 -5 L-6 5"
+          stroke="#59d7ff"
+          strokeWidth={1.2}
+        />
+        <text x={0} y={30} className="cop-svg-isr" textAnchor="middle">
+          DRONE ISR
+        </text>
+      </g>
+    </g>
+  )
+}
+
 function RunnerGlyph({ color }: { readonly color: string }): ReactElement {
   return (
     <g stroke={color} strokeWidth={1.3} strokeLinecap="round" fill="none">

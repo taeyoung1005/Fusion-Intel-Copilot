@@ -4,7 +4,7 @@ import sys
 import types
 import unittest
 
-from scene_config import PropConfig, TransformConfig, WalkerConfig
+from scene_config import PropConfig, SceneConfig, TransformConfig, WalkerConfig
 
 
 class FakeVehicleControl:
@@ -48,7 +48,16 @@ class FakeCarla(types.ModuleType):
 
 sys.modules.setdefault("carla", FakeCarla())
 
-from scene import WalkerPatrol, advance_walker_patrols, spawn_parked_vehicles, spawn_vehicles, spawn_walkers  # noqa: E402
+from scene_config import ScenarioEventConfig, ScenarioTimelineConfig, TimedActorConfig  # noqa: E402
+from scene import (  # noqa: E402
+    WalkerPatrol,
+    advance_scene_runtime,
+    advance_walker_patrols,
+    spawn_parked_vehicles,
+    spawn_scene,
+    spawn_vehicles,
+    spawn_walkers,
+)
 
 
 class FakeBlueprintLibrary:
@@ -137,6 +146,42 @@ class FakeMovingVehicleWorld:
 
     def try_spawn_actor(self, blueprint: str, transform: object) -> FakeVehicle:
         return self.vehicle
+
+
+class FakeTimelineActor:
+    def __init__(self, actor_id: str, location: FakeLocation) -> None:
+        self.actor_id = actor_id
+        self.location = location
+        self.hand_brake = False
+        self.physics_enabled = True
+        self.transforms: list[FakeTransform] = []
+
+    def get_location(self) -> FakeLocation:
+        return self.location
+
+    def set_transform(self, transform: FakeTransform) -> None:
+        self.transforms.append(transform)
+        self.location = transform.location
+
+    def set_simulate_physics(self, enabled: bool) -> None:
+        self.physics_enabled = enabled
+
+    def apply_control(self, control: FakeVehicleControl) -> None:
+        self.hand_brake = control.hand_brake
+
+
+class FakeTimelineWorld:
+    def __init__(self) -> None:
+        self.spawned_blueprints: list[str] = []
+        self.spawned_locations: list[tuple[float, float, float]] = []
+
+    def get_blueprint_library(self) -> FakeBlueprintLibrary:
+        return FakeBlueprintLibrary()
+
+    def try_spawn_actor(self, blueprint: str, transform: FakeTransform) -> FakeTimelineActor:
+        self.spawned_blueprints.append(blueprint)
+        self.spawned_locations.append((transform.location.x, transform.location.y, transform.location.z))
+        return FakeTimelineActor(blueprint, transform.location)
 
 
 class SpawnParkedVehiclesTests(unittest.TestCase):
@@ -233,6 +278,110 @@ class WalkerPatrolTests(unittest.TestCase):
         # Then: the next update will continue toward the following waypoint.
         self.assertEqual(updated[0].route_index, 1)
         self.assertEqual(round(pedestrian.location.x, 2), -95.0)
+
+
+class DeterministicTimelineRuntimeTests(unittest.TestCase):
+    def test_replays_timed_assets_and_stage_events_in_the_same_order_each_run(self) -> None:
+        # Given: a deterministic scenario with one intruder and one drone handoff.
+        timeline = ScenarioTimelineConfig(
+            name="deterministic",
+            seed=44,
+            duration_seconds=180.0,
+            events=(
+                ScenarioEventConfig(
+                    id="evt-normal-surveillance",
+                    at_seconds=0.0,
+                    stage="normal_surveillance",
+                    activity_stage="receive",
+                    source="carla",
+                    level="normal",
+                    message="정상 감시",
+                    camera_id="CARLA-N-01",
+                    asset_id=None,
+                    alert_tone="normal",
+                    map_effect="baseline",
+                ),
+                ScenarioEventConfig(
+                    id="evt-approach-detected",
+                    at_seconds=35.0,
+                    stage="perimeter_approach_detected",
+                    activity_stage="detect",
+                    source="vision",
+                    level="warn",
+                    message="외곽 접근 탐지",
+                    camera_id="CARLA-N-01",
+                    asset_id="intruder-01",
+                    alert_tone="watch",
+                    map_effect="perimeter-marker",
+                ),
+                ScenarioEventConfig(
+                    id="evt-drone-handoff",
+                    at_seconds=75.0,
+                    stage="drone_handoff",
+                    activity_stage="handoff",
+                    source="drone-isr",
+                    level="warn",
+                    message="공중 자산 인계",
+                    camera_id="CARLA-DRONE-ISR",
+                    asset_id="drone-isr-01",
+                    alert_tone="watch",
+                    map_effect="handoff-route",
+                ),
+            ),
+            actors=(
+                TimedActorConfig(
+                    id="intruder-01",
+                    kind="walker",
+                    blueprint="walker.pedestrian.0039",
+                    role="intruder-crossing",
+                    spawn_at_seconds=35.0,
+                    transform=TransformConfig(x=260.0, y=-224.0, z=0.16, pitch=0.0, yaw=0.0, roll=0.0),
+                    route=(
+                        TransformConfig(x=246.0, y=-232.0, z=0.16, pitch=0.0, yaw=0.0, roll=0.0),
+                    ),
+                    speed=0.65,
+                ),
+                TimedActorConfig(
+                    id="drone-isr-01",
+                    kind="drone",
+                    blueprint="sensor.camera.rgb",
+                    role="drone-isr-asset",
+                    spawn_at_seconds=75.0,
+                    transform=TransformConfig(x=250.0, y=-222.0, z=32.0, pitch=-60.0, yaw=-140.0, roll=0.0),
+                    route=(
+                        TransformConfig(x=236.0, y=-240.0, z=32.0, pitch=-60.0, yaw=-140.0, roll=0.0),
+                    ),
+                    speed=8.0,
+                ),
+            ),
+        )
+
+        def replay_once() -> tuple[list[str], list[str], list[tuple[float, float, float]]]:
+            world = FakeTimelineWorld()
+            runtime = spawn_scene(
+                world,
+                SceneConfig(weather=None, props=(), parked_vehicles=(), walkers=(), timeline=timeline),
+            )
+            event_ids: list[str] = []
+            for step_seconds in (0.1, 34.9, 40.0):
+                advance = advance_scene_runtime(world, runtime, step_seconds)
+                runtime = advance.runtime
+                event_ids.extend(event.id for event in advance.events)
+            return event_ids, world.spawned_blueprints, world.spawned_locations
+
+        # When: the same scripted timeline is replayed twice.
+        first_events, first_blueprints, first_locations = replay_once()
+        second_events, second_blueprints, second_locations = replay_once()
+
+        # Then: stage triggers and timed asset spawns are byte-for-byte repeatable.
+        self.assertEqual(
+            first_events,
+            ["evt-normal-surveillance", "evt-approach-detected", "evt-drone-handoff"],
+        )
+        self.assertEqual(second_events, first_events)
+        self.assertEqual(first_blueprints, ["walker.pedestrian.0039", "sensor.camera.rgb"])
+        self.assertEqual(second_blueprints, first_blueprints)
+        self.assertEqual(second_locations, first_locations)
 
 
 if __name__ == "__main__":
