@@ -3,7 +3,7 @@
 }
 
 .cop-realtime-alert {
-  transition: border-color 180ms ease-in-out, filter 180ms ease-in-out, opacity 180ms ease-in-out,
+  transition: border-color 180ms ease-in-out, opacity 180ms ease-in-out,
     transform 180ms ease-in-out;
 }
 
@@ -11,19 +11,17 @@
   border-color: var(--alert-critical);
   animation: cop-critical-entry-pulse 900ms ease-in-out 2;
   transition-duration: 120ms;
-  will-change: filter, opacity, transform;
+  will-change: opacity, transform;
 }
 
 @keyframes cop-critical-entry-pulse {
   0%,
   100% {
-    filter: none;
     opacity: 1;
     transform: translateY(0) scale(1);
   }
 
   38% {
-    filter: brightness(1.08);
     opacity: 0.96;
     transform: translateY(-2px) scale(1.012);
   }
@@ -32,7 +30,6 @@
 @media (prefers-reduced-motion: reduce) {
   .cop-realtime-alert.is-critical-entry-pulse {
     animation: none;
-    filter: none;
     opacity: 1;
     transform: none;
     will-change: auto;
