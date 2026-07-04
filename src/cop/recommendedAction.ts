@@ -1,4 +1,5 @@
 import type { Incident, MissingContext, ResponseGate } from "./copData"
+import { type TakenResponseAction, formatTakenAtClock } from "./responseActionCatalog"
 
 export type RecommendedAction = {
   readonly ko: string
@@ -12,7 +13,18 @@ export const buildRecommendedAction = (
   selectedIncident: Incident,
   missingContext: readonly MissingContext[],
   responseGates: readonly ResponseGate[],
+  takenResponseAction?: TakenResponseAction,
 ): RecommendedAction => {
+  if (takenResponseAction !== undefined) {
+    return {
+      ko: "관장 조치",
+      en: "Recommended Next Action",
+      headline: "대응 조치 완료",
+      body: `${selectedIncident.zone}: ${takenResponseAction.label} (${formatTakenAtClock(takenResponseAction.takenAtMs)})`,
+      cta: "사람 확인 게이트로 이동",
+    }
+  }
+
   if (missingContext.length > 0) {
     return {
       ko: "관장 조치",

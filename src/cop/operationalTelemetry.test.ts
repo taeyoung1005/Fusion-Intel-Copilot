@@ -299,6 +299,19 @@ describe("buildRecommendedAction", () => {
     expect(action.headline).toBe("사람 확인 게이트 검토 필요")
     expect(action.cta).toBe("사람 확인 게이트로 이동")
   })
+
+  it("returns action-taken copy when a response action has been recorded, before checking gates", () => {
+    const action = buildRecommendedAction(
+      incident,
+      [{ id: "miss-PHONE-001", camera: "PHONE-001", reason: "No frame", since: "연결 직후" }],
+      [],
+      { actionId: "qrf-dispatch", label: "번개조 출동 지시", takenAtMs: 0 },
+    )
+
+    expect(action.headline).toBe("대응 조치 완료")
+    expect(action.body).toContain("PHONE-001")
+    expect(action.body).toContain("번개조 출동 지시")
+  })
 })
 
 describe("buildDailyReportPeriod", () => {
