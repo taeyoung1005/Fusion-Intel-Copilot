@@ -34,7 +34,7 @@ test.describe("D4D COP 표면과 상호작용", () => {
 
       // --- Left rail: map layers + live phone CCTV -----------------------------
       await expect(page.getByText("MAP LAYERS")).toBeVisible()
-      await expect(page.getByRole("checkbox")).toHaveCount(15)
+      await expect(page.getByRole("checkbox")).toHaveCount(16)
 
       // Protected Assets (AMMO DEPOT) is gated by its own layer toggle now.
       await expect(page.getByText("AMMO DEPOT", { exact: true })).toBeVisible()

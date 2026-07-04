@@ -92,11 +92,13 @@ export function MapScene({
 
       {has("poi") && <PoiMarkers />}
 
-      {detectionMarkers.length > 0 && <ThreatVisualization events={detectionMarkers} />}
+      {has("events") && detectionMarkers.length > 0 && (
+        <ThreatVisualization events={detectionMarkers} />
+      )}
       {detectionMarkers.length > 0 && has("cctvCameras") && (
         <DroneIsrOverlay events={detectionMarkers} />
       )}
-      <EventMarkers events={detectionMarkers} onSelectEvent={onSelectEvent} />
+      {has("events") && <EventMarkers events={detectionMarkers} onSelectEvent={onSelectEvent} />}
 
       {has("cctvCameras") &&
         dynamicCameraRecords.map((record) => {
