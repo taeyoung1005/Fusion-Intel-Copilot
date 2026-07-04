@@ -84,7 +84,10 @@ export function CodexSummary({
   return (
     <section id="cop-codex-panel" className="cop-panel cop-codex" aria-labelledby="cop-codex-title">
       <div className="cop-panel-head">
-        <h2 id="cop-codex-title">CODEX AGENT SUMMARY</h2>
+        <div className="cop-codex-title-stack">
+          <span className="cop-codex-sub cop-codex-product-label">Fusion Intel Copilot</span>
+          <h2 id="cop-codex-title">CODEX AGENT SUMMARY</h2>
+        </div>
         <span className="cop-updated">Updated {CODEX_UPDATED}</span>
       </div>
       <p className="cop-codex-sub">Codex 판단</p>
