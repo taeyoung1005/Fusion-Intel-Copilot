@@ -72,6 +72,7 @@ export function CopDashboard(): ReactElement {
     selectedClip,
     selectedIncident,
     recentActivitySummary,
+    recentActivityEscalated,
     responseGates,
     relationshipGraph,
   } = useDashboardTelemetry({
@@ -279,6 +280,7 @@ export function CopDashboard(): ReactElement {
       </div>
       <RealtimeAlertStack
         alerts={combinedAlerts}
+        escalated={recentActivityEscalated}
         onDismiss={dismissAnyAlert}
         onUpdateSettings={updateAnyAlertSettings}
       />
