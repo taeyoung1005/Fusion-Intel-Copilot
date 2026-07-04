@@ -146,16 +146,26 @@ const configuredEndpoint = (): URL | undefined => {
   return url
 }
 
-const providerFingerprint = (): string =>
-  JSON.stringify({
+const providerFingerprint = (): string => {
+  const {
+    CODEX_AGENT_ENDPOINT: endpoint,
+    CODEX_AGENT_ENDPOINT_TIMEOUT_MS: endpointTimeoutMs,
+    CODEX_AGENT_ENDPOINT_RETRY_COUNT: endpointRetryCount,
+    CODEX_AGENT_CLI_PATH: cliPath,
+    CODEX_AGENT_CLI_MODEL: cliModel,
+    CODEX_AGENT_CLI_TIMEOUT_MS: cliTimeoutMs,
+  } = process.env
+
+  return JSON.stringify({
     mode: codexMode(),
-    endpoint: process.env["CODEX_AGENT_ENDPOINT"]?.trim() ?? "",
-    endpointTimeoutMs: process.env["CODEX_AGENT_ENDPOINT_TIMEOUT_MS"]?.trim() ?? "",
-    endpointRetryCount: process.env["CODEX_AGENT_ENDPOINT_RETRY_COUNT"]?.trim() ?? "",
-    cliPath: process.env["CODEX_AGENT_CLI_PATH"]?.trim() ?? "",
-    cliModel: process.env["CODEX_AGENT_CLI_MODEL"]?.trim() ?? "",
-    cliTimeoutMs: process.env["CODEX_AGENT_CLI_TIMEOUT_MS"]?.trim() ?? "",
+    endpoint: endpoint?.trim() ?? "",
+    endpointTimeoutMs: endpointTimeoutMs?.trim() ?? "",
+    endpointRetryCount: endpointRetryCount?.trim() ?? "",
+    cliPath: cliPath?.trim() ?? "",
+    cliModel: cliModel?.trim() ?? "",
+    cliTimeoutMs: cliTimeoutMs?.trim() ?? "",
   })
+}
 
 const cacheKeyFor = (request: CodexAgentRequest): string =>
   `${providerFingerprint()}:${JSON.stringify(request)}`
