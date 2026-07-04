@@ -1,8 +1,17 @@
-import { Car, MonitorPlay, WifiOff } from "lucide-react"
-import { type ReactElement, memo, useCallback, useEffect, useMemo, useState } from "react"
+import { Car, MonitorPlay, WifiOff, X } from "lucide-react"
+import {
+  type ReactElement,
+  type KeyboardEvent as ReactKeyboardEvent,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 import { cameraConnectionState } from "./cameraConnectionStatus"
 import type { EvidenceClip } from "./copData"
 import type { DynamicCameraRecord } from "./dynamicMapCamera"
+import type { DetrServerConnection } from "./serverDetectionClient"
 import type { CarlaCameraDetectionFrame } from "./useCarlaCameraDetection"
 import { useCarlaCameraDetection } from "./useCarlaCameraDetection"
 import { useCarlaVideoDetection } from "./useCarlaVideoDetection"
@@ -13,7 +22,15 @@ type CarlaCctvWallProps = {
   readonly selectedCameraId: string
   readonly onSelectCamera: (camera: DynamicCameraRecord) => void
   readonly onVisionEvidence: (clip: EvidenceClip) => void
+  readonly onDetectionServerConnectionChange?: CarlaDetectionServerConnectionHandler
+  readonly expanded?: boolean
+  readonly onClose?: () => void
 }
+
+export type CarlaDetectionServerConnectionHandler = (
+  cameraId: string,
+  connection: DetrServerConnection,
+) => void
 
 const formatLastFrame = (iso: string | null | undefined): string => {
   if (iso === null || iso === undefined) {
@@ -32,21 +49,77 @@ export const CarlaCctvWall = memo(function CarlaCctvWall({
   selectedCameraId,
   onSelectCamera,
   onVisionEvidence,
+  onDetectionServerConnectionChange,
+  expanded = false,
+  onClose,
 }: CarlaCctvWallProps): ReactElement {
   const liveCount = useMemo(
     () => cameras.filter((camera) => cameraConnectionState(camera).tone === "live").length,
     [cameras],
   )
 
-  return (
+  useEffect(() => {
+    if (!expanded || onClose === undefined) {
+      return
+    }
+    const handleKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === "Escape") {
+        onClose()
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [expanded, onClose])
+
+  const handlePanelKeyDown = useCallback((event: ReactKeyboardEvent<HTMLElement>): void => {
+    if (event.currentTarget !== event.target) {
+      return
+    }
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+  }, [])
+
+  const handleBackdropKeyDown = useCallback(
+    (event: ReactKeyboardEvent<HTMLDivElement>): void => {
+      if (event.currentTarget !== event.target || onClose === undefined) {
+        return
+      }
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault()
+        onClose()
+      }
+    },
+    [onClose],
+  )
+
+  const panel = (
     <section
       id="cop-carla-cctv-panel"
-      className="cop-panel cop-mobile-live"
+      className={`cop-panel cop-mobile-live${expanded ? " cop-cctv-window" : ""}`}
       aria-labelledby="cop-carla-cctv-title"
+      role={expanded ? "dialog" : undefined}
+      aria-modal={expanded ? true : undefined}
+      tabIndex={expanded ? 0 : undefined}
+      onClick={expanded ? (event) => event.stopPropagation() : undefined}
+      onKeyDown={expanded ? handlePanelKeyDown : undefined}
     >
       <div className="cop-panel-head">
         <h2 id="cop-carla-cctv-title">CARLA SIM CCTV</h2>
-        <MonitorPlay size={15} aria-hidden="true" />
+        <div className="cop-panel-head-actions">
+          <MonitorPlay size={15} aria-hidden="true" />
+          {expanded && onClose !== undefined && (
+            <button
+              type="button"
+              className="cop-icon-btn"
+              aria-label="CCTV 창 닫기"
+              onClick={onClose}
+            >
+              <X size={15} aria-hidden="true" />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="cop-mobile-live-summary">
@@ -73,11 +146,31 @@ export const CarlaCctvWall = memo(function CarlaCctvWall({
               selected={record.id === selectedCameraId}
               onSelectCamera={onSelectCamera}
               onVisionEvidence={onVisionEvidence}
+              {...(onDetectionServerConnectionChange !== undefined
+                ? { onDetectionServerConnectionChange }
+                : {})}
             />
           ))}
         </div>
       )}
     </section>
+  )
+
+  if (!expanded) {
+    return panel
+  }
+
+  return (
+    <div
+      className="cop-cctv-window-backdrop"
+      role={onClose === undefined ? undefined : "button"}
+      tabIndex={onClose === undefined ? undefined : 0}
+      aria-label={onClose === undefined ? undefined : "CCTV 창 닫기"}
+      onClick={onClose}
+      onKeyDown={onClose === undefined ? undefined : handleBackdropKeyDown}
+    >
+      {panel}
+    </div>
   )
 })
 
@@ -86,6 +179,7 @@ type CarlaCctvCardProps = {
   readonly selected: boolean
   readonly onSelectCamera: (camera: DynamicCameraRecord) => void
   readonly onVisionEvidence: (clip: EvidenceClip) => void
+  readonly onDetectionServerConnectionChange?: CarlaDetectionServerConnectionHandler
 }
 
 type CarlaCctvDetectionOverlayProps = {
@@ -151,15 +245,29 @@ const CarlaCctvCard = memo(function CarlaCctvCard({
   selected,
   onSelectCamera,
   onVisionEvidence,
+  onDetectionServerConnectionChange,
 }: CarlaCctvCardProps): ReactElement {
   const connection = cameraConnectionState(record)
   const hasFrame = record.latestFrameDataUrl !== null && record.latestFrameDataUrl !== undefined
   const webrtc = useCarlaWebrtcVideo(record.id, hasFrame)
   const webrtcLive = webrtc.state === "live"
   const [detectionFrame, setDetectionFrame] = useState<CarlaCameraDetectionFrame | null>(null)
-  const updateDetections = useCallback((frame: CarlaCameraDetectionFrame): void => {
-    setDetectionFrame(frame.objects.length === 0 ? null : frame)
-  }, [])
+  const [detectionServerConnection, setDetectionServerConnection] =
+    useState<DetrServerConnection>("disabled")
+  const updateDetectionServerConnection = useCallback(
+    (connection: DetrServerConnection): void => {
+      setDetectionServerConnection(connection)
+      onDetectionServerConnectionChange?.(record.id, connection)
+    },
+    [onDetectionServerConnectionChange, record.id],
+  )
+  const updateDetections = useCallback(
+    (frame: CarlaCameraDetectionFrame): void => {
+      setDetectionFrame(frame.objects.length === 0 ? null : frame)
+      updateDetectionServerConnection(frame.serverConnection)
+    },
+    [updateDetectionServerConnection],
+  )
   const selectCamera = useCallback((): void => {
     onSelectCamera(record)
   }, [onSelectCamera, record])
@@ -168,9 +276,19 @@ const CarlaCctvCard = memo(function CarlaCctvCard({
     if (!hasFrame || webrtcLive) {
       setDetectionFrame(null)
     }
-  }, [hasFrame, webrtcLive])
+    if (!hasFrame && detectionServerConnection !== "disabled") {
+      updateDetectionServerConnection("disabled")
+    }
+  }, [detectionServerConnection, hasFrame, updateDetectionServerConnection, webrtcLive])
 
-  useCarlaVideoDetection(record.id, record.label, webrtc.videoRef, webrtcLive, onVisionEvidence)
+  useCarlaVideoDetection(
+    record.id,
+    record.label,
+    webrtc.videoRef,
+    webrtcLive,
+    onVisionEvidence,
+    updateDetectionServerConnection,
+  )
   useCarlaCameraDetection(
     record.id,
     record.label,

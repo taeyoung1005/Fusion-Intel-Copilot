@@ -7,6 +7,7 @@ import { RealtimeAlertStack } from "./RealtimeAlertStack"
 import { RightRail } from "./RightRail"
 import { type EvidenceClip, LAST_UPDATED, MAP_LAYERS, type MapLayerId } from "./copData"
 import { useEvidenceWindowBuffer } from "./evidenceWindowBuffer"
+import { type DetrServerConnection, isDetrServerDisconnected } from "./serverDetectionClient"
 import { useCarlaCameras } from "./useCarlaCameras"
 import { useCopDashboardActions } from "./useCopDashboardActions"
 import { useCorrelationAlerts } from "./useCorrelationAlerts"
@@ -36,6 +37,10 @@ export function CopDashboard(): ReactElement {
   const [selectedCameraId, setSelectedCameraId] = useState("")
   const [selectedCitationId, setSelectedCitationId] = useState("")
   const [visionEvidence, setVisionEvidence] = useState<readonly EvidenceClip[]>([])
+  const [cctvWindowOpen, setCctvWindowOpen] = useState(false)
+  const [disconnectedDetectionCameraIds, setDisconnectedDetectionCameraIds] = useState<
+    ReadonlySet<string>
+  >(() => new Set())
   const [commandFeedback, setCommandFeedback] = useState(
     "COP 준비 완료: 합성 CCTV와 서버 Codex 하네스 연결 대기",
   )
@@ -80,6 +85,30 @@ export function CopDashboard(): ReactElement {
       return [clip, ...deduped].slice(0, MAX_VISION_EVIDENCE)
     })
   }, [])
+
+  const updateDetectionServerConnection = useCallback(
+    (cameraId: string, connection: DetrServerConnection): void => {
+      const disconnected = isDetrServerDisconnected(connection)
+      setDisconnectedDetectionCameraIds((previous) => {
+        if (previous.has(cameraId) === disconnected) {
+          return previous
+        }
+        const next = new Set(previous)
+        if (disconnected) {
+          next.add(cameraId)
+        } else {
+          next.delete(cameraId)
+        }
+        return next
+      })
+    },
+    [],
+  )
+
+  const disconnectedDetectionCameraLabels = useMemo(
+    () => [...disconnectedDetectionCameraIds].sort(),
+    [disconnectedDetectionCameraIds],
+  )
 
   const {
     alerts: correlationAlerts,
@@ -128,8 +157,19 @@ export function CopDashboard(): ReactElement {
       <p className="cop-shell-feedback" aria-live="polite">
         {commandFeedback}
       </p>
+      {disconnectedDetectionCameraLabels.length > 0 && (
+        <output className="cop-server-disconnected" aria-live="polite">
+          <span className="cop-server-disconnected-dot" aria-hidden="true" />
+          <strong>서버 연결 끊김</strong>
+          <span>
+            {disconnectedDetectionCameraLabels.length === 1
+              ? `${disconnectedDetectionCameraLabels[0]} /detect 응답 없음`
+              : `${disconnectedDetectionCameraLabels.length}개 카메라 /detect 응답 없음`}
+          </span>
+        </output>
+      )}
       <div className="cop-body">
-        <IconRail onNavigate={navigateRail} />
+        <IconRail onNavigate={navigateRail} onOpenCctvWindow={() => setCctvWindowOpen(true)} />
         <LeftPanels
           activeLayers={activeLayers}
           onToggleLayer={toggleLayer}
@@ -139,6 +179,9 @@ export function CopDashboard(): ReactElement {
           onRefresh={refreshDashboard}
           onSelectDynamicCamera={selectDynamicCamera}
           onVisionEvidence={addVisionEvidence}
+          cctvWindowOpen={cctvWindowOpen}
+          onCloseCctvWindow={() => setCctvWindowOpen(false)}
+          onDetectionServerConnectionChange={updateDetectionServerConnection}
         />
         <main className="cop-center" aria-label="시설 지도와 증거 타임라인">
           <FacilityMap
