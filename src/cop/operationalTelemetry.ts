@@ -193,9 +193,8 @@ export const buildCodexMetrics = (
   cameras: readonly DynamicCameraRecord[],
   evidence: readonly EvidenceClip[],
 ): readonly CodexMetric[] => {
-  const totalFrames = cameras.reduce((sum, camera) => sum + (camera.frameCount ?? 0), 0)
   const visionDetections = evidence.filter((clip) => clip.source === "vision").length
-  const objectiveEvidence = totalFrames + visionDetections
+  const objectiveEvidence = visionDetections
   const anomalies = evidence.filter((clip) => clip.tone === "watch" || clip.tone === "alert").length
   const liveCount = cameras.filter((camera) => cameraConnectionState(camera).tone === "live").length
   const coverage = cameras.length === 0 ? 0 : Math.round((liveCount / cameras.length) * 100)

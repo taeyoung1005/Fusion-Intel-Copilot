@@ -66,15 +66,25 @@ describe("buildCodexMetrics", () => {
     expect(byId.confidence).toBe("0%")
   })
 
-  it("computes real counts from cameras and evidence", () => {
+  it("computes objective evidence from real vision detections, not frame counts", () => {
     const cams = [camera("PHONE-001", 10, "2026-06-30T00:00:10Z")]
     const evid = [evidence({ camera: "PHONE-001", source: "vision", confidencePct: 80 })]
     const metrics = buildCodexMetrics(cams, evid)
     const byId = Object.fromEntries(metrics.map((m) => [m.id, m.value]))
-    expect(byId.evidence).toBe("11") // 10 frames + 1 vision detection
+    expect(byId.evidence).toBe("1") // 1 real vision detection; frames do not count as evidence
     expect(byId.anomalies).toBe("1")
     expect(byId.nodes).toBe("1")
     expect(byId.confidence).toBe("80%")
+  })
+
+  it("keeps objective evidence at zero when only frame counts increase", () => {
+    const cams = [
+      camera("PHONE-001", 10, "2026-06-30T00:00:10Z"),
+      camera("PHONE-002", 24, "2026-06-30T00:00:24Z"),
+    ]
+    const metrics = buildCodexMetrics(cams, [])
+    const byId = Object.fromEntries(metrics.map((m) => [m.id, m.value]))
+    expect(byId.evidence).toBe("0")
   })
 })
 
