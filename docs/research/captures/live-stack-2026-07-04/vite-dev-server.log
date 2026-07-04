@@ -3,35 +3,27 @@
 > vite --host 0.0.0.0
 
 
-  VITE v8.1.0  ready in 216 ms
+  VITE v8.1.0  ready in 223 ms
 
   ➜  Local:   http://localhost:5173/
   ➜  Network: http://192.168.0.11:5173/
   ➜  Network: http://100.113.177.10:5173/
-10:10:01 AM [vite] server/viteCodexAgentPlugin.ts changed, restarting server...
-10:10:01 AM [vite] server restarted.
-10:10:01 AM [vite] Internal server error: isCarlaWebrtcRequest is not defined
-      at file:///Users/parktaeyeong/Desktop/D4D/node_modules/.vite-temp/vite.config.ts.timestamp-1783127401436-150924f42253c8.mjs:1190:2
-      at call (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6511:5)
-      at next (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6464:4)
-      at hostValidationMiddleware (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:16558:3)
-      at call (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6511:5)
-      at next (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6464:4)
-      at cors (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6812:5)
-      at file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6835:9
-      at originCallback (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6829:8)
-      at file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6831:27
-10:10:02 AM [vite] Internal server error: isCarlaWebrtcRequest is not defined
-      at file:///Users/parktaeyeong/Desktop/D4D/node_modules/.vite-temp/vite.config.ts.timestamp-1783127401436-150924f42253c8.mjs:1190:2
-      at call (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6511:5)
-      at next (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6464:4)
-      at hostValidationMiddleware (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:16558:3)
-      at call (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6511:5)
-      at next (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6464:4)
-      at cors (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6812:5)
-      at file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6835:9
-      at originCallback (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6829:8)
-      at file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6831:27
-10:10:05 AM [vite] server/viteCodexAgentPlugin.ts changed, restarting server...
-10:10:05 AM [vite] server restarted.
-10:10:14 AM [vite] (client) hmr update /src/styles.css
+4:28:53 PM [vite] (client) [console.error] CARLA 시뮬레이션 CCTV DETR 추론 실패 TypeError: Failed to fetch
+    at window.fetch (chrome-extension://gcfpcaailhbaocipfngddidnpfgalokc/injected.js:105:22)
+    at requestVisionPipeline (http://127.0.0.1:5173/src/cop/visionPipelineClient.ts:99:25)
+    at inferOneFrame (http://127.0.0.1:5173/src/cop/useCarlaCameraDetection.ts:94:28)
+4:35:49 PM [vite] (client) hmr update /src/cop/CarlaCctvWall.tsx
+4:35:54 PM [vite] (client) hmr update /src/cop/CarlaCctvWall.tsx
+4:36:09 PM [vite] (client) hmr update /src/cop/CarlaCctvWall.tsx
+4:36:12 PM [vite] (client) hmr update /src/cop/LeftRail.tsx
+4:36:19 PM [vite] (client) hmr update /src/cop/LeftRail.tsx
+4:36:36 PM [vite] (client) hmr update /src/cop/LeftRail.tsx
+4:36:40 PM [vite] (client) hmr update /src/cop/CopDashboard.tsx
+4:36:45 PM [vite] (client) hmr update /src/cop/CopDashboard.tsx
+4:36:50 PM [vite] (client) hmr update /src/styles.css
+4:52:56 PM [vite] (client) hmr update /src/cop/CarlaCctvWall.tsx
+4:53:43 PM [vite] (client) hmr update /src/cop/CarlaCctvWall.tsx
+4:54:08 PM [vite] (client) hmr update /src/cop/CarlaCctvWall.tsx
+4:54:27 PM [vite] (client) hmr update /src/cop/CarlaCctvWall.tsx
+4:54:40 PM [vite] (client) hmr update /src/cop/CopDashboard.tsx
+4:57:26 PM [vite] (client) hmr update /src/cop/CarlaCctvWall.tsx

@@ -1,17 +1,59 @@
+# Dependencies
 node_modules/
+
+# Build, test, and coverage output
 dist/
 coverage/
-graphify-out/
 test-results/
 playwright-report/
 .vite/
+*.tsbuildinfo
+
+# Logs and local verification output
+*.log
+*.out
 npm-debug.log*
+verify*.mjs
+
+# Environment and local config
+.env
+.env.*
+!.env.example
+.DS_Store
+
+# Tool and agent state
+.claude/
+.codegraph/
+.debug-journal.md
 .omo/
+.superpowers/
+graphify-out/
+artifacts/
+
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyright/
+.hypothesis/
+.coverage
+htmlcov/
 sim/falcon-bridge/__pycache__/
 sim/falcon-bridge/.venv/
+
+# Local datasets and generated research runs
 data/
-__pycache__/
-*.pyc
-.venv/
-.DS_Store
-.superpowers/
+docs/research/captures/*-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/
+
+# This repo tracks package-lock.json; ignore accidental alternate-manager files.
+pnpm-lock.yaml
+pnpm-workspace.yaml
+yarn.lock
+bun.lock
+bun.lockb
