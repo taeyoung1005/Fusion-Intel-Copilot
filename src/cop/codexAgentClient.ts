@@ -27,15 +27,46 @@ export type CodexAgentContext = {
   readonly recentActivitySummary?: string
 }
 
+export type CodexAgentRequestPayload = {
+  readonly checkpointId: string
+  readonly checkpointLabel: string
+  readonly evidence: {
+    readonly incidentId: string
+    readonly title: string
+    readonly status: string
+    readonly summary: string
+    readonly citations: readonly string[]
+    readonly missingContext: readonly string[]
+    readonly responseOutcome: string
+  }
+}
+
+export const CODEX_AGENT_CLIENT_TIMEOUT_MS = 80_000
+export const CODEX_AGENT_RESPONSE_CACHE_TTL_MS = 5 * 60_000
+
+export type CodexAgentClientErrorReason = "http" | "invalid-response" | "network" | "timeout"
+
 export class CodexAgentClientError extends Error {
   readonly statusCode: number | null
+  readonly reason: CodexAgentClientErrorReason
 
-  constructor(message: string, statusCode: number | null) {
+  constructor(
+    message: string,
+    statusCode: number | null,
+    reason: CodexAgentClientErrorReason = "network",
+  ) {
     super(message)
     this.name = "CodexAgentClientError"
     this.statusCode = statusCode
+    this.reason = reason
   }
 }
+
+const inFlightRequests = new Map<string, Promise<CodexAgentDecision>>()
+const responseCache = new Map<
+  string,
+  { readonly response: CodexAgentDecision; readonly expiresAtMs: number }
+>()
 
 const checkpointForIncident = (
   incident: Incident,
@@ -59,6 +90,47 @@ const statusForIncident = (incident: Incident): string => {
 
 const citationLabel = (citation: Citation): string =>
   citation.time === undefined ? citation.label : `${citation.label} ${citation.time}`
+
+export const buildCodexAgentRequestPayload = (
+  context: CodexAgentContext,
+): CodexAgentRequestPayload => {
+  const checkpoint = checkpointForIncident(context.incident)
+  return {
+    checkpointId: checkpoint.id,
+    checkpointLabel: checkpoint.label,
+    evidence: {
+      incidentId: context.incident.id,
+      title: context.incident.title,
+      status: statusForIncident(context.incident),
+      summary: `${context.incident.zone} ${context.incident.meta} 증거 패킷 — ${context.incident.title}${
+        context.recentActivitySummary !== undefined ? ` · ${context.recentActivitySummary}` : ""
+      }`,
+      citations: context.citations.map(citationLabel),
+      missingContext: context.missingContext.map((item) => `${item.camera}: ${item.reason}`),
+      responseOutcome: context.responseOutcome,
+    },
+  }
+}
+
+export const buildCodexAgentRequestKey = (context: CodexAgentContext): string =>
+  JSON.stringify(buildCodexAgentRequestPayload(context))
+
+export const clearCodexAgentClientCache = (): void => {
+  responseCache.clear()
+  inFlightRequests.clear()
+}
+
+const cachedResponseFor = (key: string): CodexAgentDecision | undefined => {
+  const cached = responseCache.get(key)
+  if (cached === undefined) {
+    return undefined
+  }
+  if (Date.now() > cached.expiresAtMs) {
+    responseCache.delete(key)
+    return undefined
+  }
+  return cached.response
+}
 
 const readServerError = async (response: Response): Promise<string> => {
   const text = await response.text()
@@ -86,51 +158,62 @@ const readServerError = async (response: Response): Promise<string> => {
 export const requestCodexAgent = async (
   context: CodexAgentContext,
 ): Promise<CodexAgentDecision> => {
-  const checkpoint = checkpointForIncident(context.incident)
-  const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), 30_000)
-
-  try {
-    const response = await fetch("/api/codex-agent", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        checkpointId: checkpoint.id,
-        checkpointLabel: checkpoint.label,
-        evidence: {
-          incidentId: context.incident.id,
-          title: context.incident.title,
-          status: statusForIncident(context.incident),
-          summary: `${context.incident.zone} ${context.incident.meta} 증거 패킷 — ${context.incident.title}${
-            context.recentActivitySummary !== undefined ? ` · ${context.recentActivitySummary}` : ""
-          }`,
-          citations: context.citations.map(citationLabel),
-          missingContext: context.missingContext.map((item) => `${item.camera}: ${item.reason}`),
-          responseOutcome: context.responseOutcome,
-        },
-      }),
-      signal: controller.signal,
-    })
-
-    if (!response.ok) {
-      throw new CodexAgentClientError(await readServerError(response), response.status)
-    }
-
-    const payload: unknown = await response.json()
-    const parsed = CodexAgentResponseSchema.safeParse(payload)
-    if (!parsed.success) {
-      throw new CodexAgentClientError("서버 Codex 응답 형식을 확인할 수 없습니다.", null)
-    }
-    return parsed.data
-  } catch (error) {
-    if (error instanceof CodexAgentClientError) {
-      throw error
-    }
-    if (error instanceof Error && error.name === "AbortError") {
-      throw new CodexAgentClientError("서버 Codex 요청 시간이 초과되었습니다.", null)
-    }
-    throw new CodexAgentClientError("서버 Codex 요청 실패: 연결 상태를 확인하세요.", null)
-  } finally {
-    clearTimeout(timeout)
+  const payload = buildCodexAgentRequestPayload(context)
+  const key = JSON.stringify(payload)
+  const cached = cachedResponseFor(key)
+  if (cached !== undefined) {
+    return cached
   }
+
+  const inFlight = inFlightRequests.get(key)
+  if (inFlight !== undefined) {
+    return inFlight
+  }
+
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), CODEX_AGENT_CLIENT_TIMEOUT_MS)
+
+  const request = (async (): Promise<CodexAgentDecision> => {
+    try {
+      const response = await fetch("/api/codex-agent", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      })
+
+      if (!response.ok) {
+        throw new CodexAgentClientError(await readServerError(response), response.status, "http")
+      }
+
+      const responsePayload: unknown = await response.json()
+      const parsed = CodexAgentResponseSchema.safeParse(responsePayload)
+      if (!parsed.success) {
+        throw new CodexAgentClientError(
+          "서버 Codex 응답 형식을 확인할 수 없습니다.",
+          null,
+          "invalid-response",
+        )
+      }
+      responseCache.set(key, {
+        response: parsed.data,
+        expiresAtMs: Date.now() + CODEX_AGENT_RESPONSE_CACHE_TTL_MS,
+      })
+      return parsed.data
+    } catch (error) {
+      if (error instanceof CodexAgentClientError) {
+        throw error
+      }
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new CodexAgentClientError("서버 Codex 요청 시간이 초과되었습니다.", null, "timeout")
+      }
+      throw new CodexAgentClientError("서버 Codex 요청 실패: 연결 상태를 확인하세요.", null)
+    } finally {
+      clearTimeout(timeout)
+      inFlightRequests.delete(key)
+    }
+  })()
+
+  inFlightRequests.set(key, request)
+  return request
 }

@@ -40,6 +40,8 @@ const jsonHeaders = {
 } as const
 
 const maxBodyBytes = 64 * 1024
+export const CODEX_AGENT_SERVER_RESPONSE_CACHE_TTL_MS = 5 * 60_000
+export const CODEX_AGENT_SERVER_BUSY_RETRY_AFTER_MS = 15_000
 
 type BodyReadResult =
   | { readonly kind: "ok"; readonly body: string }
@@ -51,6 +53,18 @@ type CodexActivity = {
   readonly message: string
   readonly detail?: Readonly<Record<string, unknown>>
 }
+
+type CodexDecisionResult = {
+  readonly response: CodexAgentResponse
+  readonly fallback: boolean
+}
+
+type CodexResponseCacheEntry = CodexDecisionResult & {
+  readonly expiresAtMs: number
+}
+
+const responseCache = new Map<string, CodexResponseCacheEntry>()
+const inFlightDecisions = new Map<string, Promise<CodexDecisionResult>>()
 
 const emitCodexActivity = (activity: CodexActivity): void => {
   emitActivityEvent({
@@ -132,6 +146,37 @@ const configuredEndpoint = (): URL | undefined => {
   return url
 }
 
+const providerFingerprint = (): string =>
+  JSON.stringify({
+    mode: codexMode(),
+    endpoint: process.env["CODEX_AGENT_ENDPOINT"]?.trim() ?? "",
+    endpointTimeoutMs: process.env["CODEX_AGENT_ENDPOINT_TIMEOUT_MS"]?.trim() ?? "",
+    endpointRetryCount: process.env["CODEX_AGENT_ENDPOINT_RETRY_COUNT"]?.trim() ?? "",
+    cliPath: process.env["CODEX_AGENT_CLI_PATH"]?.trim() ?? "",
+    cliModel: process.env["CODEX_AGENT_CLI_MODEL"]?.trim() ?? "",
+    cliTimeoutMs: process.env["CODEX_AGENT_CLI_TIMEOUT_MS"]?.trim() ?? "",
+  })
+
+const cacheKeyFor = (request: CodexAgentRequest): string =>
+  `${providerFingerprint()}:${JSON.stringify(request)}`
+
+const cachedDecisionFor = (key: string): CodexDecisionResult | undefined => {
+  const cached = responseCache.get(key)
+  if (cached === undefined) {
+    return undefined
+  }
+  if (Date.now() > cached.expiresAtMs) {
+    responseCache.delete(key)
+    return undefined
+  }
+  return { response: cached.response, fallback: cached.fallback }
+}
+
+export const resetCodexAgentServerStateForTests = (): void => {
+  responseCache.clear()
+  inFlightDecisions.clear()
+}
+
 const localCodexDecision = (
   request: CodexAgentRequest,
   fallbackReason?: string,
@@ -167,52 +212,121 @@ export const decideCodexAgent = async (request: CodexAgentRequest): Promise<Code
       mode,
     },
   })
+  const cacheKey = cacheKeyFor(request)
+  const cached = cachedDecisionFor(cacheKey)
+  if (cached !== undefined) {
+    emitCodexActivity({
+      stage: "cache:hit",
+      message: "Codex 에이전트 캐시 판단을 재사용했습니다.",
+      detail: {
+        checkpointId: request.checkpointId,
+        mode,
+      },
+    })
+    return emitCodexResponse(cached.response, cached.fallback)
+  }
+
+  const inFlight = inFlightDecisions.get(cacheKey)
+  if (inFlight !== undefined) {
+    emitCodexActivity({
+      stage: "request:dedupe",
+      message: "동일한 Codex 에이전트 요청이 진행 중이라 기존 요청을 공유했습니다.",
+      detail: {
+        checkpointId: request.checkpointId,
+        mode,
+      },
+    })
+    const result = await inFlight
+    return emitCodexResponse(result.response, result.fallback)
+  }
+
+  if (inFlightDecisions.size > 0) {
+    const result: CodexDecisionResult = {
+      response: localCodexDecision(
+        request,
+        "다른 Codex provider 요청이 진행 중이라 새 provider 호출을 건너뛰었습니다.",
+      ),
+      fallback: true,
+    }
+    emitCodexActivity({
+      stage: "request:skipped",
+      level: "warn",
+      message: "Codex provider 요청이 이미 진행 중이라 새 호출을 건너뛰었습니다.",
+      detail: {
+        checkpointId: request.checkpointId,
+        mode,
+        retryAfterMs: CODEX_AGENT_SERVER_BUSY_RETRY_AFTER_MS,
+      },
+    })
+    return emitCodexResponse(result.response, result.fallback)
+  }
+
+  const decision = resolveCodexAgent(request)
+  inFlightDecisions.set(cacheKey, decision)
+  try {
+    const result = await decision
+    if (!result.fallback) {
+      responseCache.set(cacheKey, {
+        ...result,
+        expiresAtMs: Date.now() + CODEX_AGENT_SERVER_RESPONSE_CACHE_TTL_MS,
+      })
+    }
+    return emitCodexResponse(result.response, result.fallback)
+  } finally {
+    if (inFlightDecisions.get(cacheKey) === decision) {
+      inFlightDecisions.delete(cacheKey)
+    }
+  }
+}
+
+const resolveCodexAgent = async (request: CodexAgentRequest): Promise<CodexDecisionResult> => {
+  const mode = codexMode()
   let endpoint: URL | undefined
   try {
     endpoint = configuredEndpoint()
   } catch (error) {
     const reason = error instanceof Error ? error.message : "알 수 없는 오류"
-    return emitCodexResponse(localCodexDecision(request, reason), true)
+    return { response: localCodexDecision(request, reason), fallback: true }
   }
 
   if (endpoint === undefined) {
     if (mode !== "codex-cli") {
-      return emitCodexResponse(localCodexDecision(request), false)
+      return { response: localCodexDecision(request), fallback: false }
     }
 
     try {
       const providerResponse = await callCodexCli(request)
-      return emitCodexResponse(
-        {
+      return {
+        response: {
           codexMode: "codex-cli",
           decision: providerResponse.decision,
           citations: providerResponse.citations ?? request.evidence.citations,
           adapterNotice:
             providerResponse.adapterNotice ?? "로컬 Codex CLI가 하네스 판단을 생성했습니다.",
         },
-        false,
-      )
+        fallback: false,
+      }
     } catch (error) {
       const reason = error instanceof Error ? error.message : "알 수 없는 오류"
-      return emitCodexResponse(localCodexDecision(request, reason), true)
+      return { response: localCodexDecision(request, reason), fallback: true }
     }
   }
 
   try {
     const providerResponse = await callConfiguredCodexEndpoint(endpoint, request)
-    return emitCodexResponse(
-      {
+    return {
+      response: {
         codexMode: "configured-codex-endpoint",
         decision: providerResponse.decision,
         citations: providerResponse.citations ?? request.evidence.citations,
         adapterNotice:
           providerResponse.adapterNotice ?? "서버 Codex 엔드포인트에서 판단을 수신했습니다.",
       },
-      false,
-    )
+      fallback: false,
+    }
   } catch (error) {
     const reason = error instanceof Error ? error.message : "알 수 없는 오류"
-    return emitCodexResponse(localCodexDecision(request, reason), true)
+    return { response: localCodexDecision(request, reason), fallback: true }
   }
 }
 
@@ -235,6 +349,9 @@ const writeJson = (
   statusCode: number,
   payload: CodexAgentResponse | { readonly error: string },
 ): void => {
+  if (response.destroyed || response.writableEnded) {
+    return
+  }
   response.writeHead(statusCode, jsonHeaders)
   response.end(JSON.stringify(payload))
 }

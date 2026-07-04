@@ -42,7 +42,11 @@ const responseJsonSchema = {
   },
 } as const
 
-const defaultTimeoutMs = 60_000
+export const CODEX_AGENT_CLI_TIMEOUT_MS = 60_000
+export const CODEX_AGENT_CLI_MIN_TIMEOUT_MS = 5_000
+export const CODEX_AGENT_CLI_MAX_TIMEOUT_MS = 70_000
+
+const defaultTimeoutMs = CODEX_AGENT_CLI_TIMEOUT_MS
 const maxOutputBytes = 128 * 1024
 
 const parseTimeout = (): number => {
@@ -51,8 +55,12 @@ const parseTimeout = (): number => {
     return defaultTimeoutMs
   }
   const parsed = Number(value)
-  if (!Number.isFinite(parsed) || parsed < 5_000 || parsed > 180_000) {
-    throw new Error("CODEX_AGENT_CLI_TIMEOUT_MS must be between 5000 and 180000")
+  if (
+    !Number.isFinite(parsed) ||
+    parsed < CODEX_AGENT_CLI_MIN_TIMEOUT_MS ||
+    parsed > CODEX_AGENT_CLI_MAX_TIMEOUT_MS
+  ) {
+    throw new Error("CODEX_AGENT_CLI_TIMEOUT_MS must be between 5000 and 70000")
   }
   return parsed
 }
