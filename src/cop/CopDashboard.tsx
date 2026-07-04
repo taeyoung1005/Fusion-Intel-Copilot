@@ -7,6 +7,7 @@ import { RealtimeAlertStack } from "./RealtimeAlertStack"
 import { RightRail } from "./RightRail"
 import { type EvidenceClip, LAST_UPDATED, MAP_LAYERS, type MapLayerId } from "./copData"
 import { useEvidenceWindowBuffer } from "./evidenceWindowBuffer"
+import type { ResponseAction, TakenResponseAction } from "./responseActionCatalog"
 import { type DetrServerConnection, isDetrServerDisconnected } from "./serverDetectionClient"
 import type { CarlaCameraDetectionFrame } from "./useCarlaCameraDetection"
 import { useCarlaCameras } from "./useCarlaCameras"
@@ -47,6 +48,9 @@ export function CopDashboard(): ReactElement {
   >(() => new Set())
   const [liveDetectionFrames, setLiveDetectionFrames] = useState<
     ReadonlyMap<string, LiveDetectionFrame>
+  >(() => new Map())
+  const [responseActionsByIncident, setResponseActionsByIncident] = useState<
+    ReadonlyMap<string, TakenResponseAction>
   >(() => new Map())
   const [commandFeedback, setCommandFeedback] = useState(
     "COP 준비 완료: 합성 CCTV와 서버 Codex 하네스 연결 대기",
@@ -112,6 +116,14 @@ export function CopDashboard(): ReactElement {
     },
     [],
   )
+
+  const recordResponseAction = useCallback((incidentId: string, action: ResponseAction): void => {
+    setResponseActionsByIncident((previous) => {
+      const next = new Map(previous)
+      next.set(incidentId, { actionId: action.id, label: action.label, takenAtMs: Date.now() })
+      return next
+    })
+  }, [])
 
   const updateDetectionServerConnection = useCallback(
     (cameraId: string, connection: DetrServerConnection): void => {
@@ -241,6 +253,8 @@ export function CopDashboard(): ReactElement {
             operationalMetrics={operationalMetrics}
             missingContext={missingContext}
             responseGates={responseGates}
+            responseActionsByIncident={responseActionsByIncident}
+            onRecordResponseAction={recordResponseAction}
             reportRows={reportRows}
             reportPeriod={reportPeriod}
             cameraLabel={liveCameraLabel}

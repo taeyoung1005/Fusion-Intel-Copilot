@@ -21,6 +21,7 @@ import type {
   RelationshipGraphNode,
 } from "./operationalTelemetry"
 import { buildRecommendedAction } from "./operationalTelemetry"
+import type { ResponseAction, TakenResponseAction } from "./responseActionCatalog"
 import type { RightRailTab } from "./useCopDashboardActions"
 
 type RightRailProps = {
@@ -33,6 +34,8 @@ type RightRailProps = {
   readonly operationalMetrics: readonly OperationalMetricTile[]
   readonly missingContext: readonly MissingContext[]
   readonly responseGates: readonly ResponseGate[]
+  readonly responseActionsByIncident: ReadonlyMap<string, TakenResponseAction>
+  readonly onRecordResponseAction: (incidentId: string, action: ResponseAction) => void
   readonly reportRows: readonly DailyReportRow[]
   readonly reportPeriod: string
   readonly cameraLabel: string
@@ -64,6 +67,8 @@ export const RightRail = memo(function RightRail({
   operationalMetrics,
   missingContext,
   responseGates,
+  responseActionsByIncident,
+  onRecordResponseAction,
   reportRows,
   reportPeriod,
   cameraLabel,
@@ -82,9 +87,15 @@ export const RightRail = memo(function RightRail({
   const scrollToGate = useCallback((): void => {
     document.getElementById("cop-gate")?.scrollIntoView({ behavior: "smooth", block: "center" })
   }, [])
+  const takenResponseAction = responseActionsByIncident.get(selectedIncident.id)
   const recommendedAction = useMemo(
-    () => buildRecommendedAction(selectedIncident, missingContext, responseGates),
-    [selectedIncident, missingContext, responseGates],
+    () =>
+      buildRecommendedAction(selectedIncident, missingContext, responseGates, takenResponseAction),
+    [selectedIncident, missingContext, responseGates, takenResponseAction],
+  )
+  const recordResponseAction = useCallback(
+    (action: ResponseAction): void => onRecordResponseAction(selectedIncident.id, action),
+    [onRecordResponseAction, selectedIncident.id],
   )
 
   return (
@@ -115,6 +126,7 @@ export const RightRail = memo(function RightRail({
           incidents={incidents}
           selectedIncidentId={selectedIncident.id}
           cameraLabel={cameraLabel}
+          responseActionsByIncident={responseActionsByIncident}
           onSelectIncident={onSelectIncident}
         />
         <RelationshipGraphPanel
@@ -147,7 +159,12 @@ export const RightRail = memo(function RightRail({
         />
         <div className="cop-readiness-group">
           <MissingContextPanel items={missingContext} />
-          <ResponseGatePanel selectedIncident={selectedIncident} gates={responseGates} />
+          <ResponseGatePanel
+            selectedIncident={selectedIncident}
+            gates={responseGates}
+            takenResponseAction={takenResponseAction}
+            onRecordResponseAction={recordResponseAction}
+          />
         </div>
         <DailyReportPanel
           selectedClip={selectedClip}
@@ -157,6 +174,7 @@ export const RightRail = memo(function RightRail({
           citations={citations}
           missingContext={missingContext}
           responseGates={responseGates}
+          takenResponseAction={takenResponseAction}
           reportRows={reportRows}
           reportPeriod={reportPeriod}
         />

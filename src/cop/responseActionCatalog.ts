@@ -63,5 +63,6 @@ export const responseActionReportRow = (
 ): DailyReportRow => ({
   id: "response-action",
   label: "대응 조치",
-  value: action === undefined ? "없음" : `${action.label} · ${formatTakenAtClock(action.takenAtMs)}`,
+  value:
+    action === undefined ? "없음" : `${action.label} · ${formatTakenAtClock(action.takenAtMs)}`,
 })

@@ -1,6 +1,7 @@
 import { CheckCircle2, ChevronRight } from "lucide-react"
 import { type ReactElement, useState } from "react"
 import type { Incident } from "./copData"
+import type { TakenResponseAction } from "./responseActionCatalog"
 
 const TONE_DISPLAY_LABEL: Record<Incident["tone"], string> = {
   normal: "NORMAL",
@@ -14,6 +15,7 @@ type ActiveIncidentsProps = {
   readonly incidents: readonly Incident[]
   readonly selectedIncidentId: string
   readonly cameraLabel: string
+  readonly responseActionsByIncident: ReadonlyMap<string, TakenResponseAction>
   readonly onSelectIncident: (incidentId: string) => void
 }
 
@@ -21,6 +23,7 @@ export function ActiveIncidents({
   incidents,
   selectedIncidentId,
   cameraLabel,
+  responseActionsByIncident,
   onSelectIncident,
 }: ActiveIncidentsProps): ReactElement {
   const [showAll, setShowAll] = useState(false)
@@ -52,6 +55,7 @@ export function ActiveIncidents({
             incident={incident}
             cameraLabel={cameraLabel}
             selected={incident.id === selectedIncidentId}
+            takenAction={responseActionsByIncident.get(incident.id)}
             onSelect={() => onSelectIncident(incident.id)}
           />
         ))}
@@ -70,6 +74,7 @@ type IncidentRowProps = {
   readonly incident: Incident
   readonly cameraLabel: string
   readonly selected: boolean
+  readonly takenAction: TakenResponseAction | undefined
   readonly onSelect: () => void
 }
 
@@ -77,6 +82,7 @@ function IncidentRow({
   incident,
   cameraLabel,
   selected,
+  takenAction,
   onSelect,
 }: IncidentRowProps): ReactElement {
   const tone = incident.tone
@@ -94,6 +100,7 @@ function IncidentRow({
           {TONE_DISPLAY_LABEL[incident.tone]}
         </span>
         <time>{incident.time}</time>
+        {takenAction !== undefined && <span className="cop-incident-action-badge">조치됨</span>}
       </header>
       <strong className="cop-incident-zone">{incident.zone}</strong>
       <p className="cop-incident-title">{incident.title}</p>

@@ -1,5 +1,5 @@
 import { CheckCircle2, FileDown, FileText } from "lucide-react"
-import { type ReactElement, useEffect, useState } from "react"
+import { type ReactElement, useEffect, useMemo, useState } from "react"
 import {
   type Citation,
   DAILY_REPORT,
@@ -9,25 +9,33 @@ import {
   type ResponseGate,
 } from "./copData"
 import type { DailyReportRow } from "./operationalTelemetry"
+import {
+  RESPONSE_ACTION_BY_TONE,
+  type ResponseAction,
+  type TakenResponseAction,
+  responseActionReportRow,
+} from "./responseActionCatalog"
 import { useReportArtifactActions } from "./useReportArtifactActions"
 
 export function ResponseGatePanel({
   selectedIncident,
   gates,
+  takenResponseAction,
+  onRecordResponseAction,
 }: {
   readonly selectedIncident: Incident
   readonly gates: readonly ResponseGate[]
+  readonly takenResponseAction: TakenResponseAction | undefined
+  readonly onRecordResponseAction: (action: ResponseAction) => void
 }): ReactElement {
   // The operator confirms the incident as a whole; each step already shows PASS
   // when the real evidence satisfies it, PENDING until confirmed otherwise.
   const [confirmed, setConfirmed] = useState(false)
-  const [decision, setDecision] = useState<string | null>(null)
   const incidentScope = selectedIncident.id
 
   useEffect(() => {
     if (incidentScope.length > 0) {
       setConfirmed(false)
-      setDecision(null)
     }
   }, [incidentScope])
 
@@ -36,11 +44,10 @@ export function ResponseGatePanel({
 
   const confirmAll = (): void => {
     setConfirmed(true)
-    setDecision(`검토 및 확인 완료: ${selectedIncident.zone} 모든 게이트 PASS 기록`)
   }
-  const escalate = (): void => {
-    setDecision(`에스컬레이션 기록: ${selectedIncident.zone} 감독자 검토로 상신`)
-  }
+
+  const catalogAction = RESPONSE_ACTION_BY_TONE[selectedIncident.tone]
+  const showDispatchButton = catalogAction.kind === "manual" && takenResponseAction === undefined
 
   return (
     <section id="cop-gate" className="cop-panel cop-gate" aria-labelledby="cop-gate-title">
@@ -65,13 +72,29 @@ export function ResponseGatePanel({
         <button type="button" className="cop-button ok" onClick={confirmAll}>
           검토 및 확인
         </button>
-        <button type="button" className="cop-button danger" onClick={escalate}>
-          에스컬레이션
-        </button>
+        {showDispatchButton && (
+          <button
+            type="button"
+            className="cop-button danger"
+            onClick={() => onRecordResponseAction(catalogAction)}
+          >
+            {catalogAction.label}
+          </button>
+        )}
       </div>
-      {decision !== null && (
+      {confirmed && (
         <p className="cop-gate-decision" aria-live="polite">
-          {decision}
+          검토 및 확인 완료: {selectedIncident.zone} 모든 게이트 PASS 기록
+        </p>
+      )}
+      {catalogAction.kind === "auto" && (
+        <p className="cop-gate-decision" aria-live="polite">
+          {catalogAction.label}
+        </p>
+      )}
+      {takenResponseAction !== undefined && (
+        <p className="cop-gate-decision" aria-live="polite">
+          조치 완료: {takenResponseAction.label}
         </p>
       )}
     </section>
@@ -86,6 +109,7 @@ export function DailyReportPanel({
   citations,
   missingContext,
   responseGates,
+  takenResponseAction,
   reportRows,
   reportPeriod,
 }: {
@@ -96,6 +120,7 @@ export function DailyReportPanel({
   readonly citations: readonly Citation[]
   readonly missingContext: readonly MissingContext[]
   readonly responseGates: readonly ResponseGate[]
+  readonly takenResponseAction: TakenResponseAction | undefined
   readonly reportRows: readonly DailyReportRow[]
   readonly reportPeriod: string
 }): ReactElement {
@@ -110,6 +135,11 @@ export function DailyReportPanel({
     reportPeriod,
     cameraLabel,
   })
+
+  const rows = useMemo(
+    () => [...reportRows, responseActionReportRow(takenResponseAction)],
+    [reportRows, takenResponseAction],
+  )
 
   return (
     <section
@@ -143,7 +173,7 @@ export function DailyReportPanel({
               <dt>PERIOD</dt>
               <dd>{reportPeriod}</dd>
             </div>
-            {reportRows.map((row) => (
+            {rows.map((row) => (
               <div key={row.id}>
                 <dt>{row.label}</dt>
                 <dd>{row.value}</dd>
