@@ -5,7 +5,7 @@ import { codexAgentPlugin } from "./server/viteCodexAgentPlugin"
 const config = defineConfig({
   plugins: [react(), codexAgentPlugin()],
   test: {
-    exclude: ["tests/e2e/**", "**/node_modules/**", "**/.git/**"],
+    exclude: ["tests/e2e/**", "**/node_modules/**", "**/.git/**", "**/.claude/**"],
   },
 })
 
