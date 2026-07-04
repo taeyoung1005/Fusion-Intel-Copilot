@@ -29,18 +29,15 @@ export const windowMsForTone = (tone: AlertTone): number => {
   return MAX_WINDOW_MS
 }
 
-// Mirrors operationalTelemetry.ts's local toneRank: alert is worst (3), watch is
-// middle (2), everything else (normal/confirmed/uncertain) ranks lowest (1) —
-// those three tones never practically occur on EvidenceClip.tone in this harness.
-const toneRank = (tone: AlertTone): number => {
-  if (tone === "alert") {
-    return 3
-  }
-  if (tone === "watch") {
-    return 2
-  }
-  return 1
+const TONE_SEVERITY: Record<AlertTone, number> = {
+  normal: 0,
+  uncertain: 1,
+  watch: 2,
+  alert: 3,
+  confirmed: 4,
 }
+
+const toneRank = (tone: AlertTone): number => TONE_SEVERITY[tone]
 
 const formatWindowDuration = (windowMs: number): string => {
   if (windowMs < 60_000) {

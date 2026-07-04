@@ -83,6 +83,16 @@ describe("summarizeWindow", () => {
     expect(summary?.text).toBe("30초간 3회 탐지, 09:11:45~09:12:05 지속, 위험도 상승(normal→alert)")
   })
 
+  it("marks escalated when a confirmed entry outranks a preceding watch entry", () => {
+    const entries = [
+      entry("c1", "watch", "09:11:45", 205_000),
+      entry("c2", "confirmed", "09:11:55", 215_000),
+    ]
+    const summary = summarizeWindow(entries, 230_000, 30_000)
+    expect(summary?.worstTone).toBe("confirmed")
+    expect(summary?.escalated).toBe(true)
+  })
+
   it("excludes entries older than the window relative to nowMs", () => {
     const entries = [
       entry("old", "alert", "08:00:00", 0),
