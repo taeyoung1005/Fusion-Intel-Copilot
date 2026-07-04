@@ -20,6 +20,8 @@ export type {
   RelationshipGraphNode,
   RelationshipGraphNodeKind,
 } from "./relationshipGraph"
+export { buildRecommendedAction } from "./recommendedAction"
+export type { RecommendedAction } from "./recommendedAction"
 
 export type DailyReportRow = { readonly id: string; readonly label: string; readonly value: string }
 

@@ -59,6 +59,22 @@ describe("CodexSummary", () => {
     expect(markup).toContain("Fusion Intel Copilot")
   })
 
+  it("renders the initial updated timestamp as an empty live value", () => {
+    const markup = renderToStaticMarkup(
+      createElement(CodexSummary, {
+        selectedClip: undefined,
+        selectedIncident,
+        metrics: [],
+        citations: [],
+        missingContext: [],
+        recentActivitySummary: undefined,
+      }),
+    )
+
+    expect(markup).toContain("Updated --:--:--")
+    expect(markup).not.toContain("Updated 09:42:10")
+  })
+
   it("uses the posture citation when no evidence citations exist", () => {
     const context = buildCodexSummaryContext({
       selectedClip: undefined,

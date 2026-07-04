@@ -1,4 +1,4 @@
-import { type ReactElement, memo, useCallback } from "react"
+import { type ReactElement, memo, useCallback, useMemo } from "react"
 import { ActivityStreamPanel } from "./ActivityStreamPanel"
 import { OperationalMetricTiles } from "./OperationalMetricTilesPanel"
 import { CodexSummary } from "./RightRailCodex"
@@ -20,6 +20,7 @@ import type {
   OperationalMetricTile,
   RelationshipGraphNode,
 } from "./operationalTelemetry"
+import { buildRecommendedAction } from "./operationalTelemetry"
 
 type RightRailProps = {
   readonly selectedClip: EvidenceClip | undefined
@@ -71,6 +72,10 @@ export const RightRail = memo(function RightRail({
   const scrollToGate = useCallback((): void => {
     document.getElementById("cop-gate")?.scrollIntoView({ behavior: "smooth", block: "center" })
   }, [])
+  const recommendedAction = useMemo(
+    () => buildRecommendedAction(selectedIncident, missingContext, responseGates),
+    [selectedIncident, missingContext, responseGates],
+  )
 
   return (
     <aside className="cop-right" aria-label="운용자 명령 패널">
@@ -103,6 +108,7 @@ export const RightRail = memo(function RightRail({
         citations={citations}
         selectedCitationId={selectedCitationId}
         cameraLabel={cameraLabel}
+        recommendedAction={recommendedAction}
         onGoToGate={scrollToGate}
         onSelectCitation={onSelectCitation}
       />

@@ -13,6 +13,7 @@ import {
   buildIncidents,
   buildMissingContext,
   buildOperationalMetricTiles,
+  buildRecommendedAction,
   buildResponseGates,
 } from "./operationalTelemetry"
 
@@ -224,6 +225,58 @@ describe("buildResponseGates", () => {
     expect(byId["gate-fact"]).toBe("PASS")
     expect(byId["gate-data"]).toBe("PASS")
     expect(byId["gate-assess"]).toBe("PENDING") // WATCH incident still needs review
+  })
+})
+
+describe("buildRecommendedAction", () => {
+  const incident = {
+    id: "inc-PHONE-001",
+    tone: "WATCH",
+    zone: "PHONE-001",
+    title: "person",
+    meta: "PHONE-001",
+    time: "09:41:02",
+    confidence: 90,
+  } satisfies Incident
+
+  it("returns missing-data copy when context gaps exist", () => {
+    const action = buildRecommendedAction(
+      incident,
+      [{ id: "miss-PHONE-001", camera: "PHONE-001", reason: "No frame", since: "연결 직후" }],
+      [],
+    )
+
+    expect(action.headline).toBe("누락 데이터 보완 필요")
+    expect(action.body).toContain("PHONE-001")
+    expect(action.body).toContain("누락 맥락 1건 보완 후 보고서 생성 가능")
+  })
+
+  it("returns report-ready copy when every gate has passed and context is complete", () => {
+    const action = buildRecommendedAction(
+      incident,
+      [],
+      [
+        { id: "gate-fact", label: "이벤트 사실 확인", initial: "PASS" },
+        { id: "gate-context", label: "맥락 검토 완료", initial: "PASS" },
+      ],
+    )
+
+    expect(action.headline).toBe("보고서 생성 가능")
+    expect(action.cta).toBe("보고서 생성 게이트로 이동")
+  })
+
+  it("returns human-review copy when any gate is pending", () => {
+    const action = buildRecommendedAction(
+      incident,
+      [],
+      [
+        { id: "gate-fact", label: "이벤트 사실 확인", initial: "PASS" },
+        { id: "gate-data", label: "추가 데이터 검토", initial: "PENDING" },
+      ],
+    )
+
+    expect(action.headline).toBe("사람 확인 게이트 검토 필요")
+    expect(action.cta).toBe("사람 확인 게이트로 이동")
   })
 })
 

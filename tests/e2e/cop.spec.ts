@@ -108,6 +108,8 @@ test.describe("D4D COP 표면과 상호작용", () => {
       const codex = page.locator(".cop-codex")
       await expect(codex.getByText("객관적 근거")).toBeVisible()
       await expect(codex.getByText("연결 센서 노드")).toBeVisible()
+      await expect(codex.locator(".cop-updated")).not.toHaveText("Updated 09:42:10")
+      await expect(codex.locator(".cop-updated")).toHaveText(/^Updated \d{2}:\d{2}:\d{2}$/)
       // No cameras and no detections → zeroed metrics, not the old 128/64%.
       await expect(codex.locator(".cop-codex-value")).toHaveText(["0", "0", "0", "0%", "0%"])
       // The Codex request now fires automatically on selection; the manual
@@ -136,6 +138,8 @@ test.describe("D4D COP 표면과 상호작용", () => {
       await expect(page.getByText("DAILY SITUATION REPORT")).toBeVisible()
       await expect(page.getByText(/RPT-\d{8}-INC-STANDBY-\d{6}/)).toBeVisible()
       await expect(page.getByText(/EXP-2025-05-20-001/)).toHaveCount(0)
+      await expect(page.getByText("사람 확인 후 보고 (운용자 확인 필요)")).toHaveCount(0)
+      await expect(page.locator(".cop-action-headline")).not.toHaveText("")
 
       const exportDownloadPromise = page.waitForEvent("download")
       await page.getByRole("button", { name: /보고서 내보내기/ }).click()

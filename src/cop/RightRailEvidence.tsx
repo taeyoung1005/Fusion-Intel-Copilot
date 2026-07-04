@@ -1,11 +1,13 @@
 import { AlertTriangle, ArrowRight } from "lucide-react"
 import type { ReactElement } from "react"
-import { type Citation, type MissingContext, RECOMMENDED_ACTION } from "./copData"
+import type { Citation, MissingContext } from "./copData"
+import type { RecommendedAction } from "./operationalTelemetry"
 
 type CitationsPanelProps = {
   readonly citations: readonly Citation[]
   readonly selectedCitationId: string
   readonly cameraLabel: string
+  readonly recommendedAction: RecommendedAction
   readonly onGoToGate: () => void
   readonly onSelectCitation: (citationId: string) => void
 }
@@ -14,6 +16,7 @@ export function CitationsPanel({
   citations,
   selectedCitationId,
   cameraLabel,
+  recommendedAction,
   onGoToGate,
   onSelectCitation,
 }: CitationsPanelProps): ReactElement {
@@ -55,12 +58,12 @@ export function CitationsPanel({
 
       <div className="cop-action">
         <p className="cop-action-kicker">
-          {RECOMMENDED_ACTION.ko} <small>({RECOMMENDED_ACTION.en})</small>
+          {recommendedAction.ko} <small>({recommendedAction.en})</small>
         </p>
-        <p className="cop-action-headline">{RECOMMENDED_ACTION.headline}</p>
-        <p className="cop-action-body">{RECOMMENDED_ACTION.body}</p>
+        <p className="cop-action-headline">{recommendedAction.headline}</p>
+        <p className="cop-action-body">{recommendedAction.body}</p>
         <button type="button" className="cop-button warn full" onClick={onGoToGate}>
-          {RECOMMENDED_ACTION.cta}
+          {recommendedAction.cta}
           <ArrowRight size={14} aria-hidden="true" />
         </button>
       </div>

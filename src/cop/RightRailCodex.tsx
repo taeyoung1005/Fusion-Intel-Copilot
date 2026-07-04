@@ -1,6 +1,7 @@
 import { CheckCircle2 } from "lucide-react"
-import type { ReactElement } from "react"
-import { CODEX_UPDATED, type CodexMetric } from "./copData"
+import { type ReactElement, useEffect, useRef, useState } from "react"
+import type { CodexAgentDecision } from "./codexAgentClient"
+import type { CodexMetric } from "./copData"
 import {
   type CodexSummaryRequestInput,
   codexProgressText,
@@ -34,6 +35,19 @@ export function CodexSummary({
     recentActivitySummary,
     ...(telemetryFingerprint === undefined ? {} : { telemetryFingerprint }),
   })
+  const [updatedAt, setUpdatedAt] = useState<string | undefined>()
+  const lastDisplayedResponseRef = useRef<CodexAgentDecision | undefined>(undefined)
+
+  useEffect(() => {
+    if (state.kind !== "ready" || state.freshness !== "fresh") {
+      return
+    }
+    if (lastDisplayedResponseRef.current === state.response) {
+      return
+    }
+    setUpdatedAt(new Date().toLocaleTimeString("en-GB", { hour12: false }))
+    lastDisplayedResponseRef.current = state.response
+  }, [state])
 
   return (
     <section id="cop-codex-panel" className="cop-panel cop-codex" aria-labelledby="cop-codex-title">
@@ -42,7 +56,7 @@ export function CodexSummary({
           <span className="cop-codex-sub cop-codex-product-label">Fusion Intel Copilot</span>
           <h2 id="cop-codex-title">CODEX AGENT SUMMARY</h2>
         </div>
-        <span className="cop-updated">Updated {CODEX_UPDATED}</span>
+        <span className="cop-updated">Updated {updatedAt ?? "--:--:--"}</span>
       </div>
       <p className="cop-codex-sub">Codex 판단</p>
       {state.kind === "ready" && (
