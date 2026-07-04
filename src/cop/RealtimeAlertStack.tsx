@@ -6,6 +6,10 @@ import {
   isEscalationRisingEdge,
 } from "./alertEscalationPulse"
 import { carlaCameraStreamSrc } from "./carlaCameraClient"
+import {
+  type RealtimeAlertStackDepth,
+  realtimeAlertStackPlacements,
+} from "./realtimeAlertStackOrder"
 import type { RealtimeAlert } from "./realtimeAlerts"
 import { useCarlaWebrtcVideo } from "./useCarlaWebrtcVideo"
 
@@ -93,13 +97,17 @@ export function RealtimeAlertStack({
     })
   }
 
+  const placements = realtimeAlertStackPlacements(alerts)
+
   return (
     <div className="cop-realtime-alert-stack" aria-live="polite">
-      {alerts.map((alert) => (
+      {placements.map((placement) => (
         <RealtimeAlertCard
-          key={alert.id}
-          alert={alert}
-          pulseCriticalEntry={pulsingAlertIds.has(alert.id)}
+          key={placement.stackKey}
+          alert={placement.alert}
+          depth={placement.depth}
+          isTop={placement.isTop}
+          pulseCriticalEntry={pulsingAlertIds.has(placement.alert.id)}
           onPulseComplete={completePulse}
           onDismiss={onDismiss}
           onUpdateSettings={onUpdateSettings}
@@ -111,6 +119,8 @@ export function RealtimeAlertStack({
 
 type RealtimeAlertCardProps = {
   readonly alert: RealtimeAlert
+  readonly depth: RealtimeAlertStackDepth
+  readonly isTop: boolean
   readonly pulseCriticalEntry: boolean
   readonly onPulseComplete: (id: string) => void
   readonly onDismiss: (id: string) => void
@@ -119,6 +129,8 @@ type RealtimeAlertCardProps = {
 
 function RealtimeAlertCard({
   alert,
+  depth,
+  isTop,
   pulseCriticalEntry,
   onPulseComplete,
   onDismiss,
@@ -143,7 +155,10 @@ function RealtimeAlertCard({
   return (
     <div
       className={`cop-realtime-alert tone-${alert.clip.tone}${isCorrelation ? " kind-correlation" : ""}${pulseCriticalEntry ? " is-critical-entry-pulse" : ""}`}
+      data-stack-depth={depth}
+      data-stack-active={isTop ? "true" : "false"}
       role="alert"
+      aria-hidden={isTop ? undefined : true}
       onAnimationEnd={(event) => {
         if (pulseCriticalEntry && event.currentTarget === event.target) {
           onPulseComplete(alert.id)
@@ -160,6 +175,7 @@ function RealtimeAlertCard({
             type="button"
             className="cop-icon-btn"
             aria-label={`${alert.cameraId} 알림 설정`}
+            tabIndex={isTop ? undefined : -1}
             onClick={() => setSettingsOpen((value) => !value)}
           >
             <Settings2 size={13} aria-hidden="true" />
@@ -168,6 +184,7 @@ function RealtimeAlertCard({
             type="button"
             className="cop-icon-btn"
             aria-label={`${alert.cameraId} 알림 닫기`}
+            tabIndex={isTop ? undefined : -1}
             onClick={() => onDismiss(alert.id)}
           >
             <X size={13} aria-hidden="true" />
@@ -181,6 +198,7 @@ function RealtimeAlertCard({
             <input
               type="checkbox"
               checked={alert.autoClose}
+              tabIndex={isTop ? undefined : -1}
               onChange={(event) =>
                 onUpdateSettings(alert.id, {
                   autoClose: event.currentTarget.checked,
@@ -195,6 +213,7 @@ function RealtimeAlertCard({
               type="number"
               min={1}
               value={Math.round(alert.autoCloseMs / 1000)}
+              tabIndex={isTop ? undefined : -1}
               onChange={(event) => {
                 const seconds = Number(event.currentTarget.value)
                 if (Number.isNaN(seconds) || seconds <= 0) {

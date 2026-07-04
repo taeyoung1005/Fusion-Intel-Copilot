@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { detectFrameObjectsWithDetr, normalizeDetrDetections } from "./detrVisionDetector"
+import {
+  createDetrEventPromotionGate,
+  detectFrameObjectsWithDetr,
+  normalizeDetrDetections,
+} from "./detrVisionDetector"
 import { DETR_SERVER_URL } from "./serverDetectionClient"
 
 const source = "data:image/jpeg;base64,frame"
@@ -32,6 +36,91 @@ describe("normalizeDetrDetections", () => {
         bbox: { x: 300, y: 92, width: 66, height: 166 },
       },
     ])
+  })
+})
+
+describe("createDetrEventPromotionGate", () => {
+  it("suppresses a repeated track after the first promoted event", () => {
+    const gate = createDetrEventPromotionGate()
+    const first = gate.shouldPromote({
+      cameraId: "CARLA-N-01",
+      detectionClass: "person",
+      trackId: "track-person-001",
+      nowMs: 10_000,
+    })
+
+    expect(first).toMatchObject({
+      shouldPromote: true,
+      metadata: {
+        cameraId: "CARLA-N-01",
+        cooldownKey: "CARLA-N-01:person",
+        detectionClass: "person",
+        promotedAtMs: 10_000,
+        trackId: "track-person-001",
+      },
+    })
+    if (!first.shouldPromote) {
+      throw new Error("first track observation should promote")
+    }
+    gate.recordPromotion(first.metadata)
+
+    const duplicate = gate.shouldPromote({
+      cameraId: "CARLA-N-01",
+      detectionClass: "person",
+      trackId: "track-person-001",
+      nowMs: 12_000,
+    })
+
+    expect(duplicate).toMatchObject({
+      shouldPromote: false,
+      reason: "track_already_promoted",
+      metadata: {
+        cooldownKey: "CARLA-N-01:person",
+        trackId: "track-person-001",
+      },
+    })
+  })
+
+  it("suppresses a new track for the same camera and class until cooldown expires", () => {
+    const gate = createDetrEventPromotionGate({ cameraClassCooldownMs: 5_000 })
+    const first = gate.shouldPromote({
+      cameraId: "CARLA-N-01",
+      detectionClass: "person",
+      trackId: "track-person-001",
+      nowMs: 10_000,
+    })
+    if (!first.shouldPromote) {
+      throw new Error("first track observation should promote")
+    }
+    gate.recordPromotion(first.metadata)
+
+    expect(
+      gate.shouldPromote({
+        cameraId: "CARLA-N-01",
+        detectionClass: "person",
+        trackId: "track-person-002",
+        nowMs: 14_999,
+      }),
+    ).toMatchObject({
+      shouldPromote: false,
+      reason: "camera_class_cooldown",
+      remainingCooldownMs: 1,
+    })
+
+    expect(
+      gate.shouldPromote({
+        cameraId: "CARLA-N-01",
+        detectionClass: "person",
+        trackId: "track-person-002",
+        nowMs: 15_000,
+      }),
+    ).toMatchObject({
+      shouldPromote: true,
+      metadata: {
+        cooldownKey: "CARLA-N-01:person",
+        trackId: "track-person-002",
+      },
+    })
   })
 })
 

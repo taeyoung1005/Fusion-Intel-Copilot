@@ -3,7 +3,8 @@
 }
 
 .cop-realtime-alert {
-  transition: border-color 180ms ease-in-out, opacity 180ms ease-in-out, transform 180ms ease-in-out;
+  transition: border-color 180ms ease-in-out, opacity 180ms ease-in-out, translate 180ms ease-in-out,
+    scale 180ms ease-in-out;
 }
 
 .cop-realtime-alert.is-critical-entry-pulse {
@@ -17,12 +18,14 @@
   0%,
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    translate: var(--stack-x) var(--stack-y);
+    scale: var(--stack-scale);
   }
 
   38% {
     opacity: 0.96;
-    transform: translateY(-2px) scale(1.012);
+    translate: var(--stack-x) calc(var(--stack-y) - 2px);
+    scale: var(--stack-pulse-scale);
   }
 }
 
@@ -30,7 +33,8 @@
   .cop-realtime-alert.is-critical-entry-pulse {
     animation: none;
     opacity: 1;
-    transform: none;
+    translate: var(--stack-x) var(--stack-y);
+    scale: var(--stack-scale);
     will-change: auto;
   }
 }

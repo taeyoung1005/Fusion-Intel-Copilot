@@ -33,6 +33,48 @@ export type DetrDetectionResult = {
   readonly serverConnection: DetrServerConnection
   readonly source: DetrDetectionSource
 }
+export type DetrEventSuppressionReason = "track_already_promoted" | "camera_class_cooldown"
+export type DetrEventPromotionMetadata = {
+  readonly cameraId: string
+  readonly cooldownKey: string
+  readonly cooldownMs: number
+  readonly detectionClass: string
+  readonly promotedAtMs: number
+  readonly trackId: string | null
+  readonly trackingKey: string | null
+}
+export type DetrEventEvidenceFields = {
+  readonly cooldownKey: string
+  readonly detectionClass: string
+  readonly promotedAtMs: number
+  readonly trackId?: string
+}
+export type DetrEventPromotionDecision =
+  | {
+      readonly shouldPromote: true
+      readonly metadata: DetrEventPromotionMetadata
+    }
+  | {
+      readonly shouldPromote: false
+      readonly reason: DetrEventSuppressionReason
+      readonly remainingCooldownMs: number
+      readonly metadata: DetrEventPromotionMetadata
+    }
+export type DetrEventPromotionInput = {
+  readonly cameraId: string
+  readonly detectionClass: string
+  readonly nowMs: number
+  readonly trackId: string | null
+}
+export type DetrEventPromotionGate = {
+  readonly shouldPromote: (input: DetrEventPromotionInput) => DetrEventPromotionDecision
+  readonly recordPromotion: (metadata: DetrEventPromotionMetadata) => void
+}
+type DetrEventPromotionGateOptions = {
+  readonly cameraClassCooldownMs?: number
+}
+
+export const DETR_CAMERA_CLASS_COOLDOWN_MS = 30_000
 
 type NormalizeFrame = {
   readonly frameWidth: number
@@ -54,6 +96,80 @@ const sanitizeLabel = (label: string): string =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "")
     .slice(0, 32) || "object"
+
+export const normalizeDetrDetectionClass = (label: string): string => sanitizeLabel(label)
+
+const detrCooldownKey = (cameraId: string, detectionClass: string): string =>
+  `${cameraId}:${detectionClass}`
+
+const detrTrackingKey = (
+  cameraId: string,
+  detectionClass: string,
+  trackId: string | null,
+): string | null => (trackId === null ? null : `${cameraId}:${detectionClass}:${trackId}`)
+
+export const createDetrEventPromotionGate = (
+  options: DetrEventPromotionGateOptions = {},
+): DetrEventPromotionGate => {
+  const cooldownMs = options.cameraClassCooldownMs ?? DETR_CAMERA_CLASS_COOLDOWN_MS
+  const promotedTrackingKeys = new Set<string>()
+  const lastPromotedByCooldownKey = new Map<string, number>()
+
+  const metadataFor = (input: DetrEventPromotionInput): DetrEventPromotionMetadata => {
+    const detectionClass = normalizeDetrDetectionClass(input.detectionClass)
+    return {
+      cameraId: input.cameraId,
+      cooldownKey: detrCooldownKey(input.cameraId, detectionClass),
+      cooldownMs,
+      detectionClass,
+      promotedAtMs: input.nowMs,
+      trackId: input.trackId,
+      trackingKey: detrTrackingKey(input.cameraId, detectionClass, input.trackId),
+    }
+  }
+
+  return {
+    shouldPromote: (input) => {
+      const metadata = metadataFor(input)
+      if (metadata.trackingKey !== null && promotedTrackingKeys.has(metadata.trackingKey)) {
+        return {
+          shouldPromote: false,
+          reason: "track_already_promoted",
+          remainingCooldownMs: 0,
+          metadata,
+        }
+      }
+      const lastPromotedAt = lastPromotedByCooldownKey.get(metadata.cooldownKey)
+      if (lastPromotedAt !== undefined) {
+        const elapsedMs = input.nowMs - lastPromotedAt
+        if (elapsedMs < cooldownMs) {
+          return {
+            shouldPromote: false,
+            reason: "camera_class_cooldown",
+            remainingCooldownMs: cooldownMs - elapsedMs,
+            metadata,
+          }
+        }
+      }
+      return { shouldPromote: true, metadata }
+    },
+    recordPromotion: (metadata) => {
+      if (metadata.trackingKey !== null) {
+        promotedTrackingKeys.add(metadata.trackingKey)
+      }
+      lastPromotedByCooldownKey.set(metadata.cooldownKey, metadata.promotedAtMs)
+    },
+  }
+}
+
+export const detrEventEvidenceFields = (
+  metadata: DetrEventPromotionMetadata,
+): DetrEventEvidenceFields => ({
+  cooldownKey: metadata.cooldownKey,
+  detectionClass: metadata.detectionClass,
+  promotedAtMs: metadata.promotedAtMs,
+  ...(metadata.trackId === null ? {} : { trackId: metadata.trackId }),
+})
 
 const estimateDistanceMeters = (bboxHeight: number, frameHeight: number): number => {
   const ratio = bboxHeight / frameHeight

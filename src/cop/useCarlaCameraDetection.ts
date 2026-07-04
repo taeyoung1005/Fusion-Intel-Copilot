@@ -1,7 +1,11 @@
 import { useEffect, useRef } from "react"
 import { describeAttributes, extractPersonAttributesSafely } from "./attributeClassifier"
 import type { EvidenceClip } from "./copData"
-import { detectFrameObjectsWithDetr } from "./detrVisionDetector"
+import {
+  createDetrEventPromotionGate,
+  detectFrameObjectsWithDetr,
+  detrEventEvidenceFields,
+} from "./detrVisionDetector"
 import { riskToTone } from "./evidenceData"
 import type { DetrServerConnection } from "./serverDetectionClient"
 import {
@@ -79,6 +83,7 @@ export const useCarlaCameraDetection = (
   const lastEvidenceFrameRef = useRef(-EVIDENCE_EVERY_FRAMES)
   const frameHistoryRef = useRef<readonly VisionPipelineFrame[]>([])
   const lastInferenceFrameKeyRef = useRef<string | null>(null)
+  const eventPromotionGateRef = useRef(createDetrEventPromotionGate())
 
   useEffect(() => {
     if (
@@ -130,6 +135,23 @@ export const useCarlaCameraDetection = (
         }
         const frames = [...frameHistoryRef.current, frame].slice(-SEMANTIC_FRAME_HISTORY_LIMIT)
         frameHistoryRef.current = frames
+        if (frameIndex - lastEvidenceFrameRef.current < EVIDENCE_EVERY_FRAMES) {
+          return
+        }
+        const topObject = objects[0]
+        if (topObject === undefined) {
+          return
+        }
+        const promotion = eventPromotionGateRef.current.shouldPromote({
+          cameraId,
+          detectionClass: topObject.label,
+          trackId: topObject.objectId ?? null,
+          nowMs: Date.now(),
+        })
+        lastEvidenceFrameRef.current = frameIndex
+        if (!promotion.shouldPromote) {
+          return
+        }
         const response: VisionPipelineResponse = await requestVisionPipeline({
           cameraId,
           incidentId: `carla-${cameraId}`,
@@ -139,38 +161,34 @@ export const useCarlaCameraDetection = (
           frames,
         })
 
-        if (frameIndex - lastEvidenceFrameRef.current >= EVIDENCE_EVERY_FRAMES) {
-          lastEvidenceFrameRef.current = frameIndex
-          const topObject = objects[0]
-          const personObject = objects.find((object) =>
-            object.label.toLowerCase().includes("person"),
-          )
-          const semantic = response.semanticEvents?.at(0)
-          const label =
-            semantic !== undefined
-              ? `${semantic.subjectLabel} ${semantic.action}`
-              : `${topObject?.label ?? "object"} 탐지`
+        const personObject = objects.find((object) => object.label.toLowerCase().includes("person"))
+        const semantic = response.semanticEvents?.at(0)
+        const label =
+          semantic !== undefined
+            ? `${semantic.subjectLabel} ${semantic.action}`
+            : `${topObject.label} 탐지`
 
-          const attributes =
-            personObject !== undefined
-              ? await extractPersonAttributesSafely(source, personObject.bbox, isDetrMemoryFailure)
-              : undefined
-          const attributeSuffix =
-            attributes !== undefined ? ` · ${describeAttributes(attributes)}` : ""
+        const attributes =
+          personObject !== undefined
+            ? await extractPersonAttributesSafely(source, personObject.bbox, isDetrMemoryFailure)
+            : undefined
+        const attributeSuffix =
+          attributes !== undefined ? ` · ${describeAttributes(attributes)}` : ""
 
-          onVisionEvidenceRef.current({
-            id: `ev-carla-vision-${cameraId}-${frameIndex}`,
-            time: nowClock(),
-            camera: cameraId,
-            tone: riskToTone(response.situationAnalysisAgent.riskLevel),
-            label: `${cameraLabel} · ${label}${attributeSuffix}`,
-            detail: `CONF ${Math.round((topObject?.confidence ?? 0) * 100)}%`,
-            source: "vision",
-            confidencePct: Math.round((topObject?.confidence ?? 0) * 100),
-            frameDataUrl: source,
-            ...(attributes !== undefined ? { attributes } : {}),
-          })
-        }
+        onVisionEvidenceRef.current({
+          id: `ev-carla-vision-${cameraId}-${frameIndex}`,
+          time: nowClock(),
+          camera: cameraId,
+          tone: riskToTone(response.situationAnalysisAgent.riskLevel),
+          label: `${cameraLabel} · ${label}${attributeSuffix}`,
+          detail: `CONF ${Math.round(topObject.confidence * 100)}%`,
+          source: "vision",
+          confidencePct: Math.round(topObject.confidence * 100),
+          frameDataUrl: source,
+          ...detrEventEvidenceFields(promotion.metadata),
+          ...(attributes !== undefined ? { attributes } : {}),
+        })
+        eventPromotionGateRef.current.recordPromotion(promotion.metadata)
       } catch (error: unknown) {
         if (isDetrMemoryFailure(error)) {
           carlaDetrDisabled = true
