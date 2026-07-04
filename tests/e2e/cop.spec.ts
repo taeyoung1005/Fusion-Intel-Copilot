@@ -132,8 +132,9 @@ test.describe("D4D COP 표면과 상호작용", () => {
       await expect(page.locator(".cop-gate-status.pass")).toHaveCount(4)
       await expect(page.locator(".cop-gate-status.pending")).toHaveCount(0)
       await expect(page.getByText(/검토 및 확인 완료/)).toBeVisible()
-      await page.getByRole("button", { name: "에스컬레이션" }).click()
-      await expect(page.getByText(/감독자 검토로 상신/)).toBeVisible()
+      // A normal-tone standby incident is Codex-auto-handled, not a manual dispatch.
+      await expect(page.locator(".cop-gate").getByText("정상 감시 유지")).toBeVisible()
+      await expect(page.getByRole("button", { name: /출동 지시|사격 준비/ })).toHaveCount(0)
 
       // The recommended-action CTA scrolls to the response gate.
       await page.getByRole("button", { name: /사람 확인 게이트로 이동/ }).click()
@@ -762,6 +763,16 @@ test.describe("D4D COP 표면과 상호작용", () => {
 
     await page.getByRole("button", { name: "재생 닫기" }).click()
     await expect(page.locator(".cop-clip-player")).toHaveCount(0)
+
+    // The watch-tier incident gets a manual dispatch button; clicking it
+    // records the action and reflects it in the recommended-action copy.
+    await page.getByRole("tab", { name: "판단·대응" }).click()
+    const dispatchButton = page.getByRole("button", { name: "순찰 강화 지시" })
+    await expect(dispatchButton).toBeVisible()
+    await dispatchButton.click()
+    await expect(page.getByText(/조치 완료: 순찰 강화 지시/)).toBeVisible()
+    await expect(page.getByRole("button", { name: "순찰 강화 지시" })).toHaveCount(0)
+    await expect(page.getByText(/대응 조치 완료/)).toBeVisible()
 
     // Hovering a block reveals its tooltip.
     await page.locator(".cop-track-block").first().hover()
