@@ -1,7 +1,8 @@
 import { type Server, createServer } from "node:http"
 import type { AddressInfo } from "node:net"
 import { type ViteDevServer, createServer as createViteServer } from "vite"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { activityStream } from "./activityStream"
 import { codexAgentPlugin } from "./viteCodexAgentPlugin"
 
 type StartedVisionServer = {
@@ -69,8 +70,13 @@ const activePersonApproachRequest = {
 
 const startedServers: StartedVisionServer[] = []
 
+beforeEach(() => {
+  activityStream.clear()
+})
+
 afterEach(async () => {
   await Promise.all(startedServers.splice(0).map(stopVisionServer))
+  activityStream.clear()
 })
 
 describe("vision pipeline HTTP boundary", () => {
@@ -178,6 +184,28 @@ describe("vision pipeline HTTP boundary", () => {
         riskLevel: "watch",
       },
       evidenceBundle: { codexReady: true },
+    })
+  })
+
+  it("emits start and end activity events with durations and detection counts", async () => {
+    const server = await startVisionServer()
+
+    const response = await postJson(server.url, activePersonApproachRequest)
+
+    expect(response.status).toBe(200)
+    const events = activityStream.snapshot().filter((event) => event.source === "vision")
+    const stages = events.map((event) => event.stage)
+    for (const stage of ["receive", "decode", "detect", "classify", "decide"]) {
+      expect(stages).toContain(`${stage}:start`)
+      expect(stages).toContain(`${stage}:end`)
+      const endEvent = events.find((event) => event.stage === `${stage}:end`)
+      expect(endEvent?.detail).toMatchObject({
+        durationMs: expect.any(Number),
+        detectionCount: expect.any(Number),
+      })
+    }
+    expect(events.find((event) => event.stage === "detect:end")?.detail).toMatchObject({
+      detectionCount: 3,
     })
   })
 })

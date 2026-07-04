@@ -1,4 +1,10 @@
 import type { Connect, Plugin } from "vite"
+import {
+  handleActivityEventPost,
+  handleActivityStreamRequest,
+  isActivityEventPost,
+  isActivityStreamRequest,
+} from "./activityStream"
 import { handleCarlaCameraRequest, isCarlaCameraRequest } from "./carlaCameraRegistry"
 import { handleCodexAgentRequest } from "./codexAgent"
 import { handleVisionPipelineRequest } from "./visionPipeline"
@@ -16,6 +22,23 @@ const isVisionPipelinePost = (method: string | undefined, url: string | undefine
 const createCodexAgentMiddleware =
   (): Connect.NextHandleFunction =>
   (request, response, next): void => {
+    if (isActivityStreamRequest(request.method, request.url)) {
+      handleActivityStreamRequest(request, response)
+      return
+    }
+
+    if (isActivityEventPost(request.method, request.url)) {
+      handleActivityEventPost(request, response).catch((error: unknown) => {
+        if (error instanceof Error) {
+          response.writeHead(500, { "content-type": "application/json; charset=utf-8" })
+          response.end(JSON.stringify({ error: "활동 이벤트 처리 중 오류가 발생했습니다." }))
+          return
+        }
+        throw error
+      })
+      return
+    }
+
     if (isCarlaCameraRequest(request.method, request.url)) {
       handleCarlaCameraRequest(request, response).catch((error: unknown) => {
         if (error instanceof Error) {

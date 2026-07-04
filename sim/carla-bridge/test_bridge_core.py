@@ -1,7 +1,13 @@
 import json
 import unittest
 
-from bridge_core import build_frame_data_url, build_frame_payload, should_emit_frame
+from bridge_core import (
+    ActivityLogEvent,
+    build_activity_log_line,
+    build_frame_data_url,
+    build_frame_payload,
+    should_emit_frame,
+)
 
 
 class BuildFrameDataUrlTests(unittest.TestCase):
@@ -41,6 +47,34 @@ class ShouldEmitFrameTests(unittest.TestCase):
 
         # Then: frame 1 is sent immediately and the configured cadence follows.
         self.assertEqual(decisions, [True, False, False, True, False, False, True])
+
+
+class BuildActivityLogLineTests(unittest.TestCase):
+    def test_serializes_structured_activity_line_for_frame_upload(self) -> None:
+        event = ActivityLogEvent(
+            source="carla",
+            stage="frame-upload:end",
+            level="info",
+            message="CARLA frame uploaded",
+            detail={"cameraId": "CAM-CARLA-01", "frameNumber": 42},
+        )
+
+        line = build_activity_log_line(event)
+
+        prefix = "D4D_ACTIVITY "
+        self.assertTrue(line.startswith(prefix))
+        payload = json.loads(line.removeprefix(prefix))
+        self.assertIsInstance(payload.pop("ts"), str)
+        self.assertEqual(
+            payload,
+            {
+                "source": "carla",
+                "stage": "frame-upload:end",
+                "level": "info",
+                "message": "CARLA frame uploaded",
+                "detail": {"cameraId": "CAM-CARLA-01", "frameNumber": 42},
+            },
+        )
 
 
 if __name__ == "__main__":

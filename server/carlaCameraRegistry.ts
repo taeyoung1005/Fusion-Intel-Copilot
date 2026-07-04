@@ -1,5 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http"
+import { performance } from "node:perf_hooks"
 import { z } from "zod"
+import { emitActivityEvent } from "./activityStream"
 
 const MAX_BODY_BYTES = 3_000_000
 
@@ -48,6 +50,8 @@ type FrameImage = {
 const cameras = new Map<string, MutableCarlaCamera>()
 const streamClients = new Map<string, Set<ServerResponse>>()
 const MJPEG_BOUNDARY = "carla-frame"
+const durationMs = (startedAt: number): number =>
+  Math.round((performance.now() - startedAt) * 100) / 100
 
 export const isCarlaCameraRequest = (
   method: string | undefined,
@@ -126,9 +130,28 @@ const acceptFrame = async (
   response: ServerResponse,
   cameraId: string,
 ): Promise<void> => {
+  const startedAt = performance.now()
+  emitActivityEvent({
+    source: "carla",
+    stage: "frame-upload:start",
+    level: "info",
+    message: "CARLA 프레임 업링크 수신을 시작했습니다.",
+    detail: { cameraId },
+  })
   const rawBody = await readBody(request)
   const parsed = FrameRequestSchema.safeParse(parseJson(rawBody))
   if (!parsed.success) {
+    emitActivityEvent({
+      source: "carla",
+      stage: "frame-upload:end",
+      level: "warn",
+      message: "CARLA 프레임 업링크를 거부했습니다.",
+      detail: {
+        cameraId,
+        durationMs: durationMs(startedAt),
+        valid: false,
+      },
+    })
     writeJson(response, 400, { error: "CARLA 카메라 프레임은 data:image 형식이어야 합니다." })
     return
   }
@@ -155,6 +178,19 @@ const acceptFrame = async (
   if (image !== null) {
     broadcastFrame(cameraId, image)
   }
+  emitActivityEvent({
+    source: "carla",
+    stage: "frame-upload:end",
+    level: "info",
+    message: "CARLA 프레임 업링크를 완료했습니다.",
+    detail: {
+      cameraId,
+      durationMs: durationMs(startedAt),
+      frameCount: camera.frameCount,
+      imageBytes: image?.body.length ?? 0,
+      valid: true,
+    },
+  })
   writeJson(response, 200, { camera: snapshot(camera) })
 }
 

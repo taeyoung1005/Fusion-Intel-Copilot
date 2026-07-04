@@ -1,5 +1,8 @@
 import type { IncomingMessage, ServerResponse } from "node:http"
+import { performance } from "node:perf_hooks"
 import { z } from "zod"
+import type { ActivityEventInput } from "../src/activityEvents"
+import { emitActivityEvent } from "./activityStream"
 import { type VisionSemanticEvent, buildSemanticEvents } from "./visionSemantics"
 
 const VisionBoxSchema = z
@@ -101,6 +104,26 @@ type BodyReadResult =
   | { readonly kind: "ok"; readonly body: string }
   | { readonly kind: "too-large" }
 
+type VisionActivity = {
+  readonly stage: string
+  readonly level?: ActivityEventInput["level"]
+  readonly message: string
+  readonly detail?: Readonly<Record<string, unknown>>
+}
+
+const durationMs = (startedAt: number): number =>
+  Math.round((performance.now() - startedAt) * 100) / 100
+
+const emitVisionActivity = (activity: VisionActivity): void => {
+  emitActivityEvent({
+    source: "vision",
+    stage: activity.stage,
+    level: activity.level ?? "info",
+    message: activity.message,
+    ...(activity.detail === undefined ? {} : { detail: activity.detail }),
+  })
+}
+
 const collectBody = (request: IncomingMessage): Promise<BodyReadResult> =>
   new Promise((resolve, reject) => {
     const chunks: Buffer[] = []
@@ -197,9 +220,49 @@ const buildTracks = (detections: readonly VisionDetection[]): readonly VisionTra
 }
 
 export const runVisionPipeline = (request: VisionPipelineRequest): VisionPipelineResponse => {
+  const detectStartedAt = performance.now()
+  emitVisionActivity({
+    stage: "detect:start",
+    message: "비전 검출을 시작했습니다.",
+    detail: { cameraId: request.cameraId, frameCount: request.frames.length },
+  })
   const detections = buildDetections(request)
+  emitVisionActivity({
+    stage: "detect:end",
+    message: "비전 검출을 완료했습니다.",
+    detail: {
+      cameraId: request.cameraId,
+      durationMs: durationMs(detectStartedAt),
+      detectionCount: detections.length,
+    },
+  })
+
+  const classifyStartedAt = performance.now()
+  emitVisionActivity({
+    stage: "classify:start",
+    message: "비전 분류를 시작했습니다.",
+    detail: { cameraId: request.cameraId, detectionCount: detections.length },
+  })
   const tracks = buildTracks(detections)
   const semanticEvents = buildSemanticEvents(request.frames)
+  emitVisionActivity({
+    stage: "classify:end",
+    message: "비전 분류를 완료했습니다.",
+    detail: {
+      cameraId: request.cameraId,
+      durationMs: durationMs(classifyStartedAt),
+      detectionCount: detections.length,
+      semanticEventCount: semanticEvents.length,
+      trackCount: tracks.length,
+    },
+  })
+
+  const decideStartedAt = performance.now()
+  emitVisionActivity({
+    stage: "decide:start",
+    message: "비전 판단을 시작했습니다.",
+    detail: { cameraId: request.cameraId, detectionCount: detections.length },
+  })
   const activeTrack = tracks.find((track) => track.status === "active_track")
   const watch =
     activeTrack !== undefined &&
@@ -211,7 +274,7 @@ export const runVisionPipeline = (request: VisionPipelineRequest): VisionPipelin
       ? "normal"
       : "review"
 
-  return {
+  const response: VisionPipelineResponse = {
     provider: request.providerHint === "transformers-detr" ? "transformers-detr" : "local-frame-cv",
     sequenceId: request.sequenceId ?? request.incidentId ?? "vision-sequence",
     cameraId: request.cameraId,
@@ -241,6 +304,19 @@ export const runVisionPipeline = (request: VisionPipelineRequest): VisionPipelin
       ],
     },
   }
+  emitVisionActivity({
+    stage: "decide:end",
+    level: riskLevel === "watch" ? "watch" : "info",
+    message: "비전 판단을 완료했습니다.",
+    detail: {
+      cameraId: request.cameraId,
+      citationCount: response.evidenceBundle.citations.length,
+      detectionCount: detections.length,
+      durationMs: durationMs(decideStartedAt),
+      riskLevel,
+    },
+  })
+  return response
 }
 
 const writeJson = (
@@ -256,16 +332,63 @@ export const handleVisionPipelineRequest = async (
   request: IncomingMessage,
   response: ServerResponse,
 ): Promise<void> => {
+  const receiveStartedAt = performance.now()
+  emitVisionActivity({
+    stage: "receive:start",
+    message: "비전 파이프라인 요청 수신을 시작했습니다.",
+  })
   const result = await collectBody(request)
   if (result.kind === "too-large") {
+    emitVisionActivity({
+      stage: "receive:end",
+      level: "warn",
+      message: "비전 파이프라인 요청이 제한 크기를 초과했습니다.",
+      detail: { detectionCount: 0, durationMs: durationMs(receiveStartedAt) },
+    })
     writeJson(response, 413, { error: "비전 파이프라인 요청이 너무 큽니다." })
     return
   }
+  emitVisionActivity({
+    stage: "receive:end",
+    message: "비전 파이프라인 요청 수신을 완료했습니다.",
+    detail: {
+      bodyBytes: Buffer.byteLength(result.body),
+      detectionCount: 0,
+      durationMs: durationMs(receiveStartedAt),
+    },
+  })
+
+  const decodeStartedAt = performance.now()
+  emitVisionActivity({
+    stage: "decode:start",
+    message: "비전 파이프라인 요청 디코드를 시작했습니다.",
+  })
   const parsedBody = parseJsonBody(result.body)
   const parsed = VisionPipelineRequestSchema.safeParse(parsedBody)
   if (!parsed.success) {
+    emitVisionActivity({
+      stage: "decode:end",
+      level: "warn",
+      message: "비전 파이프라인 요청 디코드에 실패했습니다.",
+      detail: { detectionCount: 0, durationMs: durationMs(decodeStartedAt), valid: false },
+    })
     writeJson(response, 400, { error: "비전 파이프라인 요청에는 하나 이상의 프레임이 필요합니다." })
     return
   }
+  const decodedObjectCount = parsed.data.frames.reduce(
+    (sum, frame) => sum + frame.objects.length,
+    0,
+  )
+  emitVisionActivity({
+    stage: "decode:end",
+    message: "비전 파이프라인 요청 디코드를 완료했습니다.",
+    detail: {
+      detectionCount: decodedObjectCount,
+      durationMs: durationMs(decodeStartedAt),
+      frameCount: parsed.data.frames.length,
+      objectCount: decodedObjectCount,
+      valid: true,
+    },
+  })
   writeJson(response, 200, runVisionPipeline(parsed.data))
 }

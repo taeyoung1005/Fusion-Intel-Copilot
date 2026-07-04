@@ -1,5 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http"
 import { z } from "zod"
+import type { ActivityEventInput } from "../src/activityEvents"
+import { emitActivityEvent } from "./activityStream"
 import { callCodexCli } from "./codexCliProvider"
 import { callConfiguredCodexEndpoint } from "./codexProvider"
 
@@ -42,6 +44,23 @@ const maxBodyBytes = 64 * 1024
 type BodyReadResult =
   | { readonly kind: "ok"; readonly body: string }
   | { readonly kind: "too-large" }
+
+type CodexActivity = {
+  readonly stage: string
+  readonly level?: ActivityEventInput["level"]
+  readonly message: string
+  readonly detail?: Readonly<Record<string, unknown>>
+}
+
+const emitCodexActivity = (activity: CodexActivity): void => {
+  emitActivityEvent({
+    source: "codex",
+    stage: activity.stage,
+    level: activity.level ?? "info",
+    message: activity.message,
+    ...(activity.detail === undefined ? {} : { detail: activity.detail }),
+  })
+}
 
 const collectBody = (request: IncomingMessage): Promise<BodyReadResult> =>
   new Promise((resolve, reject) => {
@@ -139,47 +158,76 @@ const localCodexDecision = (
 
 export const decideCodexAgent = async (request: CodexAgentRequest): Promise<CodexAgentResponse> => {
   const mode = codexMode()
+  emitCodexActivity({
+    stage: "request:send",
+    message: "Codex 에이전트 요청을 전송했습니다.",
+    detail: {
+      checkpointId: request.checkpointId,
+      citationCount: request.evidence.citations.length,
+      mode,
+    },
+  })
   let endpoint: URL | undefined
   try {
     endpoint = configuredEndpoint()
   } catch (error) {
     const reason = error instanceof Error ? error.message : "알 수 없는 오류"
-    return localCodexDecision(request, reason)
+    return emitCodexResponse(localCodexDecision(request, reason), true)
   }
 
   if (endpoint === undefined) {
     if (mode !== "codex-cli") {
-      return localCodexDecision(request)
+      return emitCodexResponse(localCodexDecision(request), false)
     }
 
     try {
       const providerResponse = await callCodexCli(request)
-      return {
-        codexMode: "codex-cli",
-        decision: providerResponse.decision,
-        citations: providerResponse.citations ?? request.evidence.citations,
-        adapterNotice:
-          providerResponse.adapterNotice ?? "로컬 Codex CLI가 하네스 판단을 생성했습니다.",
-      }
+      return emitCodexResponse(
+        {
+          codexMode: "codex-cli",
+          decision: providerResponse.decision,
+          citations: providerResponse.citations ?? request.evidence.citations,
+          adapterNotice:
+            providerResponse.adapterNotice ?? "로컬 Codex CLI가 하네스 판단을 생성했습니다.",
+        },
+        false,
+      )
     } catch (error) {
       const reason = error instanceof Error ? error.message : "알 수 없는 오류"
-      return localCodexDecision(request, reason)
+      return emitCodexResponse(localCodexDecision(request, reason), true)
     }
   }
 
   try {
     const providerResponse = await callConfiguredCodexEndpoint(endpoint, request)
-    return {
-      codexMode: "configured-codex-endpoint",
-      decision: providerResponse.decision,
-      citations: providerResponse.citations ?? request.evidence.citations,
-      adapterNotice:
-        providerResponse.adapterNotice ?? "서버 Codex 엔드포인트에서 판단을 수신했습니다.",
-    }
+    return emitCodexResponse(
+      {
+        codexMode: "configured-codex-endpoint",
+        decision: providerResponse.decision,
+        citations: providerResponse.citations ?? request.evidence.citations,
+        adapterNotice:
+          providerResponse.adapterNotice ?? "서버 Codex 엔드포인트에서 판단을 수신했습니다.",
+      },
+      false,
+    )
   } catch (error) {
     const reason = error instanceof Error ? error.message : "알 수 없는 오류"
-    return localCodexDecision(request, reason)
+    return emitCodexResponse(localCodexDecision(request, reason), true)
   }
+}
+
+const emitCodexResponse = (response: CodexAgentResponse, fallback: boolean): CodexAgentResponse => {
+  emitCodexActivity({
+    stage: "response:received",
+    level: fallback ? "warn" : "info",
+    message: "Codex 에이전트 응답을 수신했습니다.",
+    detail: {
+      citationCount: response.citations.length,
+      fallback,
+      mode: response.codexMode,
+    },
+  })
+  return response
 }
 
 const writeJson = (

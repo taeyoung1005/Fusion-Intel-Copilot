@@ -3,7 +3,8 @@ import { type IncomingMessage, createServer } from "node:http"
 import type { AddressInfo } from "node:net"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { activityStream } from "./activityStream"
 import { type CodexAgentRequest, decideCodexAgent } from "./codexAgent"
 
 const codexEndpointEnvKey = "CODEX_AGENT_ENDPOINT"
@@ -25,11 +26,16 @@ const baseRequest: CodexAgentRequest = {
   },
 }
 
+beforeEach(() => {
+  activityStream.clear()
+})
+
 afterEach(() => {
   Reflect.deleteProperty(process.env, codexEndpointEnvKey)
   Reflect.deleteProperty(process.env, codexProviderEnvKey)
   Reflect.deleteProperty(process.env, codexCliPathEnvKey)
   Reflect.deleteProperty(process.env, codexLegacyCliEnvKey)
+  activityStream.clear()
 })
 
 describe("server Codex provider boundary", () => {
@@ -75,6 +81,27 @@ describe("server Codex provider boundary", () => {
       citations: ["mock-provider-citation"],
       adapterNotice: "Mock Codex provider 응답입니다.",
     })
+    expect(activityStream.snapshot()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          source: "codex",
+          stage: "request:send",
+          detail: expect.objectContaining({
+            citationCount: 1,
+            mode: "configured-codex-endpoint",
+          }),
+        }),
+        expect.objectContaining({
+          source: "codex",
+          stage: "response:received",
+          detail: expect.objectContaining({
+            citationCount: 1,
+            fallback: false,
+            mode: "configured-codex-endpoint",
+          }),
+        }),
+      ]),
+    )
     await close(server)
   })
 
@@ -90,6 +117,20 @@ describe("server Codex provider boundary", () => {
 
     expect(response.codexMode).toBe("local-codex-adapter")
     expect(response.adapterNotice).toContain("설정된 Codex 엔드포인트 호출에 실패")
+    expect(activityStream.snapshot()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          source: "codex",
+          stage: "response:received",
+          level: "warn",
+          detail: expect.objectContaining({
+            citationCount: 1,
+            fallback: true,
+            mode: "local-codex-adapter",
+          }),
+        }),
+      ]),
+    )
     await close(server)
   })
 

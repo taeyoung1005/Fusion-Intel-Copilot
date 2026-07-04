@@ -1,7 +1,8 @@
 import { type Server, createServer } from "node:http"
 import { type ViteDevServer, createServer as createViteServer } from "vite"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it } from "vitest"
 import { z } from "zod"
+import { activityStream } from "./activityStream"
 import { codexAgentPlugin } from "./viteCodexAgentPlugin"
 
 type StartedCarlaServer = {
@@ -19,8 +20,13 @@ const startedServers: StartedCarlaServer[] = []
 
 const CameraListSchema = z.object({ cameras: z.array(z.object({ id: z.string() })) })
 
+beforeEach(() => {
+  activityStream.clear()
+})
+
 afterEach(async () => {
   await Promise.all(startedServers.splice(0).map(stopCarlaServer))
+  activityStream.clear()
 })
 
 describe("carla camera registry HTTP boundary", () => {
@@ -137,6 +143,33 @@ describe("carla camera registry HTTP boundary", () => {
     const listed = await getJson(`${server.url}/api/carla-cameras`)
     const listedIds = CameraListSchema.parse(listed.body).cameras.map((camera) => camera.id)
     expect(listedIds).not.toContain("CAM-CARLA-BAD")
+  })
+
+  it("emits a structured CARLA activity event when a frame upload is accepted", async () => {
+    // Given: the activity buffer is empty and the Vite middleware server is running.
+    const server = await startCarlaServer()
+
+    // When: the CARLA bridge posts a valid frame.
+    const frame = await postJson(`${server.url}/api/carla-cameras/CAM-CARLA-01/frame`, {
+      frameDataUrl: "data:image/jpeg;base64,QUJDRA==",
+      label: "CARLA 북측 게이트",
+    })
+
+    // Then: the registry records the real frame upload as a structured activity event.
+    expect(frame.status).toBe(200)
+    expect(activityStream.snapshot()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          source: "carla",
+          stage: "frame-upload:end",
+          level: "info",
+          detail: expect.objectContaining({
+            cameraId: "CAM-CARLA-01",
+            frameCount: expect.any(Number),
+          }),
+        }),
+      ]),
+    )
   })
 
   it("removes a CARLA camera from the registry", async () => {
