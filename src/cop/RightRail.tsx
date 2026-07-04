@@ -1,7 +1,10 @@
 import type { ReactElement } from "react"
+import { ActivityStreamPanel } from "./ActivityStreamPanel"
+import { OperationalMetricTiles } from "./OperationalMetricTilesPanel"
 import { CodexSummary } from "./RightRailCodex"
 import { CitationsPanel, MissingContextPanel } from "./RightRailEvidence"
 import { ActiveIncidents } from "./RightRailIncidents"
+import { RelationshipGraphPanel } from "./RightRailRelationshipGraph"
 import { DailyReportPanel, ResponseGatePanel } from "./RightRailResponseReport"
 import type {
   Citation,
@@ -11,7 +14,12 @@ import type {
   MissingContext,
   ResponseGate,
 } from "./copData"
-import type { DailyReportRow } from "./operationalTelemetry"
+import type {
+  DailyReportRow,
+  EvidenceRelationshipGraph,
+  OperationalMetricTile,
+  RelationshipGraphNode,
+} from "./operationalTelemetry"
 
 type RightRailProps = {
   readonly selectedClip: EvidenceClip | undefined
@@ -19,15 +27,20 @@ type RightRailProps = {
   readonly incidents: readonly Incident[]
   readonly citations: readonly Citation[]
   readonly codexMetrics: readonly CodexMetric[]
+  readonly operationalMetrics: readonly OperationalMetricTile[]
   readonly missingContext: readonly MissingContext[]
   readonly responseGates: readonly ResponseGate[]
   readonly reportRows: readonly DailyReportRow[]
   readonly reportPeriod: string
   readonly cameraLabel: string
+  readonly selectedCameraId: string
+  readonly selectedClipId: string
   readonly selectedCitationId: string
+  readonly relationshipGraph: EvidenceRelationshipGraph
   readonly recentActivitySummary: string | undefined
   readonly onSelectCitation: (citationId: string) => void
   readonly onSelectIncident: (incidentId: string) => void
+  readonly onSelectRelationshipNode: (node: RelationshipGraphNode) => void
 }
 
 export function RightRail({
@@ -36,15 +49,20 @@ export function RightRail({
   incidents,
   citations,
   codexMetrics,
+  operationalMetrics,
   missingContext,
   responseGates,
   reportRows,
   reportPeriod,
   cameraLabel,
+  selectedCameraId,
+  selectedClipId,
   selectedCitationId,
+  relationshipGraph,
   recentActivitySummary,
   onSelectCitation,
   onSelectIncident,
+  onSelectRelationshipNode,
 }: RightRailProps): ReactElement {
   const scrollToGate = (): void => {
     document.getElementById("cop-gate")?.scrollIntoView({ behavior: "smooth", block: "center" })
@@ -52,11 +70,21 @@ export function RightRail({
 
   return (
     <aside className="cop-right" aria-label="운용자 명령 패널">
+      <OperationalMetricTiles metrics={operationalMetrics} />
+      <ActivityStreamPanel />
       <ActiveIncidents
         incidents={incidents}
         selectedIncidentId={selectedIncident.id}
         cameraLabel={cameraLabel}
         onSelectIncident={onSelectIncident}
+      />
+      <RelationshipGraphPanel
+        graph={relationshipGraph}
+        selectedIncidentId={selectedIncident.id}
+        selectedCameraId={selectedCameraId}
+        selectedClipId={selectedClipId}
+        selectedCitationId={selectedCitationId}
+        onSelectNode={onSelectRelationshipNode}
       />
       <CodexSummary
         selectedClip={selectedClip}

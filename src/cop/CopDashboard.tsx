@@ -1,4 +1,4 @@
-import { type ReactElement, useEffect, useMemo, useState } from "react"
+import { type ReactElement, useEffect, useState } from "react"
 import { CommandBar } from "./CommandBar"
 import { EventTimeline } from "./EventTimeline"
 import { FacilityMap } from "./FacilityMap"
@@ -13,23 +13,13 @@ import {
   type MapEvent,
   type MapLayerId,
   type TimelineEvent,
-  toneToLane,
 } from "./copData"
 import type { DynamicCameraRecord } from "./dynamicMapCamera"
 import { useEvidenceWindowBuffer } from "./evidenceWindowBuffer"
-import { summarizeWindow, windowMsForTone } from "./evidenceWindowSummary"
-import {
-  buildCitations,
-  buildCodexMetrics,
-  buildDailyReportPeriod,
-  buildDailyReportRows,
-  buildDetectionMarkers,
-  buildIncidents,
-  buildMissingContext,
-  buildResponseGates,
-} from "./operationalTelemetry"
+import type { RelationshipGraphNode } from "./operationalTelemetry"
 import { useCarlaCameras } from "./useCarlaCameras"
 import { useCorrelationAlerts } from "./useCorrelationAlerts"
+import { useDashboardTelemetry } from "./useDashboardTelemetry"
 import { useRealtimeAlerts } from "./useRealtimeAlerts"
 
 const MAX_VISION_EVIDENCE = 6
@@ -69,56 +59,28 @@ export function CopDashboard(): ReactElement {
   const evidenceClips = visionEvidence
   const windowBuffer = useEvidenceWindowBuffer(evidenceClips)
   const { alerts, dismissAlert, updateAlertSettings } = useRealtimeAlerts(evidenceClips)
-  const incidents = useMemo(() => buildIncidents(cameras, evidenceClips), [cameras, evidenceClips])
-  const citations = useMemo(() => buildCitations(evidenceClips), [evidenceClips])
-  // Timeline events are the real evidence, placed on a live current-time axis.
-  const timelineEvents = useMemo<readonly TimelineEvent[]>(
-    () =>
-      evidenceClips.map((clip) => ({
-        id: clip.id,
-        time: clip.time,
-        display: clip.time,
-        tone: clip.tone,
-        lane: toneToLane(clip.tone),
-      })),
-    [evidenceClips],
-  )
-  const detectionMarkers = useMemo(
-    () => buildDetectionMarkers(cameras, evidenceClips),
-    [cameras, evidenceClips],
-  )
-  const missingContext = useMemo(() => buildMissingContext(cameras), [cameras])
-  const reportRows = useMemo(() => buildDailyReportRows(evidenceClips), [evidenceClips])
-  const reportPeriod = useMemo(() => buildDailyReportPeriod(evidenceClips), [evidenceClips])
-  const codexMetrics = useMemo(
-    () => buildCodexMetrics(cameras, evidenceClips),
-    [cameras, evidenceClips],
-  )
-
-  const selectedClip = evidenceClips.find((clip) => clip.id === selectedClipId)
-  const selectedIncident =
-    incidents.find((incident) => incident.id === selectedIncidentId) ?? incidents[0]
-
-  const recentActivitySummary = useMemo(() => {
-    if (selectedIncident === undefined) {
-      return undefined
-    }
-    const entries = windowBuffer.get(selectedIncident.zone)
-    if (entries === undefined || entries.length === 0) {
-      return undefined
-    }
-    const latestTone = entries[entries.length - 1]?.clip.tone ?? "normal"
-    return summarizeWindow(entries, Date.now(), windowMsForTone(latestTone))?.text
-  }, [selectedIncident, windowBuffer])
-
-  // The human-confirmation gate reflects the selected incident's real readiness.
-  const responseGates = useMemo(
-    () =>
-      selectedIncident === undefined
-        ? []
-        : buildResponseGates(selectedIncident, evidenceClips, missingContext),
-    [selectedIncident, evidenceClips, missingContext],
-  )
+  const {
+    incidents,
+    citations,
+    timelineEvents,
+    detectionMarkers,
+    missingContext,
+    reportRows,
+    reportPeriod,
+    codexMetrics,
+    operationalMetrics,
+    selectedClip,
+    selectedIncident,
+    recentActivitySummary,
+    responseGates,
+    relationshipGraph,
+  } = useDashboardTelemetry({
+    cameras,
+    evidenceClips,
+    selectedClipId,
+    selectedIncidentId,
+    windowBuffer,
+  })
 
   const addVisionEvidence = (clip: EvidenceClip): void => {
     setVisionEvidence((previous) => {
@@ -220,6 +182,32 @@ export function CopDashboard(): ReactElement {
     }
   }
 
+  const selectRelationshipNode = (node: RelationshipGraphNode): void => {
+    if (
+      node.incidentId !== undefined &&
+      incidents.some((incident) => incident.id === node.incidentId)
+    ) {
+      setSelectedIncidentId(node.incidentId)
+    }
+    if (node.cameraId !== undefined) {
+      setSelectedCameraId(node.cameraId)
+    }
+    if (node.clipId !== undefined) {
+      setSelectedClipId(node.clipId)
+      document.getElementById("cop-timeline-panel")?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      })
+    }
+    if (node.citationId !== undefined) {
+      setSelectedCitationId(node.citationId)
+    }
+    if (node.responseGateId !== undefined) {
+      document.getElementById("cop-gate")?.scrollIntoView({ behavior: "smooth", block: "center" })
+    }
+    setCommandFeedback(`${node.label} 관계 그래프 노드 선택: 실제 증거 컨텍스트를 동기화했습니다.`)
+  }
+
   const navigateRail = (targetId: string, label: string): void => {
     document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "center" })
     setCommandFeedback(`${label} 패널로 이동했습니다.`)
@@ -272,15 +260,20 @@ export function CopDashboard(): ReactElement {
             incidents={incidents}
             citations={citations}
             codexMetrics={codexMetrics}
+            operationalMetrics={operationalMetrics}
             missingContext={missingContext}
             responseGates={responseGates}
             reportRows={reportRows}
             reportPeriod={reportPeriod}
             cameraLabel={liveCameraLabel}
+            selectedCameraId={selectedCameraId}
+            selectedClipId={selectedClipId}
             selectedCitationId={selectedCitationId}
+            relationshipGraph={relationshipGraph}
             recentActivitySummary={recentActivitySummary}
             onSelectCitation={setSelectedCitationId}
             onSelectIncident={selectIncident}
+            onSelectRelationshipNode={selectRelationshipNode}
           />
         )}
       </div>

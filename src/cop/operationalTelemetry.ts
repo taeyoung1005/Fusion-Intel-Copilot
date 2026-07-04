@@ -10,6 +10,17 @@ import type {
 } from "./copData"
 import type { DynamicCameraRecord } from "./dynamicMapCamera"
 
+export { buildOperationalMetricTiles } from "./operationalMetricTiles"
+export type { OperationalMetricTile } from "./operationalMetricTiles"
+export { buildEvidenceRelationshipGraph } from "./relationshipGraph"
+export type {
+  EvidenceRelationshipGraph,
+  EvidenceRelationshipGraphInput,
+  RelationshipGraphEdge,
+  RelationshipGraphNode,
+  RelationshipGraphNodeKind,
+} from "./relationshipGraph"
+
 export type DailyReportRow = { readonly id: string; readonly label: string; readonly value: string }
 
 // Derives the right-rail panels (incidents, citations, Codex metrics) from the
