@@ -65,7 +65,7 @@ const buildConfirmedClip = (
     id: `${CORRELATION_CLIP_PREFIX}${pairKey(candidate.clipA.id, candidate.clipB.id)}`,
     time: nowClock(),
     camera: candidate.clipB.camera,
-    tone: "watch",
+    tone: "confirmed",
     label: `${laterLabel} · ⚠️ ${candidate.clipA.camera}에서 ${minutes}분 전 동일 인물 가능성 ${candidate.score}%`,
     detail: `CORR ${candidate.score}%`,
     source: "correlation",
@@ -106,7 +106,7 @@ const buildJudgingClip = (
     id: `${CORRELATION_CLIP_PREFIX}judging-${pairKey(candidate.clipA.id, candidate.clipB.id)}`,
     time: nowClock(),
     camera: candidate.clipB.camera,
-    tone: "watch",
+    tone: "uncertain",
     label: `${laterLabel} · ⚠️ ${candidate.clipA.camera} 동일 인물 판단 중... 유사도 ${candidate.score}%`,
     detail: `CORR ${candidate.score}%`,
     source: "correlation",
@@ -122,7 +122,7 @@ const buildCodexContext = (
   const key = pairKey(candidate.clipA.id, candidate.clipB.id)
   const incident: Incident = {
     id: `inc-corr-${key}`,
-    tone: "WATCH",
+    tone: "watch",
     // All CARLA cameras ring the single AMMO DEPOT cluster (see design §3); the
     // DynamicCameraRecord has no zone field, so this fixed value is sufficient.
     zone: "AMMO DEPOT CLUSTER",
