@@ -3,8 +3,7 @@
 }
 
 .cop-realtime-alert {
-  transition: border-color 180ms ease-in-out, opacity 180ms ease-in-out,
-    transform 180ms ease-in-out;
+  transition: border-color 180ms ease-in-out, opacity 180ms ease-in-out, transform 180ms ease-in-out;
 }
 
 .cop-realtime-alert.is-critical-entry-pulse {

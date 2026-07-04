@@ -1,7 +1,6 @@
 import { Car, MonitorPlay, WifiOff } from "lucide-react"
 import type { ReactElement } from "react"
 import { cameraConnectionState } from "./cameraConnectionStatus"
-import { carlaCameraStreamSrc } from "./carlaCameraClient"
 import type { EvidenceClip } from "./copData"
 import type { DynamicCameraRecord } from "./dynamicMapCamera"
 import { useCarlaCameraDetection } from "./useCarlaCameraDetection"
@@ -93,7 +92,6 @@ function CarlaCctvCard({
 }: CarlaCctvCardProps): ReactElement {
   const connection = cameraConnectionState(record)
   const hasFrame = record.latestFrameDataUrl !== null && record.latestFrameDataUrl !== undefined
-  const streamSrc = carlaCameraStreamSrc(record.id)
   const webrtc = useCarlaWebrtcVideo(record.id, hasFrame)
   const webrtcLive = webrtc.state === "live"
   useCarlaVideoDetection(record.id, record.label, webrtc.videoRef, webrtcLive, onVisionEvidence)
@@ -128,7 +126,7 @@ function CarlaCctvCard({
             />
             <img
               className={webrtcLive ? "fallback" : undefined}
-              src={streamSrc}
+              src={record.latestFrameDataUrl ?? ""}
               alt={`${record.id} CARLA CCTV 화면`}
               decoding="async"
             />
