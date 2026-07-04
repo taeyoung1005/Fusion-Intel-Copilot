@@ -109,8 +109,7 @@ export const useFacilityMapViewport = (viewMode: ViewMode): FacilityMapViewportC
     event.preventDefault()
     setViewport((current) => {
       const focusPoint = pointerMapPoint(bounds, clientX, clientY, current)
-      const zoomDelta =
-        deltaY < 0 ? FACILITY_VIEWPORT_ZOOM.step : -FACILITY_VIEWPORT_ZOOM.step
+      const zoomDelta = deltaY < 0 ? FACILITY_VIEWPORT_ZOOM.step : -FACILITY_VIEWPORT_ZOOM.step
       return zoomFacilityViewport(current, current.zoom + zoomDelta, focusPoint)
     })
   }, [])
