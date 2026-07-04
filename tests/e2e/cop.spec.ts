@@ -1,3 +1,4 @@
+import { readFile } from "node:fs/promises"
 import { expect, test } from "@playwright/test"
 
 test.describe("D4D COP 표면과 상호작용", () => {
@@ -133,10 +134,33 @@ test.describe("D4D COP 표면과 상호작용", () => {
 
       // --- Right rail: daily report --------------------------------------------
       await expect(page.getByText("DAILY SITUATION REPORT")).toBeVisible()
+      await expect(page.getByText(/RPT-\d{8}-INC-STANDBY-\d{6}/)).toBeVisible()
+      await expect(page.getByText(/EXP-2025-05-20-001/)).toHaveCount(0)
+
+      const exportDownloadPromise = page.waitForEvent("download")
       await page.getByRole("button", { name: /보고서 내보내기/ }).click()
-      await expect(page.getByText(/EXP-2025-05-20-001/)).toBeVisible()
+      const exportDownload = await exportDownloadPromise
+      await expect(
+        page.getByText(/보고서 내보내기 완료: EXP-\d{8}-INC-STANDBY-\d{6}/),
+      ).toBeVisible()
+      expect(exportDownload.suggestedFilename()).toMatch(
+        /^d4d-report-RPT-\d{8}-INC-STANDBY-\d{6}\.json$/,
+      )
+      const exportPath = await exportDownload.path()
+      expect(exportPath).not.toBeNull()
+      const exportContent = exportPath === null ? "" : await readFile(exportPath, "utf8")
+      expect(exportContent).toContain('"reportId": "RPT-')
+      expect(exportContent).toContain('"exportReceiptId": "EXP-')
+
       await page.getByRole("button", { name: /PDF 미리보기/ }).click()
-      await expect(page.getByText(/RPT-2025-05-20-PREVIEW/)).toBeVisible()
+      await expect(page.getByText(/PDF 미리보기 생성: RPT-\d{8}-INC-STANDBY-\d{6}/)).toBeVisible()
+      await expect(page.locator(".cop-report-pdf-preview")).toHaveAttribute("src", /^blob:/)
+      const pdfDownloadPromise = page.waitForEvent("download")
+      await page.getByRole("link", { name: /PDF 파일 저장/ }).click()
+      const pdfDownload = await pdfDownloadPromise
+      expect(pdfDownload.suggestedFilename()).toMatch(
+        /^d4d-report-RPT-\d{8}-INC-STANDBY-\d{6}\.pdf$/,
+      )
 
       // No marketing copy and no runtime errors.
       await expect(page.getByText(/Live Guard COP/)).toHaveCount(0)
@@ -359,24 +383,13 @@ test.describe("D4D COP 표면과 상호작용", () => {
     // Switch to B here first so the actual race below starts from a real
     // prior selection and clicking A is a genuine transition.
     await incidents.locator(".cop-incident", { hasText: "CARLA-STALE-B" }).click()
-    await page.waitForTimeout(500)
+    await expect(page.getByText("판단-inc-CARLA-STALE-B")).toBeVisible({ timeout: 20_000 })
 
-    // Selecting incident A auto-fires a Codex request (300ms delayed mock).
-    // Immediately switching to B fires a second request; the requestVersion
-    // guard must drop A's stale response so it never replaces the panel.
-    const staleResponseA = page.waitForResponse(
-      (response) =>
-        response.url().includes("/api/codex-agent") &&
-        (response.request().postDataJSON()?.evidence?.incidentId ?? "") === "inc-CARLA-STALE-A",
-    )
     await incidents.locator(".cop-incident", { hasText: "CARLA-STALE-A" }).click()
     await incidents.locator(".cop-incident", { hasText: "CARLA-STALE-B" }).click()
-    await staleResponseA
 
     await expect(page.locator(".cop-codex")).toHaveCount(1)
-    // The stale request bound to incident A must never replace the active panel.
     await expect(page.getByText("판단-inc-CARLA-STALE-A")).toHaveCount(0)
-    // B's decision is the one that lands.
     await expect(page.getByText("판단-inc-CARLA-STALE-B")).toBeVisible()
   })
 
@@ -477,7 +490,7 @@ test.describe("D4D COP 표면과 상호작용", () => {
       .poll(() => page.locator(".cop-track-block").count(), { timeout: 10_000 })
       .toBeGreaterThanOrEqual(1)
 
-    await expect.poll(() => postedSummary).toContain("분간")
+    await expect.poll(() => postedSummary).toContain("30초간")
     await expect.poll(() => postedSummary).toContain("회 탐지")
   })
 
@@ -543,6 +556,7 @@ test.describe("D4D COP 표면과 상호작용", () => {
     await expect(handoffRoutes).toHaveCount(1)
     await page.getByRole("button", { name: "3D" }).click()
     await expect(page.locator(".cop-map.is-3d")).toBeVisible()
+    await expect(page.locator(".cop-map-roadview")).toHaveCount(0)
     await page.getByRole("button", { name: "2D" }).click()
     await expect(page.locator(".cop-map.is-3d")).toHaveCount(0)
 

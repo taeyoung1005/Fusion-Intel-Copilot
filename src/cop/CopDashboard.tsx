@@ -67,6 +67,7 @@ export function CopDashboard(): ReactElement {
     operationalMetrics,
     selectedClip,
     selectedIncident,
+    codexRequestFingerprint,
     recentActivitySummary,
     recentActivityEscalated,
     responseGates,
@@ -204,6 +205,7 @@ export function CopDashboard(): ReactElement {
           <RightRail
             selectedClip={selectedClip}
             selectedIncident={selectedIncident}
+            evidenceClips={evidenceClips}
             incidents={incidents}
             citations={citations}
             codexMetrics={codexMetrics}
@@ -217,6 +219,7 @@ export function CopDashboard(): ReactElement {
             selectedClipId={selectedClipId}
             selectedCitationId={selectedCitationId}
             relationshipGraph={relationshipGraph}
+            codexRequestFingerprint={codexRequestFingerprint}
             recentActivitySummary={recentActivitySummary}
             onSelectCitation={setSelectedCitationId}
             onSelectIncident={selectIncident}

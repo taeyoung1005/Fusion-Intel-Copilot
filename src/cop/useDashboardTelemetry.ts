@@ -49,11 +49,38 @@ type DashboardTelemetry = {
   readonly operationalMetrics: readonly OperationalMetricTile[]
   readonly selectedClip: EvidenceClip | undefined
   readonly selectedIncident: Incident | undefined
+  readonly codexRequestFingerprint: string
   readonly recentActivitySummary: string | undefined
   readonly recentActivityEscalated: boolean
   readonly responseGates: readonly ResponseGate[]
   readonly relationshipGraph: EvidenceRelationshipGraph
 }
+
+const codexFingerprintFor = ({
+  selectedClip,
+  selectedIncident,
+  citations,
+  missingContext,
+  recentActivitySummary,
+}: {
+  readonly selectedClip: EvidenceClip | undefined
+  readonly selectedIncident: Incident | undefined
+  readonly citations: readonly Citation[]
+  readonly missingContext: readonly MissingContext[]
+  readonly recentActivitySummary: string | undefined
+}): string =>
+  JSON.stringify({
+    selectedClipId: selectedClip?.id ?? "no-clip",
+    selectedClipLabel: selectedClip?.label ?? "",
+    selectedIncidentId: selectedIncident?.id ?? "no-incident",
+    selectedIncidentTitle: selectedIncident?.title ?? "",
+    selectedIncidentTone: selectedIncident?.tone ?? "",
+    citations: citations
+      .slice(0, 2)
+      .map((citation) => [citation.id, citation.label, citation.time ?? ""]),
+    missingContext: missingContext.map((item) => [item.id, item.camera, item.reason]),
+    recentActivitySummary: recentActivitySummary ?? "",
+  })
 
 export const useDashboardTelemetry = ({
   cameras,
@@ -96,21 +123,39 @@ export const useDashboardTelemetry = ({
     [cameras, evidenceClips, windowBuffer],
   )
 
-  const selectedClip = evidenceClips.find((clip) => clip.id === selectedClipId)
-  const selectedIncident =
-    incidents.find((incident) => incident.id === selectedIncidentId) ?? incidents[0]
+  const selectedClip = useMemo(
+    () => evidenceClips.find((clip) => clip.id === selectedClipId),
+    [evidenceClips, selectedClipId],
+  )
+  const selectedIncident = useMemo(
+    () => incidents.find((incident) => incident.id === selectedIncidentId) ?? incidents[0],
+    [incidents, selectedIncidentId],
+  )
 
+  const selectedIncidentZone = selectedIncident?.zone
   const recentWindowSummary = useMemo(() => {
-    if (selectedIncident === undefined) {
+    if (selectedIncidentZone === undefined) {
       return undefined
     }
-    const entries = windowBuffer.get(selectedIncident.zone)
+    const entries = windowBuffer.get(selectedIncidentZone)
     if (entries === undefined || entries.length === 0) {
       return undefined
     }
     const latestTone = entries[entries.length - 1]?.clip.tone ?? "normal"
     return summarizeWindow(entries, Date.now(), windowMsForTone(latestTone))
-  }, [selectedIncident, windowBuffer])
+  }, [selectedIncidentZone, windowBuffer])
+
+  const codexRequestFingerprint = useMemo(
+    () =>
+      codexFingerprintFor({
+        selectedClip,
+        selectedIncident,
+        citations,
+        missingContext,
+        recentActivitySummary: recentWindowSummary?.text,
+      }),
+    [selectedClip, selectedIncident, citations, missingContext, recentWindowSummary?.text],
+  )
 
   const responseGates = useMemo(
     () =>
@@ -144,6 +189,7 @@ export const useDashboardTelemetry = ({
     operationalMetrics,
     selectedClip,
     selectedIncident,
+    codexRequestFingerprint,
     recentActivitySummary: recentWindowSummary?.text,
     recentActivityEscalated: recentWindowSummary?.escalated ?? false,
     responseGates,

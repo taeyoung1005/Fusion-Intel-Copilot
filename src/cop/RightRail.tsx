@@ -24,6 +24,7 @@ import type {
 type RightRailProps = {
   readonly selectedClip: EvidenceClip | undefined
   readonly selectedIncident: Incident
+  readonly evidenceClips: readonly EvidenceClip[]
   readonly incidents: readonly Incident[]
   readonly citations: readonly Citation[]
   readonly codexMetrics: readonly CodexMetric[]
@@ -37,6 +38,7 @@ type RightRailProps = {
   readonly selectedClipId: string
   readonly selectedCitationId: string
   readonly relationshipGraph: EvidenceRelationshipGraph
+  readonly codexRequestFingerprint: string
   readonly recentActivitySummary: string | undefined
   readonly onSelectCitation: (citationId: string) => void
   readonly onSelectIncident: (incidentId: string) => void
@@ -46,6 +48,7 @@ type RightRailProps = {
 export const RightRail = memo(function RightRail({
   selectedClip,
   selectedIncident,
+  evidenceClips,
   incidents,
   citations,
   codexMetrics,
@@ -59,6 +62,7 @@ export const RightRail = memo(function RightRail({
   selectedClipId,
   selectedCitationId,
   relationshipGraph,
+  codexRequestFingerprint,
   recentActivitySummary,
   onSelectCitation,
   onSelectIncident,
@@ -92,6 +96,7 @@ export const RightRail = memo(function RightRail({
         metrics={codexMetrics}
         citations={citations}
         missingContext={missingContext}
+        telemetryFingerprint={codexRequestFingerprint}
         recentActivitySummary={recentActivitySummary}
       />
       <CitationsPanel
@@ -107,6 +112,10 @@ export const RightRail = memo(function RightRail({
         selectedClip={selectedClip}
         selectedIncident={selectedIncident}
         cameraLabel={cameraLabel}
+        evidenceClips={evidenceClips}
+        citations={citations}
+        missingContext={missingContext}
+        responseGates={responseGates}
         reportRows={reportRows}
         reportPeriod={reportPeriod}
       />

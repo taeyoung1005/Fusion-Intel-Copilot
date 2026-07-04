@@ -1,13 +1,15 @@
 import { CheckCircle2, FileDown, FileText } from "lucide-react"
 import { type ReactElement, useEffect, useState } from "react"
-import { DAILY_REPORT, type EvidenceClip, type Incident, type ResponseGate } from "./copData"
+import {
+  type Citation,
+  DAILY_REPORT,
+  type EvidenceClip,
+  type Incident,
+  type MissingContext,
+  type ResponseGate,
+} from "./copData"
 import type { DailyReportRow } from "./operationalTelemetry"
-
-const todayStamp = (): string => {
-  const now = new Date()
-  const pad = (value: number): string => String(value).padStart(2, "0")
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`
-}
+import { useReportArtifactActions } from "./useReportArtifactActions"
 
 export function ResponseGatePanel({
   selectedIncident,
@@ -80,23 +82,34 @@ export function DailyReportPanel({
   selectedClip,
   selectedIncident,
   cameraLabel,
+  evidenceClips,
+  citations,
+  missingContext,
+  responseGates,
   reportRows,
   reportPeriod,
 }: {
   readonly selectedClip: EvidenceClip | undefined
   readonly selectedIncident: Incident
   readonly cameraLabel: string
+  readonly evidenceClips: readonly EvidenceClip[]
+  readonly citations: readonly Citation[]
+  readonly missingContext: readonly MissingContext[]
+  readonly responseGates: readonly ResponseGate[]
   readonly reportRows: readonly DailyReportRow[]
   readonly reportPeriod: string
 }): ReactElement {
-  const [receipt, setReceipt] = useState<string | null>(null)
-  const reportScope = `${selectedIncident.id}:${selectedClip?.id ?? "no-clip"}`
-
-  useEffect(() => {
-    if (reportScope.length > 0) {
-      setReceipt(null)
-    }
-  }, [reportScope])
+  const { actionState, artifact, createPdfPreview, exportReport } = useReportArtifactActions({
+    selectedIncident,
+    selectedClip,
+    evidenceClips,
+    citations,
+    missingContext,
+    responseGates,
+    reportRows,
+    reportPeriod,
+    cameraLabel,
+  })
 
   return (
     <section
@@ -116,7 +129,15 @@ export function DailyReportPanel({
           <dl className="cop-report-meta">
             <div>
               <dt>DATE</dt>
-              <dd>{todayStamp()}</dd>
+              <dd>{artifact.date}</dd>
+            </div>
+            <div>
+              <dt>REPORT ID</dt>
+              <dd>{artifact.reportId}</dd>
+            </div>
+            <div>
+              <dt>INCIDENT</dt>
+              <dd>{selectedIncident.id}</dd>
             </div>
             <div>
               <dt>PERIOD</dt>
@@ -139,60 +160,56 @@ export function DailyReportPanel({
             aria-label="일일 보고 미니 지도"
           >
             <title>일일 보고 미니 지도</title>
-            <rect x={0} y={0} width={120} height={90} fill="#06131c" />
+            <rect x={0} y={0} width={120} height={90} fill="var(--surface-inset)" />
             <ellipse
               cx={60}
               cy={45}
               rx={40}
               ry={26}
               fill="none"
-              stroke="rgba(89,215,255,0.5)"
+              stroke="var(--accent-primary)"
               strokeWidth={1}
             />
             {[18, 40, 60, 80, 102].map((x) => (
-              <circle key={x} cx={x} cy={45 + (x % 3) * 4 - 6} r={2} fill="#59d7ff" />
+              <circle key={x} cx={x} cy={45 + (x % 3) * 4 - 6} r={2} fill="var(--accent-primary)" />
             ))}
             <rect
               x={48}
               y={36}
               width={24}
               height={18}
-              fill="rgba(89,215,255,0.18)"
-              stroke="rgba(89,215,255,0.4)"
+              fill="var(--map-cone)"
+              stroke="var(--accent-primary)"
             />
           </svg>
         </div>
       </div>
       <div className="cop-report-actions">
-        <button
-          type="button"
-          className="cop-button"
-          onClick={() =>
-            setReceipt(
-              `PDF 미리보기 생성: RPT-2025-05-20-PREVIEW / ${selectedIncident.id} / ${
-                selectedClip === undefined ? "선택 클립 없음" : cameraLabel
-              }`,
-            )
-          }
-        >
+        <button type="button" className="cop-button" onClick={createPdfPreview}>
           <FileText size={14} aria-hidden="true" />
           PDF 미리보기
         </button>
-        <button
-          type="button"
-          className="cop-button accent"
-          onClick={() =>
-            setReceipt(`보고서 내보내기 영수증: EXP-2025-05-20-001 / ${selectedIncident.id}`)
-          }
-        >
+        <button type="button" className="cop-button accent" onClick={exportReport}>
           <FileDown size={14} aria-hidden="true" />
           보고서 내보내기
         </button>
       </div>
-      {receipt !== null && (
+      {actionState.kind !== "idle" && (
         <p className="cop-report-receipt" aria-live="polite">
-          {receipt}
+          {actionState.message} / {actionState.fileName} / {actionState.sizeBytes} bytes
         </p>
+      )}
+      {actionState.kind === "pdf" && (
+        <div className="cop-report-pdf-shell">
+          <iframe
+            className="cop-report-pdf-preview"
+            src={actionState.url}
+            title={`${artifact.reportId} PDF 미리보기`}
+          />
+          <a className="cop-report-pdf-link" href={actionState.url} download={actionState.fileName}>
+            PDF 파일 저장
+          </a>
+        </div>
       )}
     </section>
   )

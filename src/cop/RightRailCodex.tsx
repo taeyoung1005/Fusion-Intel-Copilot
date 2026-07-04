@@ -1,37 +1,21 @@
 import { CheckCircle2 } from "lucide-react"
-import { type ReactElement, useCallback, useEffect, useRef, useState } from "react"
+import type { ReactElement } from "react"
+import { CODEX_UPDATED, type CodexMetric } from "./copData"
 import {
-  CodexAgentClientError,
-  type CodexAgentDecision,
-  requestCodexAgent,
-} from "./codexAgentClient"
-import {
-  CODEX_UPDATED,
-  type Citation,
-  type CodexMetric,
-  type EvidenceClip,
-  type Incident,
-  type MissingContext,
-} from "./copData"
+  type CodexSummaryRequestInput,
+  codexProgressText,
+  useCodexSummaryDecision,
+} from "./useCodexSummaryDecision"
 
-type CodexSummaryProps = {
-  readonly selectedClip: EvidenceClip | undefined
-  readonly selectedIncident: Incident
+export {
+  buildCodexSummaryContext,
+  buildCodexSummaryRequestKey,
+  codexProgressText,
+} from "./useCodexSummaryDecision"
+
+type CodexSummaryProps = CodexSummaryRequestInput & {
   readonly metrics: readonly CodexMetric[]
-  readonly citations: readonly Citation[]
-  readonly missingContext: readonly MissingContext[]
-  readonly recentActivitySummary: string | undefined
 }
-
-// When there is no real evidence yet, the Codex request still needs a citation
-// to validate; this stands in for the system's baseline posture packet.
-const SYSTEM_POSTURE_CITATION: Citation = { id: "cite-system", label: "SYSTEM-POSTURE" }
-
-type CodexPanelState =
-  | { readonly kind: "idle" }
-  | { readonly kind: "loading" }
-  | { readonly kind: "success"; readonly response: CodexAgentDecision }
-  | { readonly kind: "failure"; readonly message: string }
 
 export function CodexSummary({
   selectedClip,
@@ -40,46 +24,16 @@ export function CodexSummary({
   citations,
   missingContext,
   recentActivitySummary,
+  telemetryFingerprint,
 }: CodexSummaryProps): ReactElement {
-  const [state, setState] = useState<CodexPanelState>({ kind: "idle" })
-  const selectionScope = `${selectedIncident.id}:${selectedClip?.id ?? "no-clip"}`
-  const requestVersion = useRef(0)
-
-  const requestDecision = useCallback(async (): Promise<void> => {
-    const currentRequest = requestVersion.current + 1
-    requestVersion.current = currentRequest
-    setState({ kind: "loading" })
-    try {
-      const requestCitations =
-        citations.length > 0 ? citations.slice(0, 2) : [SYSTEM_POSTURE_CITATION]
-      const response = await requestCodexAgent({
-        incident: selectedIncident,
-        citations: requestCitations,
-        missingContext,
-        responseOutcome: `사람 확인 게이트 대기 / ${selectedClip?.label ?? "선택 클립 없음"}`,
-        ...(recentActivitySummary !== undefined ? { recentActivitySummary } : {}),
-      })
-      if (requestVersion.current !== currentRequest) {
-        return
-      }
-      setState({ kind: "success", response })
-    } catch (error) {
-      if (requestVersion.current !== currentRequest) {
-        return
-      }
-      if (error instanceof CodexAgentClientError) {
-        setState({ kind: "failure", message: error.message })
-        return
-      }
-      throw error
-    }
-  }, [selectedClip?.label, selectedIncident, citations, missingContext, recentActivitySummary])
-
-  useEffect(() => {
-    if (selectionScope.length > 0) {
-      void requestDecision()
-    }
-  }, [requestDecision, selectionScope])
+  const state = useCodexSummaryDecision({
+    selectedClip,
+    selectedIncident,
+    citations,
+    missingContext,
+    recentActivitySummary,
+    ...(telemetryFingerprint === undefined ? {} : { telemetryFingerprint }),
+  })
 
   return (
     <section id="cop-codex-panel" className="cop-panel cop-codex" aria-labelledby="cop-codex-title">
@@ -91,15 +45,20 @@ export function CodexSummary({
         <span className="cop-updated">Updated {CODEX_UPDATED}</span>
       </div>
       <p className="cop-codex-sub">Codex 판단</p>
-      {state.kind === "success" && (
+      {state.kind === "ready" && (
         <p className="cop-codex-decision" aria-live="polite">
           <strong>{state.response.decision.title}</strong>: {state.response.decision.summary}
           <br />
           권고: {state.response.decision.recommendedAction}
         </p>
       )}
+      {state.kind === "loading" && (
+        <p className="cop-codex-decision" aria-live="polite">
+          {codexProgressText(state.progress)}
+        </p>
+      )}
       {state.kind === "failure" && (
-        <p className="cop-codex-decision error" aria-live="polite">
+        <p className="cop-codex-decision" aria-live="polite">
           {state.message}
         </p>
       )}
@@ -108,13 +67,25 @@ export function CodexSummary({
           <CodexRow key={metric.id} metric={metric} />
         ))}
       </ul>
-      {state.kind === "success" && (
+      {state.kind === "ready" && (
         <p className="cop-codex-mode">
           {state.response.codexMode === "configured-codex-endpoint" && "서버 Codex 엔드포인트 연결"}
           {state.response.codexMode === "codex-cli" && "로컬 Codex CLI 연결"}
           {state.response.codexMode === "local-codex-adapter" && "로컬 Codex 어댑터"}
           {" · "}
           {state.response.adapterNotice}
+          {state.notice !== undefined && (
+            <>
+              {" · "}
+              {state.notice}
+            </>
+          )}
+          {state.notice === undefined && state.progress !== undefined && (
+            <>
+              {" · "}
+              {codexProgressText(state.progress)}
+            </>
+          )}
         </p>
       )}
     </section>
