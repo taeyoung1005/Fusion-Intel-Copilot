@@ -163,6 +163,85 @@ test.describe("D4D COP 표면과 상호작용", () => {
       .toBe(true)
   })
 
+  test("활동 스트림 패널이 SSE 처리 단계를 실시간 로그로 표시한다", async ({ page }) => {
+    await page.addInitScript(() => {
+      class MockActivityEventSource extends EventTarget implements EventSource {
+        static readonly CONNECTING = 0
+        static readonly OPEN = 1
+        static readonly CLOSED = 2
+        readonly CONNECTING = 0
+        readonly OPEN = 1
+        readonly CLOSED = 2
+        readonly url: string
+        readonly withCredentials = false
+        readyState = MockActivityEventSource.CONNECTING
+        onerror: ((this: EventSource, event: Event) => unknown) | null = null
+        onmessage: ((this: EventSource, event: MessageEvent) => unknown) | null = null
+        onopen: ((this: EventSource, event: Event) => unknown) | null = null
+
+        constructor(url: string | URL) {
+          super()
+          this.url = String(url)
+          window.setTimeout(() => {
+            this.readyState = MockActivityEventSource.OPEN
+            this.onopen?.call(this, new Event("open"))
+            this.emit({
+              ts: "2026-07-04T09:42:18.120Z",
+              source: "vision",
+              level: "info",
+              stage: "receive",
+              message: "프레임 수신",
+              detail: { machineId: "activity-event-backend/vision-worker-01" },
+            })
+            this.emit({
+              ts: "2026-07-04T09:42:19.360Z",
+              source: "vision",
+              level: "watch",
+              stage: "detect",
+              message: "DETR 후보 2건 검출",
+              detail: { machineId: "activity-event-backend/vision-worker-01" },
+            })
+          }, 25)
+        }
+
+        close(): void {
+          this.readyState = MockActivityEventSource.CLOSED
+        }
+
+        private emit(payload: {
+          readonly ts: string
+          readonly source: string
+          readonly level: string
+          readonly stage: string
+          readonly message: string
+          readonly detail: {
+            readonly machineId: string
+          }
+        }): void {
+          const event = new MessageEvent("activity", { data: JSON.stringify(payload) })
+          this.onmessage?.call(this, event)
+          this.dispatchEvent(event)
+        }
+      }
+
+      Object.defineProperty(window, "EventSource", { value: MockActivityEventSource })
+    })
+
+    await page.goto("/")
+
+    const panel = page.locator(".cop-activity-stream")
+    await expect(panel.getByRole("heading", { name: /시스템 처리 로그/ })).toBeVisible()
+    await expect(panel.locator(".cop-activity-stage", { hasText: /^수신$/ })).toBeVisible()
+    await expect(panel.locator(".cop-activity-stage", { hasText: /^검출$/ })).toBeVisible()
+    await expect(panel.getByText("프레임 수신")).toBeVisible()
+    await expect(panel.getByText("DETR 후보 2건 검출")).toBeVisible()
+    await expect(
+      panel
+        .locator(".cop-activity-line", { hasText: "프레임 수신" })
+        .getByText("activity-event-backend/vision-worker-01"),
+    ).toBeVisible()
+  })
+
   test("Codex 요청 중 사건을 바꿔도 이전 판단을 표시하지 않는다", async ({ page }) => {
     // Incidents are now real: they only exist once DETR actually detects
     // something. Two CARLA simulation cameras, brought online one after the
