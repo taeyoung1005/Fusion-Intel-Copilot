@@ -5,6 +5,8 @@ import { carlaCameraStreamSrc } from "./carlaCameraClient"
 import type { EvidenceClip } from "./copData"
 import type { DynamicCameraRecord } from "./dynamicMapCamera"
 import { useCarlaCameraDetection } from "./useCarlaCameraDetection"
+import { useCarlaVideoDetection } from "./useCarlaVideoDetection"
+import { useCarlaWebrtcVideo } from "./useCarlaWebrtcVideo"
 
 type CarlaCctvWallProps = {
   readonly cameras: readonly DynamicCameraRecord[]
@@ -90,15 +92,18 @@ function CarlaCctvCard({
   onVisionEvidence,
 }: CarlaCctvCardProps): ReactElement {
   const connection = cameraConnectionState(record)
+  const hasFrame = record.latestFrameDataUrl !== null && record.latestFrameDataUrl !== undefined
+  const streamSrc = carlaCameraStreamSrc(record.id)
+  const webrtc = useCarlaWebrtcVideo(record.id, hasFrame)
+  const webrtcLive = webrtc.state === "live"
+  useCarlaVideoDetection(record.id, record.label, webrtc.videoRef, webrtcLive, onVisionEvidence)
   useCarlaCameraDetection(
     record.id,
     record.label,
-    record.latestFrameDataUrl ?? null,
-    record.lastFrameAt ?? null,
+    webrtcLive ? null : (record.latestFrameDataUrl ?? null),
+    webrtcLive ? null : (record.lastFrameAt ?? null),
     onVisionEvidence,
   )
-  const hasFrame = record.latestFrameDataUrl !== null && record.latestFrameDataUrl !== undefined
-  const streamSrc = carlaCameraStreamSrc(record.id)
 
   return (
     <button
@@ -112,7 +117,22 @@ function CarlaCctvCard({
           {connection.shortLabel}
         </span>
         {hasFrame ? (
-          <img src={streamSrc} alt={`${record.id} CARLA CCTV 화면`} decoding="async" />
+          <>
+            <video
+              ref={webrtc.videoRef}
+              className={webrtcLive ? undefined : "pending"}
+              aria-label={`${record.id} CARLA WebRTC CCTV 화면`}
+              autoPlay
+              muted
+              playsInline
+            />
+            <img
+              className={webrtcLive ? "fallback" : undefined}
+              src={streamSrc}
+              alt={`${record.id} CARLA CCTV 화면`}
+              decoding="async"
+            />
+          </>
         ) : (
           <span className="cop-mobile-live-empty">
             <WifiOff size={12} aria-hidden="true" />

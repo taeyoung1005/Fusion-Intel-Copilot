@@ -6,6 +6,7 @@ import {
   isActivityStreamRequest,
 } from "./activityStream"
 import { handleCarlaCameraRequest, isCarlaCameraRequest } from "./carlaCameraRegistry"
+import { handleCarlaWebrtcRequest, isCarlaWebrtcRequest } from "./carlaWebrtcSignaling"
 import { handleCodexAgentRequest } from "./codexAgent"
 import { handleVisionPipelineRequest } from "./visionPipeline"
 
@@ -44,6 +45,18 @@ const createCodexAgentMiddleware =
         if (error instanceof Error) {
           response.writeHead(500, { "content-type": "application/json; charset=utf-8" })
           response.end(JSON.stringify({ error: "CARLA 카메라 처리 중 오류가 발생했습니다." }))
+          return
+        }
+        throw error
+      })
+      return
+    }
+
+    if (isCarlaWebrtcRequest(request.method, request.url)) {
+      handleCarlaWebrtcRequest(request, response).catch((error: unknown) => {
+        if (error instanceof Error) {
+          response.writeHead(500, { "content-type": "application/json; charset=utf-8" })
+          response.end(JSON.stringify({ error: "CARLA WebRTC 처리 중 오류가 발생했습니다." }))
           return
         }
         throw error

@@ -60,6 +60,7 @@
 }
 
 .cop-realtime-alert-media {
+  position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
@@ -67,11 +68,27 @@
   background: var(--surface-inset);
 }
 
-.cop-realtime-alert-media img {
+.cop-realtime-alert-media img,
+.cop-realtime-alert-media video {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.cop-realtime-alert-media video {
+  z-index: 1;
+}
+
+.cop-realtime-alert-media video.pending {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cop-realtime-alert-media img.fallback {
+  opacity: 0;
 }
 
 .cop-realtime-alert-detail {

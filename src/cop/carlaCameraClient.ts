@@ -17,6 +17,13 @@ const CarlaCameraListSchema = z.object({
 
 export type CarlaCameraSnapshot = z.infer<typeof CarlaCameraSchema>
 
+const CarlaWebrtcAnswerSchema = z.object({
+  type: z.literal("answer"),
+  sdp: z.string(),
+})
+
+export type CarlaWebrtcAnswer = z.infer<typeof CarlaWebrtcAnswerSchema>
+
 export const listCarlaCameras = async (): Promise<readonly CarlaCameraSnapshot[]> => {
   const response = await fetch("/api/carla-cameras?frames=0")
   const body = await readJson(response)
@@ -28,6 +35,19 @@ export const carlaCameraFrameSrc = (cameraId: string, frameCount: number): strin
 
 export const carlaCameraStreamSrc = (cameraId: string): string =>
   `/api/carla-cameras/${encodeURIComponent(cameraId)}/stream.mjpg`
+
+export const requestCarlaWebrtcAnswer = async (
+  cameraId: string,
+  offer: RTCSessionDescriptionInit,
+): Promise<CarlaWebrtcAnswer> => {
+  const response = await fetch(`/api/carla-webrtc/${encodeURIComponent(cameraId)}/offer`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ type: offer.type, sdp: offer.sdp }),
+  })
+  const body = await readJson(response)
+  return CarlaWebrtcAnswerSchema.parse(body)
+}
 
 export const deleteCarlaCamera = async (
   cameraId: string,

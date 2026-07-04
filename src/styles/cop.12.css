@@ -323,12 +323,26 @@
   background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 4px);
 }
 
-.cop-mobile-live-media img {
+.cop-mobile-live-media img,
+.cop-mobile-live-media video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.cop-mobile-live-media video {
+  z-index: 1;
+}
+
+.cop-mobile-live-media video.pending {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cop-mobile-live-media img.fallback {
+  opacity: 0;
 }
 
 .cop-mobile-live-status {
