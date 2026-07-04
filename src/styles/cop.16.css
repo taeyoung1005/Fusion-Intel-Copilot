@@ -1,0 +1,308 @@
+.cop-map-svg {
+  cursor: grab;
+  touch-action: none;
+}
+
+.cop-map-svg:active {
+  cursor: grabbing;
+}
+
+.cop-map.is-3d .cop-map-svg {
+  opacity: 0.18;
+  transform: none;
+}
+
+.cop-map.is-3d .cop-map-weather-canvas {
+  opacity: 0.34;
+}
+
+.cop-map-legend,
+.cop-map-zoom,
+.cop-map-rotate,
+.cop-map-mini,
+.cop-map-coord,
+.cop-map-weather {
+  z-index: 4;
+}
+
+.cop-map-rotate {
+  position: absolute;
+  top: 112px;
+  left: 132px;
+  display: inline-grid;
+  grid-template-columns: 30px minmax(42px, auto) 30px;
+  align-items: center;
+  gap: 4px;
+}
+
+.cop-map-rotate button,
+.cop-map-rotate span {
+  display: grid;
+  place-items: center;
+  height: 30px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: rgba(3, 10, 15, 0.86);
+  color: var(--text-secondary);
+}
+
+.cop-map-rotate button:hover {
+  color: var(--c-cyan);
+  border-color: var(--c-cyan-dim);
+}
+
+.cop-map-rotate span {
+  padding-inline: 7px;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.cop-mini-frame {
+  background: linear-gradient(rgba(89, 215, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(89, 215, 255, 0.06) 1px, transparent 1px), rgba(3, 12, 18, 0.88);
+  background-size: 18px 18px;
+}
+
+.cop-mini-shape {
+  inset: 16px 18px;
+}
+
+.cop-mini-view {
+  box-sizing: border-box;
+  min-width: 8px;
+  min-height: 8px;
+  border: 1px solid var(--c-cyan);
+  background: rgba(89, 215, 255, 0.16);
+  transform-origin: center;
+}
+
+.cop-mini-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--text-tertiary);
+}
+
+.cop-svg-depot-status {
+  fill: var(--text-secondary);
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.cop-depot-bunker.tone-alert .cop-svg-depot-status {
+  fill: var(--c-red);
+}
+
+.cop-depot-bunker.tone-watch .cop-svg-depot-status {
+  fill: var(--c-amber);
+}
+
+.cop-depot-bunker.tone-normal .cop-svg-depot-status {
+  fill: var(--c-green);
+}
+
+.cop-map-roadview {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  border: 1px solid rgba(89, 215, 255, 0.18);
+  background: #061012;
+  color: var(--text-primary);
+  perspective: 900px;
+}
+
+.cop-roadview-sky {
+  position: absolute;
+  inset: 0 0 44%;
+  background: linear-gradient(180deg, rgba(13, 28, 32, 0.96), rgba(12, 24, 24, 0.78)),
+    linear-gradient(90deg, rgba(79, 179, 191, 0.08), transparent 34% 66%, rgba(244, 196, 48, 0.06));
+}
+
+.cop-roadview-horizon {
+  position: absolute;
+  left: 172px;
+  right: 154px;
+  top: 18px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-secondary);
+}
+
+.cop-roadview-horizon strong {
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cop-roadview-horizon span {
+  flex: 0 0 auto;
+  color: var(--c-cyan);
+}
+
+.cop-roadview-ground {
+  position: absolute;
+  inset: 34% -18% -18%;
+  background: linear-gradient(180deg, rgba(19, 37, 31, 0.78), rgba(4, 12, 10, 0.96)),
+    repeating-linear-gradient(90deg, rgba(89, 215, 255, 0.04) 0 1px, transparent 1px 72px);
+  transform: rotateX(62deg);
+  transform-origin: center bottom;
+}
+
+.cop-roadview-lane,
+.cop-roadview-grid {
+  position: absolute;
+  left: 50%;
+  border-color: rgba(244, 196, 48, 0.32);
+  border-style: solid;
+  border-width: 0 1px;
+}
+
+.cop-roadview-lane {
+  top: 0;
+  bottom: 0;
+  width: 18%;
+}
+
+.cop-roadview-lane.lane-left {
+  transform: translateX(-124%) skewX(-16deg);
+}
+
+.cop-roadview-lane.lane-right {
+  transform: translateX(24%) skewX(16deg);
+}
+
+.cop-roadview-grid {
+  width: 62%;
+  height: 0;
+  border-width: 1px 0 0;
+  transform: translateX(-50%);
+}
+
+.cop-roadview-grid.grid-a {
+  top: 22%;
+}
+
+.cop-roadview-grid.grid-b {
+  top: 46%;
+}
+
+.cop-roadview-grid.grid-c {
+  top: 70%;
+}
+
+.cop-roadview-depot,
+.cop-roadview-marker {
+  position: absolute;
+  display: grid;
+  gap: 2px;
+  min-width: 58px;
+  padding: 5px 7px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: rgba(5, 14, 20, 0.9);
+  color: var(--text-secondary);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 800;
+  text-align: center;
+  transform-origin: center bottom;
+}
+
+.cop-roadview-depot {
+  min-width: 112px;
+  border-color: rgba(244, 196, 48, 0.48);
+  color: var(--text-primary);
+}
+
+.cop-roadview-marker.camera,
+.cop-roadview-marker.event {
+  cursor: pointer;
+}
+
+.cop-roadview-marker.camera {
+  border-color: rgba(89, 215, 255, 0.45);
+}
+
+.cop-roadview-marker.camera.selected {
+  border-color: var(--c-amber);
+  color: var(--c-amber);
+}
+
+.cop-roadview-marker.event {
+  border-color: var(--c-amber);
+  color: var(--c-amber);
+}
+
+.cop-roadview-marker.event.tone-alert {
+  border-color: var(--c-red);
+  color: var(--c-red);
+}
+
+.cop-roadview-marker.depot {
+  border-color: rgba(170, 200, 215, 0.38);
+}
+
+.cop-roadview-marker:hover,
+.cop-roadview-marker:focus-visible {
+  border-color: var(--c-cyan);
+  color: var(--text-primary);
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.cop-roadview-marker span,
+.cop-roadview-depot span {
+  color: var(--text-tertiary);
+}
+
+.cop-roadview-status {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  gap: var(--space-2);
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: rgba(3, 10, 15, 0.86);
+  color: var(--text-tertiary);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+@media (max-width: 720px) {
+  .cop-map-zoom {
+    left: 12px;
+  }
+
+  .cop-map-rotate {
+    top: 112px;
+    left: 12px;
+  }
+
+  .cop-map-mini {
+    width: 116px;
+  }
+
+  .cop-roadview-horizon {
+    left: 118px;
+    right: 132px;
+  }
+
+  .cop-roadview-horizon span {
+    display: none;
+  }
+}

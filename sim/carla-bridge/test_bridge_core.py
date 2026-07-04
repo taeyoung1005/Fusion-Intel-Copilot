@@ -36,6 +36,19 @@ class BuildFramePayloadTests(unittest.TestCase):
             {"frameDataUrl": frame_data_url, "label": "CARLA 북측 게이트"},
         )
 
+    def test_serializes_normalized_yaw_for_registry_post(self) -> None:
+        # Given: CARLA reports a negative actor yaw outside a 0-360 heading range.
+        frame_data_url = "data:image/jpeg;base64,YWJjZA=="
+
+        # When: the bridge builds the HTTP JSON payload.
+        payload = build_frame_payload(frame_data_url, "CARLA drone ISR", yaw=-725.25)
+
+        # Then: D4D receives a normalized heading in degrees.
+        self.assertEqual(
+            json.loads(payload.decode("utf-8")),
+            {"frameDataUrl": frame_data_url, "label": "CARLA drone ISR", "yaw": 354.75},
+        )
+
 
 class ShouldEmitFrameTests(unittest.TestCase):
     def test_emits_first_frame_and_every_nth_frame(self) -> None:

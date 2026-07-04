@@ -541,6 +541,10 @@ test.describe("D4D COP 표면과 상호작용", () => {
     await expect(handoffRoutes).toHaveCount(0)
     await page.locator("label.cop-layer", { hasText: "Camera Handoff" }).click()
     await expect(handoffRoutes).toHaveCount(1)
+    await page.getByRole("button", { name: "3D" }).click()
+    await expect(page.locator(".cop-map.is-3d")).toBeVisible()
+    await page.getByRole("button", { name: "2D" }).click()
+    await expect(page.locator(".cop-map.is-3d")).toHaveCount(0)
 
     await page.getByRole("button", { name: "CARLA-E2E-001 카메라 선택" }).hover()
     await expect(page.getByRole("img", { name: "CARLA-E2E-001 지도 CCTV 미리보기" })).toBeVisible()

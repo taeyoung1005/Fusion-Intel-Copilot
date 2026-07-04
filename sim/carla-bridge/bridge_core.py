@@ -24,9 +24,16 @@ def build_frame_data_url(jpeg_bytes: bytes) -> str:
     return f"{DATA_URL_PREFIX}{encoded}"
 
 
-def build_frame_payload(frame_data_url: str, label: str) -> bytes:
+def normalize_yaw_degrees(yaw: float) -> float:
+    return yaw % 360.0
+
+
+def build_frame_payload(frame_data_url: str, label: str, yaw: float | None = None) -> bytes:
+    payload: dict[str, str | float] = {"frameDataUrl": frame_data_url, "label": label}
+    if yaw is not None:
+        payload["yaw"] = normalize_yaw_degrees(yaw)
     return json.dumps(
-        {"frameDataUrl": frame_data_url, "label": label},
+        payload,
         ensure_ascii=False,
         separators=(",", ":"),
     ).encode("utf-8")

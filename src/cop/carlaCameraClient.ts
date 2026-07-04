@@ -9,6 +9,7 @@ const CarlaCameraSchema = z.object({
   lastFrameAt: z.string().nullable(),
   frameCount: z.number().int().nonnegative(),
   latestFrameDataUrl: z.string().nullable(),
+  yaw: z.number().finite().optional(),
 })
 
 const CarlaCameraListSchema = z.object({

@@ -128,6 +128,7 @@ def handle_camera_image(
     frame_store: CameraFrameStore,
     camera: CameraSpec,
     image: carla.Image,
+    yaw: float,
 ) -> None:
     rgb = image_to_rgb_array(image)
     frame_store.publish(camera.id, rgb)
@@ -147,7 +148,7 @@ def handle_camera_image(
         ),
     )
     data_url = build_frame_data_url(rgb_array_to_jpeg_bytes(rgb))
-    payload = build_frame_payload(data_url, camera.label)
+    payload = build_frame_payload(data_url, camera.label, yaw=yaw)
     url = f"{d4d_origin}/api/carla-cameras/{urllib.parse.quote(camera.id)}/frame"
     request = urllib.request.Request(
         url,
@@ -209,6 +210,7 @@ def spawn_cameras(
                 frame_store,
                 camera,
                 image,
+                yaw=camera.rotation.yaw,
             ),
         )
         sensors.append(sensor)
@@ -227,12 +229,13 @@ def attach_timed_drone_sensors(
             continue
         camera = camera_spec_for_timed_drone(spawn.config)
         spawn.actor.listen(
-            lambda image, camera=camera: handle_camera_image(
+            lambda image, camera=camera, actor=spawn.actor: handle_camera_image(
                 d4d_origin,
                 frame_stride,
                 frame_store,
                 camera,
                 image,
+                yaw=actor.get_transform().rotation.yaw,
             ),
         )
         print(f"CARLA drone ISR online: {camera.id} {camera.label}")

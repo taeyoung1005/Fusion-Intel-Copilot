@@ -1,4 +1,5 @@
 import type { ReactElement } from "react"
+import { DepotFootprint } from "./FacilityMapDepot"
 import {
   BlindSpots,
   CameraHandoffRoutes,
@@ -13,9 +14,6 @@ import {
 import { SatelliteBase, SatelliteTiles } from "./FacilityMapTerrain"
 import { cameraConnectionState } from "./cameraConnectionStatus"
 import {
-  DEPOT_BUNKERS,
-  DEPOT_FOOTPRINT,
-  DEPOT_TITLE_POINT,
   DISTANCE_BANDS,
   type MapCamera,
   type MapEvent,
@@ -71,7 +69,7 @@ export function MapScene({
         />
       )}
 
-      <DepotFootprint />
+      <DepotFootprint events={detectionMarkers} />
 
       {has("cameraCoverage") &&
         dynamicCameraRecords.map((record) => (
@@ -224,60 +222,6 @@ function ZoneLabels(): ReactElement {
           {zone.label}
         </text>
       ))}
-    </g>
-  )
-}
-
-function DepotFootprint(): ReactElement {
-  return (
-    <g>
-      <rect
-        x={DEPOT_FOOTPRINT.x}
-        y={DEPOT_FOOTPRINT.y}
-        width={DEPOT_FOOTPRINT.width}
-        height={DEPOT_FOOTPRINT.height}
-        rx={4}
-        fill="rgba(8,24,33,0.42)"
-        stroke="rgba(89,215,255,0.55)"
-        strokeWidth={1}
-        strokeDasharray="4 3"
-      />
-      {DEPOT_BUNKERS.map((bunker) => (
-        <g key={bunker.id}>
-          <rect
-            x={bunker.x}
-            y={bunker.y}
-            width={bunker.width}
-            height={bunker.height}
-            rx={2}
-            fill="rgba(150,180,195,0.32)"
-            stroke="rgba(170,200,215,0.6)"
-            strokeWidth={0.8}
-          />
-          <circle
-            cx={bunker.x + bunker.width / 2}
-            cy={bunker.y + bunker.height / 2}
-            r={2}
-            fill="#9fe6ff"
-          />
-          <text
-            x={bunker.labelPoint.x}
-            y={bunker.labelPoint.y}
-            className="cop-svg-depot"
-            textAnchor="middle"
-          >
-            {bunker.id}
-          </text>
-        </g>
-      ))}
-      <text
-        x={DEPOT_TITLE_POINT.x}
-        y={DEPOT_TITLE_POINT.y}
-        className="cop-svg-depot-title"
-        textAnchor="middle"
-      >
-        AMMO DEPOT
-      </text>
     </g>
   )
 }

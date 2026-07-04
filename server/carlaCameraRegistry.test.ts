@@ -38,9 +38,11 @@ describe("carla camera registry HTTP boundary", () => {
     const firstFrame = await postJson(`${server.url}/api/carla-cameras/CAM-CARLA-01/frame`, {
       frameDataUrl: "data:image/jpeg;base64,QUJDRA==",
       label: "CARLA 북측 게이트",
+      yaw: 90,
     })
     const secondFrame = await postJson(`${server.url}/api/carla-cameras/CAM-CARLA-01/frame`, {
       frameDataUrl: "data:image/jpeg;base64,RUZHSA==",
+      yaw: 271.5,
     })
 
     // Then: the camera is upserted and keeps the latest frame.
@@ -52,6 +54,7 @@ describe("carla camera registry HTTP boundary", () => {
         label: "CARLA 북측 게이트",
         source: "carla",
         frameCount: 2,
+        yaw: 271.5,
       }),
     })
     const listed = await getJson(`${server.url}/api/carla-cameras`)
@@ -61,6 +64,7 @@ describe("carla camera registry HTTP boundary", () => {
           id: "CAM-CARLA-01",
           latestFrameDataUrl: "data:image/jpeg;base64,RUZHSA==",
           source: "carla",
+          yaw: 271.5,
         }),
       ],
     })

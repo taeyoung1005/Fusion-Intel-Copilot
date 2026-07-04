@@ -32,7 +32,8 @@ export const areCarlaCameraSnapshotsEqual = (
       camera.id === other.id &&
       camera.label === other.label &&
       camera.lastFrameAt === other.lastFrameAt &&
-      camera.frameCount === other.frameCount
+      camera.frameCount === other.frameCount &&
+      camera.yaw === other.yaw
     )
   })
 
@@ -79,6 +80,7 @@ export const useCarlaCameras = ({
             camera.frameCount,
             camera.lastFrameAt,
             camera.frameCount > 0 ? carlaCameraFrameSrc(camera.id, camera.frameCount) : null,
+            camera.yaw,
           ),
         ),
       ),

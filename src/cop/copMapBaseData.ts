@@ -45,7 +45,7 @@ const MAP_CAMERA_SEEDS: readonly MapCameraSeed[] = [
   { id: "CAM-E-01", direction: "E", angle: 330, confidence: 93, tone: "watch", handoff: "target" },
   { id: "CAM-E-02", direction: "E", angle: 6, confidence: 92, tone: "normal" },
   { id: "CAM-E-03", direction: "E", angle: 38, confidence: 90, tone: "alert" },
-  { id: "CAM-S-01", direction: "S", angle: 138, confidence: 90, tone: "normal" },
+  { id: "CAM-S-01", direction: "S", angle: 124, confidence: 90, tone: "normal" },
   { id: "CAM-S-02", direction: "S", angle: 92, confidence: 88, tone: "normal" },
   { id: "CAM-S-03", direction: "S", angle: 58, confidence: 89, tone: "normal" },
 ] as const

@@ -97,6 +97,7 @@
   display: grid;
   gap: 5px;
   width: 132px;
+  pointer-events: none;
 }
 
 .cop-mini-frame {
@@ -128,6 +129,7 @@
 .cop-mini-controls {
   display: flex;
   gap: 4px;
+  pointer-events: auto;
 }
 
 .cop-mini-controls button {
@@ -141,6 +143,7 @@
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 700;
+  pointer-events: auto;
 }
 
 .cop-mini-controls button.active {

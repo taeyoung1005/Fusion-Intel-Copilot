@@ -1,0 +1,64 @@
+.cop-cctv-window-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  padding: var(--space-6);
+  background: rgba(2, 8, 12, 0.72);
+  animation: cop-cctv-window-fade-in 180ms ease-in-out;
+}
+
+.cop-panel.cop-mobile-live.cop-cctv-window {
+  width: min(1400px, 96vw);
+  max-height: min(920px, calc(100vh - var(--space-8)));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  border: 1px solid var(--border-default);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+
+.cop-cctv-window .cop-mobile-live-grid {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-3);
+}
+
+@keyframes cop-cctv-window-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cop-cctv-window-backdrop {
+    animation: none;
+  }
+}
+
+.cop-panel-head-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.cop-mobile-live .cop-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--line-soft);
+  border-radius: 5px;
+  background: var(--panel-inset);
+  color: var(--text-secondary);
+  transition: color 120ms ease-out, border-color 120ms ease-out;
+}
+
+.cop-mobile-live .cop-icon-btn:hover {
+  color: var(--c-cyan);
+  border-color: var(--c-cyan-dim);
+}

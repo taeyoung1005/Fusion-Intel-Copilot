@@ -9,6 +9,7 @@ const FrameRequestSchema = z
   .object({
     frameDataUrl: z.string().min(24).max(2_500_000).startsWith("data:image"),
     label: z.string().trim().min(1).max(64).optional(),
+    yaw: z.number().finite().optional(),
   })
   .strict()
 
@@ -21,6 +22,7 @@ export type CarlaCamera = {
   readonly lastFrameAt: string | null
   readonly frameCount: number
   readonly latestFrameDataUrl: string | null
+  readonly yaw?: number
 }
 
 type MutableCarlaCamera = {
@@ -32,6 +34,7 @@ type MutableCarlaCamera = {
   lastFrameAt: string | null
   frameCount: number
   latestFrameDataUrl: string | null
+  yaw?: number
 }
 
 type RouteMatch =
@@ -168,6 +171,9 @@ const acceptFrame = async (
   }
   if (parsed.data.label !== undefined) {
     camera.label = parsed.data.label
+  }
+  if (parsed.data.yaw !== undefined) {
+    camera.yaw = parsed.data.yaw
   }
   camera.status = "online"
   camera.lastFrameAt = new Date().toISOString()
@@ -306,6 +312,7 @@ const snapshot = (camera: MutableCarlaCamera, includeFrame = true): CarlaCamera 
   lastFrameAt: camera.lastFrameAt,
   frameCount: camera.frameCount,
   latestFrameDataUrl: includeFrame ? camera.latestFrameDataUrl : null,
+  ...(camera.yaw !== undefined ? { yaw: camera.yaw } : {}),
 })
 
 const readBody = async (request: IncomingMessage): Promise<string> =>

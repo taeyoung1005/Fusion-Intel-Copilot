@@ -32,4 +32,11 @@ describe("useCarlaCameras registry polling", () => {
 
     expect(areCarlaCameraSnapshotsEqual(previous, next)).toBe(false)
   })
+
+  it("publishes a new snapshot when only the camera yaw changes", () => {
+    const previous = [cameraSnapshot({ yaw: 90 })]
+    const next = [cameraSnapshot({ yaw: 271.5 })]
+
+    expect(areCarlaCameraSnapshotsEqual(previous, next)).toBe(false)
+  })
 })
