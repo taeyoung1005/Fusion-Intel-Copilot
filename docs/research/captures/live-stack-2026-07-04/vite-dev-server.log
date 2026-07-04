@@ -1,0 +1,37 @@
+
+> d4d-perimeter-ai-harness@0.1.0 dev
+> vite --host 0.0.0.0
+
+
+  VITE v8.1.0  ready in 216 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://192.168.0.11:5173/
+  ➜  Network: http://100.113.177.10:5173/
+10:10:01 AM [vite] server/viteCodexAgentPlugin.ts changed, restarting server...
+10:10:01 AM [vite] server restarted.
+10:10:01 AM [vite] Internal server error: isCarlaWebrtcRequest is not defined
+      at file:///Users/parktaeyeong/Desktop/D4D/node_modules/.vite-temp/vite.config.ts.timestamp-1783127401436-150924f42253c8.mjs:1190:2
+      at call (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6511:5)
+      at next (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6464:4)
+      at hostValidationMiddleware (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:16558:3)
+      at call (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6511:5)
+      at next (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6464:4)
+      at cors (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6812:5)
+      at file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6835:9
+      at originCallback (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6829:8)
+      at file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6831:27
+10:10:02 AM [vite] Internal server error: isCarlaWebrtcRequest is not defined
+      at file:///Users/parktaeyeong/Desktop/D4D/node_modules/.vite-temp/vite.config.ts.timestamp-1783127401436-150924f42253c8.mjs:1190:2
+      at call (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6511:5)
+      at next (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6464:4)
+      at hostValidationMiddleware (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:16558:3)
+      at call (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6511:5)
+      at next (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6464:4)
+      at cors (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6812:5)
+      at file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6835:9
+      at originCallback (file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6829:8)
+      at file:///Users/parktaeyeong/Desktop/D4D/node_modules/vite/dist/node/chunks/node.js:6831:27
+10:10:05 AM [vite] server/viteCodexAgentPlugin.ts changed, restarting server...
+10:10:05 AM [vite] server restarted.
+10:10:14 AM [vite] (client) hmr update /src/styles.css

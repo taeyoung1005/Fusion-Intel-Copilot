@@ -1,0 +1,1532 @@
+: connected
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.182Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.191Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":20.46,"frameCount":151,"imageBytes":31806,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.200Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":17.81,"frameCount":151,"imageBytes":29059,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.212Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.231Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":19.09,"frameCount":151,"imageBytes":32250,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.238Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.253Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.255Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":16.99,"frameCount":151,"imageBytes":36959,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.265Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.271Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":17.91,"frameCount":152,"imageBytes":28781,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.292Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":26.45,"frameCount":152,"imageBytes":31892,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.294Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.316Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":22.15,"frameCount":152,"imageBytes":28953,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.316Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.336Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":19.92,"frameCount":152,"imageBytes":32072,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.338Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.354Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.357Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":18.82,"frameCount":152,"imageBytes":36758,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.370Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":16.6,"frameCount":153,"imageBytes":28649,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.371Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.386Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.393Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":22.85,"frameCount":153,"imageBytes":31735,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.403Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":16.32,"frameCount":153,"imageBytes":28945,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.411Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.427Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":16.08,"frameCount":153,"imageBytes":32070,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.433Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.454Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":20.72,"frameCount":153,"imageBytes":36856,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.459Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.473Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.474Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":15.73,"frameCount":154,"imageBytes":28392,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.488Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.499Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":26.4,"frameCount":154,"imageBytes":31777,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.507Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":19.35,"frameCount":154,"imageBytes":28917,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.510Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.534Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":23.72,"frameCount":154,"imageBytes":32020,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.535Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.563Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":27.96,"frameCount":154,"imageBytes":36861,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.564Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.573Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.581Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":17.38,"frameCount":155,"imageBytes":28003,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.594Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.598Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":25.5,"frameCount":155,"imageBytes":31721,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.613Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":18.69,"frameCount":155,"imageBytes":28900,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.614Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.637Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.641Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":27.1,"frameCount":155,"imageBytes":32011,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.655Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":18.32,"frameCount":155,"imageBytes":36818,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.660Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.673Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.683Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":23.56,"frameCount":156,"imageBytes":27687,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.704Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":30.73,"frameCount":156,"imageBytes":31651,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.705Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.712Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.721Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":16.15,"frameCount":156,"imageBytes":28891,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.731Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":19.51,"frameCount":156,"imageBytes":32100,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.733Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.758Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":24.32,"frameCount":156,"imageBytes":36924,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.758Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.768Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.773Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":14.64,"frameCount":157,"imageBytes":28190,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.786Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.789Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":21.38,"frameCount":157,"imageBytes":31774,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.801Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":15.16,"frameCount":157,"imageBytes":28925,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.809Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.827Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":17.81,"frameCount":157,"imageBytes":32028,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.836Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.858Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":22.46,"frameCount":157,"imageBytes":36892,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.859Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.879Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":20.52,"frameCount":158,"imageBytes":28386,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.880Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.891Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.900Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":20.51,"frameCount":158,"imageBytes":31630,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.909Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":18.3,"frameCount":158,"imageBytes":28900,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.913Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.932Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":19.15,"frameCount":158,"imageBytes":32073,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.937Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.958Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":20.99,"frameCount":158,"imageBytes":36845,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.959Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.981Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":22.82,"frameCount":159,"imageBytes":28766,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.982Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:20.994Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.003Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":21.3,"frameCount":159,"imageBytes":31666,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.013Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":18.61,"frameCount":159,"imageBytes":29049,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.013Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.035Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":22.05,"frameCount":159,"imageBytes":32094,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.036Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.058Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":22.26,"frameCount":159,"imageBytes":36922,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.059Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.070Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.078Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":19.63,"frameCount":160,"imageBytes":29677,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.090Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":20.27,"frameCount":160,"imageBytes":31743,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.091Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.112Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":20.88,"frameCount":160,"imageBytes":28910,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.115Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.132Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":16.92,"frameCount":160,"imageBytes":31954,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.140Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.154Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.160Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":19.51,"frameCount":160,"imageBytes":36789,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.170Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":16.45,"frameCount":161,"imageBytes":30079,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.171Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.184Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.194Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":22.98,"frameCount":161,"imageBytes":31603,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.218Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":33.74,"frameCount":161,"imageBytes":28885,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.226Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.240Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.249Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":23.02,"frameCount":161,"imageBytes":32036,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.253Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.259Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":19.25,"frameCount":161,"imageBytes":36833,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.269Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.273Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":20.11,"frameCount":162,"imageBytes":30521,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.290Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.291Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":21.73,"frameCount":162,"imageBytes":31566,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.307Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.315Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":24.4,"frameCount":162,"imageBytes":28923,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.330Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":23.31,"frameCount":162,"imageBytes":32008,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.343Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.354Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.359Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":16.77,"frameCount":162,"imageBytes":36839,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.369Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.372Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":18.01,"frameCount":163,"imageBytes":30796,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.381Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.387Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":18.08,"frameCount":163,"imageBytes":31582,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.402Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":21.27,"frameCount":163,"imageBytes":28876,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.413Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.433Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":19.7,"frameCount":163,"imageBytes":32070,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.434Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.452Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":18.69,"frameCount":163,"imageBytes":36828,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.453Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.469Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.474Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":20.86,"frameCount":164,"imageBytes":30947,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.484Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.487Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":18.54,"frameCount":164,"imageBytes":31603,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.506Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":21.6,"frameCount":164,"imageBytes":28936,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.516Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.534Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":18.09,"frameCount":164,"imageBytes":32117,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.538Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.557Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.557Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":19.51,"frameCount":164,"imageBytes":36858,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.574Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.575Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":18.03,"frameCount":165,"imageBytes":31209,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.583Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.591Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":17.01,"frameCount":165,"imageBytes":31679,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.601Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":18.01,"frameCount":165,"imageBytes":28947,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.616Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.637Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":20.4,"frameCount":165,"imageBytes":31985,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.638Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.653Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.656Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":18.48,"frameCount":165,"imageBytes":36811,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.672Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":18.53,"frameCount":166,"imageBytes":31353,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.673Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.686Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.688Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":15.86,"frameCount":166,"imageBytes":31573,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.704Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":17.88,"frameCount":166,"imageBytes":28915,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.715Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.741Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":26.36,"frameCount":166,"imageBytes":31980,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.742Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.754Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.762Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":20.15,"frameCount":166,"imageBytes":36828,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.774Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.776Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":21.61,"frameCount":167,"imageBytes":31669,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.789Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.806Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":31.82,"frameCount":167,"imageBytes":31557,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.818Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":29.8,"frameCount":167,"imageBytes":28991,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.821Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.834Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.845Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":23.31,"frameCount":167,"imageBytes":32101,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.855Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":20.51,"frameCount":167,"imageBytes":36936,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.856Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.869Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.877Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":21.1,"frameCount":168,"imageBytes":31918,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.891Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":22.46,"frameCount":168,"imageBytes":31678,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.893Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.912Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":19.36,"frameCount":168,"imageBytes":28932,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.913Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.935Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":22.25,"frameCount":168,"imageBytes":31885,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.937Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.956Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":18.97,"frameCount":168,"imageBytes":36775,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.957Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.970Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.974Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":17.26,"frameCount":169,"imageBytes":31795,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.988Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":18.57,"frameCount":169,"imageBytes":31474,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:21.989Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.006Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":17.47,"frameCount":169,"imageBytes":28888,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.012Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.032Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":19.79,"frameCount":169,"imageBytes":31974,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.034Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.052Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":18.47,"frameCount":169,"imageBytes":36835,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.053Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.069Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.075Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":21.88,"frameCount":170,"imageBytes":31865,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.087Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":17.91,"frameCount":170,"imageBytes":31573,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.088Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.103Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":15.97,"frameCount":170,"imageBytes":28858,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.115Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.142Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.142Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":27.03,"frameCount":170,"imageBytes":31940,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.155Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.159Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":17.7,"frameCount":170,"imageBytes":36827,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.167Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.173Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":18.78,"frameCount":171,"imageBytes":31980,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.185Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":18.06,"frameCount":171,"imageBytes":31557,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.186Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.205Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":19.52,"frameCount":171,"imageBytes":28920,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.215Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.237Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":22.26,"frameCount":171,"imageBytes":32052,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.237Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.263Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":25.5,"frameCount":171,"imageBytes":36862,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.263Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.271Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.280Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":16.42,"frameCount":172,"imageBytes":32140,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.282Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.288Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":17.6,"frameCount":172,"imageBytes":31555,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.299Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":16.84,"frameCount":172,"imageBytes":28892,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.314Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.338Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":24.03,"frameCount":172,"imageBytes":31999,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.344Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.355Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.363Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":19.62,"frameCount":172,"imageBytes":36833,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.366Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.376Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":20.59,"frameCount":173,"imageBytes":32366,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.388Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.389Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":22.74,"frameCount":173,"imageBytes":31678,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.408Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":20.59,"frameCount":173,"imageBytes":28881,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.413Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.436Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":22.97,"frameCount":173,"imageBytes":32079,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.441Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.456Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.460Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":18.44,"frameCount":173,"imageBytes":36837,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.470Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.476Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":19.98,"frameCount":174,"imageBytes":32371,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.485Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.490Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":19.48,"frameCount":174,"imageBytes":31719,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.504Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":18.72,"frameCount":174,"imageBytes":28917,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.515Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.532Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":17.12,"frameCount":174,"imageBytes":32103,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.535Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.561Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":26.31,"frameCount":174,"imageBytes":36839,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.562Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.571Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.579Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":16.78,"frameCount":175,"imageBytes":32385,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.583Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.589Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":18.66,"frameCount":175,"imageBytes":31703,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.600Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":16.73,"frameCount":175,"imageBytes":29003,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.611Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.630Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":19.14,"frameCount":175,"imageBytes":32277,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.632Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.658Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.659Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":26.81,"frameCount":175,"imageBytes":36952,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.671Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.680Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":21.52,"frameCount":176,"imageBytes":36266,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.683Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.688Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":17.62,"frameCount":176,"imageBytes":31745,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.699Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":16.4,"frameCount":176,"imageBytes":28858,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.710Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.727Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":17.79,"frameCount":176,"imageBytes":32165,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.738Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.763Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":25.16,"frameCount":176,"imageBytes":36757,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.763Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.772Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.785Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":21.86,"frameCount":177,"imageBytes":31607,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.788Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.796Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":24.15,"frameCount":177,"imageBytes":32781,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.806Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":17.17,"frameCount":177,"imageBytes":28834,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.811Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.830Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":18.97,"frameCount":177,"imageBytes":32173,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.836Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.858Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":21.84,"frameCount":177,"imageBytes":36857,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.859Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.892Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.893Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":34.04,"frameCount":178,"imageBytes":32466,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.899Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.913Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.931Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":38.89,"frameCount":178,"imageBytes":31701,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.931Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":32.15,"frameCount":178,"imageBytes":28874,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.951Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":38.54,"frameCount":178,"imageBytes":32198,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.952Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.966Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.981Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":29.21,"frameCount":178,"imageBytes":36863,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.983Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.992Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:22.992Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":25.65,"frameCount":179,"imageBytes":32365,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.002Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":18.56,"frameCount":179,"imageBytes":31678,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.010Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":17.89,"frameCount":179,"imageBytes":28894,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.012Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.036Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":23.8,"frameCount":179,"imageBytes":32329,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.036Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.056Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.060Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":24.02,"frameCount":179,"imageBytes":36820,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.072Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.078Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":21.77,"frameCount":180,"imageBytes":36007,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.088Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.094Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":22.09,"frameCount":180,"imageBytes":31676,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.105Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":16.82,"frameCount":180,"imageBytes":28925,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.112Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.134Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.142Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":29.68,"frameCount":180,"imageBytes":32431,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.156Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":22.25,"frameCount":180,"imageBytes":36813,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.162Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.173Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.179Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":17.25,"frameCount":181,"imageBytes":32364,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.189Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.193Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":20.1,"frameCount":181,"imageBytes":31787,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.210Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":20.79,"frameCount":181,"imageBytes":28910,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.216Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.236Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":20.4,"frameCount":181,"imageBytes":32424,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.238Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.253Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.257Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":18.85,"frameCount":181,"imageBytes":36848,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.262Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.271Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":18.01,"frameCount":182,"imageBytes":32883,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.284Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":22.32,"frameCount":182,"imageBytes":31755,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.285Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.306Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":20.66,"frameCount":182,"imageBytes":28910,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.321Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.337Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.339Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":17.71,"frameCount":182,"imageBytes":32498,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.349Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.360Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":22.89,"frameCount":182,"imageBytes":36820,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.371Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":21.89,"frameCount":183,"imageBytes":32201,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.373Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.386Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.389Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":15.95,"frameCount":183,"imageBytes":31736,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.407Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":21.47,"frameCount":183,"imageBytes":28971,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.418Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.438Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.439Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":20.98,"frameCount":183,"imageBytes":32686,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.460Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":22.09,"frameCount":183,"imageBytes":36894,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.461Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.471Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.480Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":18.57,"frameCount":184,"imageBytes":31585,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.486Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.489Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":18.66,"frameCount":184,"imageBytes":31901,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.506Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":19.73,"frameCount":184,"imageBytes":28877,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.512Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.533Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":20.15,"frameCount":184,"imageBytes":32517,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.534Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.552Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":17.33,"frameCount":184,"imageBytes":36775,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.553Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.567Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.571Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":18.73,"frameCount":185,"imageBytes":31316,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.583Z","source":"vision","stage":"receive:start","level":"info","message":"비전 파이프라인 요청 수신을 시작했습니다."}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.584Z","source":"vision","stage":"receive:end","level":"info","message":"비전 파이프라인 요청 수신을 완료했습니다.","detail":{"bodyBytes":691,"detectionCount":0,"durationMs":0.3}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.584Z","source":"vision","stage":"decode:start","level":"info","message":"비전 파이프라인 요청 디코드를 시작했습니다."}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.584Z","source":"vision","stage":"decode:end","level":"info","message":"비전 파이프라인 요청 디코드를 완료했습니다.","detail":{"detectionCount":3,"durationMs":0.22,"frameCount":1,"objectCount":3,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.584Z","source":"vision","stage":"detect:start","level":"info","message":"비전 검출을 시작했습니다.","detail":{"cameraId":"CARLA-S-03","frameCount":1}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.584Z","source":"vision","stage":"detect:end","level":"info","message":"비전 검출을 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":0.07,"detectionCount":3}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.584Z","source":"vision","stage":"classify:start","level":"info","message":"비전 분류를 시작했습니다.","detail":{"cameraId":"CARLA-S-03","detectionCount":3}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.584Z","source":"vision","stage":"classify:end","level":"info","message":"비전 분류를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":0.1,"detectionCount":3,"semanticEventCount":0,"trackCount":1}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.584Z","source":"vision","stage":"decide:start","level":"info","message":"비전 판단을 시작했습니다.","detail":{"cameraId":"CARLA-S-03","detectionCount":3}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.584Z","source":"vision","stage":"decide:end","level":"info","message":"비전 판단을 완료했습니다.","detail":{"cameraId":"CARLA-S-03","citationCount":3,"detectionCount":3,"durationMs":0.07,"riskLevel":"review"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.586Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":19.56,"frameCount":185,"imageBytes":31696,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.587Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.611Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":23.87,"frameCount":185,"imageBytes":28913,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.613Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.633Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":19.45,"frameCount":185,"imageBytes":32615,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.636Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.659Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":23.11,"frameCount":185,"imageBytes":36860,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.660Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.670Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.678Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":18.1,"frameCount":186,"imageBytes":30918,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.691Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.692Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":21.72,"frameCount":186,"imageBytes":31784,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.714Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":23.01,"frameCount":186,"imageBytes":28876,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.714Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.734Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":19.6,"frameCount":186,"imageBytes":32679,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.735Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.755Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":19.52,"frameCount":186,"imageBytes":36872,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.756Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.767Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.785Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":28.69,"frameCount":187,"imageBytes":30663,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.794Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":27.73,"frameCount":187,"imageBytes":31729,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.795Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.819Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":24.17,"frameCount":187,"imageBytes":28845,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.819Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.841Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.850Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":31.1,"frameCount":187,"imageBytes":32866,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.864Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":23.8,"frameCount":187,"imageBytes":36850,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.865Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.878Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.886Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":21.04,"frameCount":188,"imageBytes":30142,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.886Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.909Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":31.36,"frameCount":188,"imageBytes":31822,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.916Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":29.35,"frameCount":188,"imageBytes":28946,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.919Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.942Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":22.73,"frameCount":188,"imageBytes":32879,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.942Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.954Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.978Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":35.1,"frameCount":188,"imageBytes":36901,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.981Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.990Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":35.86,"frameCount":189,"imageBytes":30059,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:23.990Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.013Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":32.48,"frameCount":189,"imageBytes":31839,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.021Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.023Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":32.3,"frameCount":189,"imageBytes":28886,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.042Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":20.84,"frameCount":189,"imageBytes":33013,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.053Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.073Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.082Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":29.39,"frameCount":189,"imageBytes":36861,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.089Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.093Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.099Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":25.48,"frameCount":190,"imageBytes":31847,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.111Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":21.78,"frameCount":190,"imageBytes":29821,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.119Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":25.34,"frameCount":190,"imageBytes":28898,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.119Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.143Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.143Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":23.84,"frameCount":190,"imageBytes":33169,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.155Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.162Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":19.17,"frameCount":190,"imageBytes":36853,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.169Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.175Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":20.6,"frameCount":191,"imageBytes":29694,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.185Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.193Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":24.67,"frameCount":191,"imageBytes":31835,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.205Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":20.41,"frameCount":191,"imageBytes":28954,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.215Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.236Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":20.97,"frameCount":191,"imageBytes":33170,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.237Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.264Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":27.44,"frameCount":191,"imageBytes":36950,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.264Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.273Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.284Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":19.33,"frameCount":192,"imageBytes":29601,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.284Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.292Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":19.11,"frameCount":192,"imageBytes":32005,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.304Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":19.72,"frameCount":192,"imageBytes":28890,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.313Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.329Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":16.5,"frameCount":192,"imageBytes":33090,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.331Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.360Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":29.11,"frameCount":192,"imageBytes":36809,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.360Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.369Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.377Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":16.62,"frameCount":193,"imageBytes":29552,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.389Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":20,"frameCount":193,"imageBytes":31800,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.390Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.426Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":36.02,"frameCount":193,"imageBytes":28905,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.429Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.436Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.451Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":22.13,"frameCount":193,"imageBytes":33177,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.467Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":30.54,"frameCount":193,"imageBytes":36808,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.468Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.476Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.487Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.496Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":28.33,"frameCount":194,"imageBytes":29429,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.497Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":20.85,"frameCount":194,"imageBytes":31887,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.507Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":19.93,"frameCount":194,"imageBytes":28922,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.513Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.529Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":16.4,"frameCount":194,"imageBytes":33146,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.542Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.554Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.562Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":19.21,"frameCount":194,"imageBytes":36822,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.569Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.576Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":22.68,"frameCount":195,"imageBytes":29528,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.598Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":29.12,"frameCount":195,"imageBytes":31886,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.599Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.617Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.622Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":22.85,"frameCount":195,"imageBytes":28907,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.636Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":19.07,"frameCount":195,"imageBytes":33257,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.636Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.655Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":18.29,"frameCount":195,"imageBytes":36846,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.655Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.668Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.676Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":20.83,"frameCount":196,"imageBytes":29323,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.691Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":23.16,"frameCount":196,"imageBytes":31853,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.691Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.713Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":21.63,"frameCount":196,"imageBytes":28937,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.713Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.734Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":20.99,"frameCount":196,"imageBytes":33202,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.735Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.758Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":23.82,"frameCount":196,"imageBytes":36837,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.759Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.770Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.779Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":19.83,"frameCount":197,"imageBytes":29291,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.796Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.796Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":26.5,"frameCount":197,"imageBytes":32031,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.812Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.817Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":20.97,"frameCount":197,"imageBytes":28965,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.830Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":17.63,"frameCount":197,"imageBytes":33090,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.832Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.851Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":19.09,"frameCount":197,"imageBytes":36856,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.854Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.869Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.887Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":33.04,"frameCount":198,"imageBytes":29077,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.897Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":28.16,"frameCount":198,"imageBytes":32027,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.898Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.908Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.917Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":19.18,"frameCount":198,"imageBytes":28894,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.929Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":20.92,"frameCount":198,"imageBytes":32909,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.937Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.958Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":20.85,"frameCount":198,"imageBytes":36858,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.959Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.971Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.983Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":23.52,"frameCount":199,"imageBytes":28928,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.992Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:24.993Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":21.61,"frameCount":199,"imageBytes":31983,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.013Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":21.36,"frameCount":199,"imageBytes":29067,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.014Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.036Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":21.83,"frameCount":199,"imageBytes":32929,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.037Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.060Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":23.86,"frameCount":199,"imageBytes":36953,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.061Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.074Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.080Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":19.13,"frameCount":200,"imageBytes":28817,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.094Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-N-01"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.097Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-W-04","durationMs":22.58,"frameCount":200,"imageBytes":32145,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.111Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-E-02"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.115Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-N-01","durationMs":20.85,"frameCount":200,"imageBytes":28943,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.145Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-E-02","durationMs":33.82,"frameCount":200,"imageBytes":32635,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.148Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-S-03"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.158Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.169Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-S-03","durationMs":21.54,"frameCount":200,"imageBytes":36780,"valid":true}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.170Z","source":"carla","stage":"frame-upload:start","level":"info","message":"CARLA 프레임 업링크 수신을 시작했습니다.","detail":{"cameraId":"CARLA-W-04"}}
+
+event: activity
+data: {"ts":"2026-07-04T01:10:25.180Z","source":"carla","stage":"frame-upload:end","level":"info","message":"CARLA 프레임 업링크를 완료했습니다.","detail":{"cameraId":"CARLA-DRONE-ISR","durationMs":21.12,"frameCount":201,"imageBytes":28795,"valid":true}}
+
