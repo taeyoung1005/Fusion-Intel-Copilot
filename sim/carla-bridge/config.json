@@ -79,12 +79,20 @@
         "speed": 1.1
       },
       {
-        "blueprint": "walker.pedestrian.0021",
+        "blueprints": [
+          "walker.pedestrian.0021",
+          "walker.pedestrian.0018",
+          "walker.pedestrian.0034"
+        ],
+        "movement": "roam",
+        "roaming_seed": 19,
+        "arrival_tolerance": 0.85,
         "location": { "x": -81.49, "y": 34.02, "z": 0.16 },
         "route": [
           { "x": -74.65, "y": 34.03, "z": 0.16 },
           { "x": -72.1, "y": 34.57, "z": 0.16 },
-          { "x": -88.47, "y": 34.17, "z": 0.16 }
+          { "x": -88.47, "y": 34.17, "z": 0.16 },
+          { "x": -83.2, "y": 28.8, "z": 0.16 }
         ],
         "speed": 0.9
       }

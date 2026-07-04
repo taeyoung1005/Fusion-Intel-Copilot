@@ -5,7 +5,7 @@ from typing import Literal, TypeAlias
 
 JsonValue: TypeAlias = None | bool | int | float | str | list["JsonValue"] | dict[str, "JsonValue"]
 JsonMap: TypeAlias = dict[str, JsonValue]
-TimedActorKind: TypeAlias = Literal["walker", "vehicle", "drone"]
+TimedActorKind: TypeAlias = Literal["walker", "vehicle", "drone", "animal"]
 
 
 class SceneConfigError(TypeError):
@@ -36,7 +36,15 @@ class WalkerConfig:
     transform: TransformConfig
     route: tuple[TransformConfig, ...]
     speed: float
+    blueprints: tuple[str, ...] = ()
     role: str = "patrol"
+    movement: str = "patrol"
+    roaming_seed: int | None = None
+    arrival_tolerance: float | None = None
+
+    def __post_init__(self) -> None:
+        if len(self.blueprints) == 0:
+            object.__setattr__(self, "blueprints", (self.blueprint,))
 
 
 @dataclass(frozen=True, slots=True)
@@ -73,7 +81,14 @@ class TimedActorConfig:
     transform: TransformConfig
     route: tuple[TransformConfig, ...]
     speed: float
+    blueprints: tuple[str, ...] = ()
+    despawn_at_seconds: float | None = None
+    movement: str = "patrol"
     camera_id: str | None = None
+
+    def __post_init__(self) -> None:
+        if len(self.blueprints) == 0:
+            object.__setattr__(self, "blueprints", (self.blueprint,))
 
 
 @dataclass(frozen=True, slots=True)
@@ -134,12 +149,17 @@ def parse_prop(raw: JsonValue, field: str) -> PropConfig:
 
 def parse_walker(raw: JsonValue) -> WalkerConfig:
     data = require_map(raw, "walkers")
+    blueprints = read_blueprints(data)
     return WalkerConfig(
-        blueprint=read_string(data, "blueprint"),
+        blueprint=blueprints[0],
+        blueprints=blueprints,
         transform=parse_transform(data),
         route=parse_walker_route(data),
         speed=read_float(data, "speed", 1.2),
         role=read_optional_string(data, "role", "patrol"),
+        movement=read_optional_string(data, "movement", "patrol"),
+        roaming_seed=read_nullable_int(data, "roaming_seed"),
+        arrival_tolerance=read_nullable_float(data, "arrival_tolerance"),
     )
 
 
@@ -182,15 +202,19 @@ def parse_scenario_event(raw: JsonValue) -> ScenarioEventConfig:
 
 def parse_timed_actor(raw: JsonValue) -> TimedActorConfig:
     data = require_map(raw, "actors")
+    blueprints = read_blueprints(data)
     return TimedActorConfig(
         id=read_string(data, "id"),
         kind=parse_timed_actor_kind(data),
-        blueprint=read_string(data, "blueprint"),
+        blueprint=blueprints[0],
+        blueprints=blueprints,
         role=read_optional_string(data, "role", "scenario-actor"),
         spawn_at_seconds=read_float(data, "spawn_at_seconds", 0.0),
+        despawn_at_seconds=read_nullable_float(data, "despawn_at_seconds"),
         transform=parse_transform(data),
         route=tuple(parse_waypoint(item) for item in read_route(data.get("route"))),
         speed=read_float(data, "speed", 1.0),
+        movement=read_optional_string(data, "movement", "patrol"),
         camera_id=read_nullable_string(data, "camera_id"),
     )
 
@@ -198,7 +222,7 @@ def parse_timed_actor(raw: JsonValue) -> TimedActorConfig:
 def parse_timed_actor_kind(raw: JsonMap) -> TimedActorKind:
     value = read_string(raw, "kind")
     match value:
-        case "walker" | "vehicle" | "drone":
+        case "walker" | "vehicle" | "drone" | "animal":
             return value
         case _:
             raise SceneConfigError("kind")
@@ -275,6 +299,20 @@ def read_nullable_string(raw: JsonMap, field: str) -> str | None:
     return value
 
 
+def read_blueprints(raw: JsonMap) -> tuple[str, ...]:
+    value = raw.get("blueprints")
+    if value is None:
+        return (read_string(raw, "blueprint"),)
+    if not isinstance(value, list) or len(value) == 0:
+        raise SceneConfigError("blueprints")
+    blueprints: list[str] = []
+    for item in value:
+        if not isinstance(item, str):
+            raise SceneConfigError("blueprints")
+        blueprints.append(item)
+    return tuple(blueprints)
+
+
 def read_int(raw: JsonMap, field: str, default: int) -> int:
     value = raw.get(field, default)
     if not isinstance(value, int):
@@ -282,8 +320,26 @@ def read_int(raw: JsonMap, field: str, default: int) -> int:
     return value
 
 
+def read_nullable_int(raw: JsonMap, field: str) -> int | None:
+    value = raw.get(field)
+    if value is None:
+        return None
+    if not isinstance(value, int):
+        raise SceneConfigError(field)
+    return value
+
+
 def read_float(raw: JsonMap, field: str, default: float) -> float:
     value = raw.get(field, default)
+    if not isinstance(value, int | float):
+        raise SceneConfigError(field)
+    return float(value)
+
+
+def read_nullable_float(raw: JsonMap, field: str) -> float | None:
+    value = raw.get(field)
+    if value is None:
+        return None
     if not isinstance(value, int | float):
         raise SceneConfigError(field)
     return float(value)

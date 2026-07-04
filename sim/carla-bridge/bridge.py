@@ -356,7 +356,7 @@ def run(config: BridgeConfig) -> None:
     frame_store = CameraFrameStore()
     start_webrtc_server_in_thread(config.webrtc, frame_store, FRAME_WIDTH, FRAME_HEIGHT)
     scene_runtime = spawn_scene(world, config.scene)
-    actors = [*spawn_cameras(world, config, frame_store), *spawn_vehicles(world, config.vehicle_count)]
+    actors = [*spawn_cameras(world, config, frame_store), *spawn_vehicles(world, config.vehicle_count, client=client)]
     try:
         while True:
             advance = advance_scene_runtime(world, scene_runtime, SCENE_STEP_SECONDS)

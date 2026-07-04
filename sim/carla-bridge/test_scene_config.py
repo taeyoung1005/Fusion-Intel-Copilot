@@ -172,6 +172,65 @@ class LoadSceneConfigTests(unittest.TestCase):
         self.assertEqual(timeline.actors[1].kind, "drone")
         self.assertEqual(timeline.actors[1].transform.z, 32.0)
 
+    def test_parses_diverse_blueprints_roaming_and_actor_despawn_schedule(self) -> None:
+        # Given: scene config asks for varied actors and a time-bounded roaming pedestrian.
+        raw = {
+            "scene": {
+                "walkers": [
+                    {
+                        "blueprints": ["walker.pedestrian.0010", "walker.pedestrian.0021"],
+                        "movement": "roam",
+                        "roaming_seed": 1,
+                        "arrival_tolerance": 0.75,
+                        "location": {"x": 0, "y": 0, "z": 0.2},
+                        "route": [
+                            {"x": 10, "y": 0, "z": 0.2},
+                            {"x": 20, "y": 0, "z": 0.2},
+                        ],
+                    }
+                ],
+                "timeline": {
+                    "name": "spawn-despawn",
+                    "seed": 3,
+                    "duration_seconds": 40,
+                    "events": [],
+                    "actors": [
+                        {
+                            "id": "dog-or-pedestrian-01",
+                            "kind": "animal",
+                            "blueprints": ["walker.pedestrian.0001", "walker.pedestrian.0002"],
+                            "role": "ambient-roamer",
+                            "spawn_at_seconds": 5,
+                            "despawn_at_seconds": 25,
+                            "movement": "roam",
+                            "location": {"x": 1, "y": 2, "z": 0.2},
+                            "route": [
+                                {"x": 3, "y": 4, "z": 0.2},
+                                {"x": 5, "y": 6, "z": 0.2},
+                            ],
+                            "speed": 1.3,
+                        }
+                    ],
+                },
+            }
+        }
+
+        # When: the scene boundary is parsed.
+        scene = load_scene_config(raw)
+
+        # Then: the typed config keeps all movement and lifecycle choices.
+        self.assertEqual(scene.walkers[0].blueprint, "walker.pedestrian.0010")
+        self.assertEqual(scene.walkers[0].blueprints, ("walker.pedestrian.0010", "walker.pedestrian.0021"))
+        self.assertEqual(scene.walkers[0].movement, "roam")
+        self.assertEqual(scene.walkers[0].roaming_seed, 1)
+        self.assertEqual(scene.walkers[0].arrival_tolerance, 0.75)
+        self.assertIsNotNone(scene.timeline)
+        timeline = scene.timeline
+        self.assertEqual(timeline.actors[0].kind, "animal")
+        self.assertEqual(timeline.actors[0].blueprints, ("walker.pedestrian.0001", "walker.pedestrian.0002"))
+        self.assertEqual(timeline.actors[0].despawn_at_seconds, 25.0)
+        self.assertEqual(timeline.actors[0].movement, "roam")
+
 
 if __name__ == "__main__":
     unittest.main()

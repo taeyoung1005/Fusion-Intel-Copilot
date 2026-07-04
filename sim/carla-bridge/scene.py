@@ -18,6 +18,15 @@ from scene_config import (
     WalkerConfig,
     WeatherConfig,
 )
+from scene_movement import (
+    PatrolMotion,
+    RoamingMotion,
+    RoamingState,
+    advance_patrol_motion,
+    advance_roaming_motion,
+)
+
+type WalkerMotion = PatrolMotion | RoamingMotion
 
 
 @dataclass(frozen=True, slots=True)
@@ -27,6 +36,7 @@ class WalkerPatrol:
     route_index: int
     speed: float
     role: str = "patrol"
+    motion: WalkerMotion | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -121,17 +131,27 @@ def spawn_parked_vehicles(world: carla.World, vehicles: tuple[PropConfig, ...]) 
     return actors
 
 
-def spawn_vehicles(world: carla.World, count: int) -> list[carla.Actor]:
+def spawn_vehicles(
+    world: carla.World,
+    count: int,
+    client: carla.Client | None = None,
+    tm_port: int = 8000,
+) -> list[carla.Actor]:
     blueprints = list(world.get_blueprint_library().filter("vehicle.*"))
     spawn_points = list(world.get_map().get_spawn_points())
     rng = random.Random(7)
     rng.shuffle(spawn_points)
+    if client is not None:
+        client.get_trafficmanager(tm_port)
     vehicles: list[carla.Actor] = []
     for spawn_point in spawn_points[:count]:
         blueprint = rng.choice(blueprints)
         vehicle = world.try_spawn_actor(blueprint, spawn_point)
         if vehicle is not None:
-            vehicle.apply_control(carla.VehicleControl(throttle=0.36, steer=0.0))
+            if client is None:
+                vehicle.apply_control(carla.VehicleControl(throttle=0.36, steer=0.0))
+            else:
+                vehicle.set_autopilot(True, tm_port)
             vehicles.append(vehicle)
     print(f"CARLA vehicles online: {len(vehicles)}")
     return vehicles
@@ -146,20 +166,37 @@ def spawn_walkers(world: carla.World, walkers: tuple[WalkerConfig, ...]) -> tupl
             continue
         pedestrian.set_simulate_physics(False)
         actors.append(pedestrian)
-        patrols.append(
-            WalkerPatrol(
-                pedestrian=pedestrian,
-                route=walker.route,
-                route_index=0,
-                speed=walker.speed,
-                role=walker.role,
-            ),
-        )
+        patrols.append(walker_patrol_for_config(pedestrian, walker))
     print(
         "CARLA checkpoint walkers online: "
         f"spawned={len(actors)} configured={len(walkers)} {format_role_counts(patrols)}"
     )
     return actors, tuple(patrols)
+
+
+def walker_patrol_for_config(pedestrian: carla.Actor, walker: WalkerConfig) -> WalkerPatrol:
+    if walker.movement == "roam":
+        return WalkerPatrol(
+            pedestrian=pedestrian,
+            route=walker.route,
+            route_index=0,
+            speed=walker.speed,
+            role=walker.role,
+            motion=RoamingMotion(
+                route=walker.route,
+                state=RoamingState(target_index=None, visit_count=0),
+                seed=0 if walker.roaming_seed is None else walker.roaming_seed,
+                arrival_tolerance=1.0 if walker.arrival_tolerance is None else walker.arrival_tolerance,
+            ),
+        )
+    return WalkerPatrol(
+        pedestrian=pedestrian,
+        route=walker.route,
+        route_index=0,
+        speed=walker.speed,
+        role=walker.role,
+        motion=PatrolMotion(route=walker.route, route_index=0, speed=walker.speed),
+    )
 
 
 def spawn_walker(world: carla.World, walker: WalkerConfig) -> carla.Actor | None:
@@ -308,22 +345,62 @@ def due_timeline_events(
 
 
 def advance_walker_patrol(patrol: WalkerPatrol, step_seconds: float) -> WalkerPatrol:
-    current_target = patrol.route[patrol.route_index]
-    location = patrol.pedestrian.get_location()
-    distance = distance_meters(location, current_target)
-    max_step = patrol.speed * step_seconds
-    if distance > max_step:
-        patrol.pedestrian.set_transform(to_carla_transform(interpolate_transform(location, current_target, max_step)))
-        return patrol
-    patrol.pedestrian.set_transform(to_carla_transform(current_target))
-    next_index = next_route_index(patrol.route, patrol.route_index)
+    motion = patrol.motion
+    if motion is None:
+        motion = PatrolMotion(route=patrol.route, route_index=patrol.route_index, speed=patrol.speed)
+    location = to_transform_config(patrol.pedestrian.get_location())
+    match motion:
+        case PatrolMotion():
+            return advance_patrol_walker(patrol, motion, location, step_seconds)
+        case RoamingMotion():
+            return advance_roaming_walker(patrol, motion, location)
+        case unreachable:
+            assert_never(unreachable)
+
+
+def advance_patrol_walker(
+    patrol: WalkerPatrol,
+    motion: PatrolMotion,
+    location: TransformConfig,
+    step_seconds: float,
+) -> WalkerPatrol:
+    advance = advance_patrol_motion(location, motion, step_seconds)
+    patrol.pedestrian.set_transform(to_carla_transform(advance.transform))
     return WalkerPatrol(
         pedestrian=patrol.pedestrian,
-        route=patrol.route,
-        route_index=next_index,
+        route=advance.motion.route,
+        route_index=advance.motion.route_index,
+        speed=advance.motion.speed,
+        role=patrol.role,
+        motion=advance.motion,
+    )
+
+
+def advance_roaming_walker(
+    patrol: WalkerPatrol,
+    motion: RoamingMotion,
+    location: TransformConfig,
+) -> WalkerPatrol:
+    advance = advance_roaming_motion(location, motion)
+    if advance.target_changed and advance.target is not None:
+        apply_walker_destination(patrol.pedestrian, advance.target)
+    route_index = 0 if advance.motion.state.target_index is None else advance.motion.state.target_index
+    return WalkerPatrol(
+        pedestrian=patrol.pedestrian,
+        route=advance.motion.route,
+        route_index=route_index,
         speed=patrol.speed,
         role=patrol.role,
+        motion=advance.motion,
     )
+
+
+def apply_walker_destination(pedestrian: carla.Actor, target: TransformConfig) -> None:
+    go_to_location = getattr(pedestrian, "go_to_location", None)
+    if callable(go_to_location):
+        go_to_location(to_carla_location(target))
+        return
+    pedestrian.set_transform(to_carla_transform(target))
 
 
 def format_role_counts(patrols: list[WalkerPatrol]) -> str:
@@ -352,6 +429,10 @@ def interpolate_transform(location: carla.Location, target: TransformConfig, max
 
 def distance_meters(location: carla.Location, target: TransformConfig) -> float:
     return sqrt((location.x - target.x) ** 2 + (location.y - target.y) ** 2 + (location.z - target.z) ** 2)
+
+
+def to_transform_config(location: carla.Location) -> TransformConfig:
+    return TransformConfig(x=location.x, y=location.y, z=location.z, pitch=0.0, yaw=0.0, roll=0.0)
 
 
 def to_carla_transform(transform: TransformConfig) -> carla.Transform:
