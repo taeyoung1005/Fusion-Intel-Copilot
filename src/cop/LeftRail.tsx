@@ -9,7 +9,7 @@ import {
   Settings2,
   SlidersHorizontal,
 } from "lucide-react"
-import { type ReactElement, useState } from "react"
+import { type ReactElement, useCallback, useState } from "react"
 import {
   CarlaCctvWall,
   type CarlaDetectionFrameChangeHandler,
@@ -76,6 +76,7 @@ type LeftPanelsProps = {
   readonly onRefresh: () => void
   readonly onVisionEvidence: (clip: EvidenceClip) => void
   readonly cctvWindowOpen: boolean
+  readonly onOpenCctvWindow: () => void
   readonly onCloseCctvWindow: () => void
   readonly onDetectionServerConnectionChange: CarlaDetectionServerConnectionHandler
   readonly onDetectionFrameChange: CarlaDetectionFrameChangeHandler
@@ -91,10 +92,19 @@ export function LeftPanels({
   onRefresh,
   onVisionEvidence,
   cctvWindowOpen,
+  onOpenCctvWindow,
   onCloseCctvWindow,
   onDetectionServerConnectionChange,
   onDetectionFrameChange,
 }: LeftPanelsProps): ReactElement {
+  const selectCameraAndExpand = useCallback(
+    (camera: DynamicCameraRecord): void => {
+      onSelectDynamicCamera(camera)
+      onOpenCctvWindow()
+    },
+    [onSelectDynamicCamera, onOpenCctvWindow],
+  )
+
   return (
     <>
       <aside className="cop-left" aria-label="좌측 운용 레이어">
@@ -131,7 +141,7 @@ export function LeftPanels({
           <CarlaCctvWall
             cameras={carlaCameras}
             selectedCameraId={selectedCameraId}
-            onSelectCamera={onSelectDynamicCamera}
+            onSelectCamera={selectCameraAndExpand}
             onVisionEvidence={onVisionEvidence}
             onDetectionServerConnectionChange={onDetectionServerConnectionChange}
             onDetectionFrameChange={onDetectionFrameChange}

@@ -221,6 +221,7 @@ export function CopDashboard(): ReactElement {
           onSelectDynamicCamera={selectDynamicCamera}
           onVisionEvidence={addVisionEvidence}
           cctvWindowOpen={cctvWindowOpen}
+          onOpenCctvWindow={() => setCctvWindowOpen(true)}
           onCloseCctvWindow={() => setCctvWindowOpen(false)}
           onDetectionServerConnectionChange={updateDetectionServerConnection}
           onDetectionFrameChange={updateLiveDetectionFrame}
