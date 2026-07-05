@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import type { CommanderReportArtifact } from "./reportArtifact"
-import { ReportPdfClientError, requestReportPdf } from "./reportPdfClient"
+import {
+  REPORT_PDF_CLIENT_TIMEOUT_MS,
+  ReportPdfClientError,
+  requestReportPdf,
+} from "./reportPdfClient"
 
 const reportArtifact = {
   reportId: "RPT-20260705-INC-CARLA-N-01-140305",
@@ -164,5 +168,27 @@ ${"0".repeat(700)}
     await expect(requestReportPdf(reportArtifact)).rejects.toMatchObject({
       message: "PDF 미리보기 생성 실패: 서버 연결 상태를 확인하세요.",
     })
+  })
+
+  it("aborts and surfaces a retryable timeout instead of hanging forever", async () => {
+    // Given: the server never responds (e.g. a dev-server restart mid-request).
+    vi.useFakeTimers()
+    const fetchHangs = (_input: RequestInfo | URL, init?: RequestInit): Promise<Response> =>
+      new Promise((_resolve, reject) => {
+        init?.signal?.addEventListener("abort", () => reject(new DOMException("", "AbortError")))
+      })
+    vi.stubGlobal("fetch", fetchHangs)
+
+    // When: the client request is left in flight past the client-side timeout.
+    const pending = requestReportPdf(reportArtifact)
+    const assertion = expect(pending).rejects.toMatchObject({
+      message:
+        "PDF 미리보기 생성 실패: 서버 응답이 너무 오래 걸려 요청을 취소했습니다. 다시 시도하세요.",
+    })
+    await vi.advanceTimersByTimeAsync(REPORT_PDF_CLIENT_TIMEOUT_MS)
+
+    // Then: it rejects with Korean timeout guidance instead of staying pending.
+    await assertion
+    vi.useRealTimers()
   })
 })

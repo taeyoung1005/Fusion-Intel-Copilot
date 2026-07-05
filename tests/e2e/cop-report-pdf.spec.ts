@@ -82,4 +82,27 @@ test.describe("D4D COP 보고서 PDF 미리보기", () => {
     await expect(page.getByRole("button", { name: /PDF 미리보기/ })).toBeEnabled()
     await expect(page.locator(".cop-report-pdf-preview")).toHaveCount(0)
   })
+
+  test("서버가 응답 없이 멈추면 무한정 생성 중에 머무르지 않고 시간 초과로 복구된다", async ({
+    page,
+  }) => {
+    test.setTimeout(60_000)
+    // The server never responds — no fulfill, no abort — reproducing a dev-server
+    // restart or dropped connection mid-request.
+    await page.route("**/api/report-pdf", () => new Promise<never>(() => {}))
+
+    await page.goto("/")
+    await page.getByRole("tab", { name: "판단·대응" }).click()
+    await page.getByRole("button", { name: /PDF 생성 중|PDF 미리보기/ }).click()
+
+    await expect(page.getByRole("button", { name: "PDF 생성 중" })).toBeDisabled()
+
+    await expect(
+      page.getByText(
+        "PDF 미리보기 생성 실패: 서버 응답이 너무 오래 걸려 요청을 취소했습니다. 다시 시도하세요.",
+      ),
+    ).toBeVisible({ timeout: 35_000 })
+    await expect(page.getByRole("button", { name: "PDF 미리보기" })).toBeEnabled()
+    await expect(page.locator(".cop-report-pdf-preview")).toHaveCount(0)
+  })
 })
